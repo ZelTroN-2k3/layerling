@@ -114,7 +114,7 @@ It is not a full CAD package: there is no parametric timeline and no assemblies.
 - **Right-click menu** – a short right click on a body brings up the most used commands: duplicate, hole or solid, group, chamfer, fillet and hollow for one body, mirror and scale by percent, hide, lock, drop to the workplane, delete. Dragging with the right button still turns the view.
 - **Section view** – cut the view open along a plane across X, Y or Z to look at walls, cavities and parts that fit into each other, with a coarse and a fine slider. Only the view is cut: the design and every export stay whole. "Section as SVG" saves the cut itself at 1:1, for a laser or a template, and "Measure" reads wall thickness and gaps right on the cut, snapping square to the wall.
 - **Workplane on any face** – press W and click a face to build on it; a click near a corner puts it exactly on the corner, near an edge on the edge with the grid running along it, and on the empty plate where you click. An eye hides the plane for a clear view while it keeps applying. An AI can set it on a face too.
-- **On a tablet** – one finger works the design, exactly as the left mouse button does: tap to select, drag to move, drag on empty space for a selection box. **Two fingers belong to the view**: spread or pinch them to zoom, move them together to shift the workplane. Putting a second finger down takes back whatever the first one had started, so a pinch never nudges a part. Turning the view has no gesture of its own; the camera rail carries a switch for it, shown only on a touch screen, and while it is on, one finger orbits instead of selecting. Number fields hand you their whole value when you tap them, ready to be overwritten – a decimal keypad has no arrow keys to move the caret with.
+- **On a tablet** – one finger works the design, exactly as the left mouse button does: tap to select, drag to move, drag on empty space for a selection box. **Two fingers belong to the view**: spread or pinch them to zoom, move them together to shift the workplane. Putting a second finger down takes back whatever the first one had started, so a pinch never nudges a part. Turning the view has no gesture of its own; the camera rail carries a switch for it, shown only on a touch screen, and while it is on, one finger orbits instead of selecting. Number fields hand you their whole value when you tap them, ready to be overwritten – a decimal keypad has no arrow keys to move the caret with. A finger reaches a little further to sketch points, lines, handles, measuring points and edges than a mouse does, but **a stylus is the better tool on a tablet**: finer, and it does not cover what you aim at.
 
 ### Videos
 
@@ -255,7 +255,7 @@ LAYERLING_SHARED_PROJECTS_DIR=/srv/layerling-projects npm run start
 
 The start page then shows a folder named **On the server** beside your browser designs. Open it and you are in that
 folder: **New design** starts one right there, **New folder** makes a subfolder, and a trail under the heading says where
-you are. A `..` tile leads back out. Designs move by dragging them onto a folder, onto that tile or onto a step of the
+you are. A `..` tile leads back out, and **Back to designs in this browser** at the left of the buttons returns to the designs of this browser. Designs move by dragging them onto a folder, onto that tile or onto a step of the
 trail – or through **Move to …** in their menu. A design from your browser goes onto the server the same way: drag its
 card onto the server folder.
 

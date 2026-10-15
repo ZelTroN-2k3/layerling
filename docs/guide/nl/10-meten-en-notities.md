@@ -16,7 +16,7 @@ Het meetlint zit aan de onderkant van de camerabalk aan de linkerrand ({{ui:came
 3. **{{ui:camera.deleteMeasurement}}:** Klik daarna op een meting om die te verwijderen.
 4. **{{ui:camera.tapeWholeEdges}}:** Een klik op een rand meet de hele rand, bij een cirkel bijvoorbeeld de omtrek. Staat dit uit, dan zet een klik in plaats daarvan een punt op de rand, en het tweede punt mag overal liggen, zodat je de diameter of een andere afstand kunt meten. [[Alt]] draait de schakelaar voor één klik om. Op een cirkel klikt het punt tegenover het eerste vast zodra de aanwijzer in de buurt komt, en de punten liggen op de echte cirkel, zodat de diameter precies klopt.
 5. **{{ui:camera.deleteAllMeasurements}}:** Verwijdert alle metingen in één keer. Omdat dit niet ongedaan kan worden gemaakt, vraagt layerling het eerst; zijn er geen metingen, dan is er niets te doen.
-6. **{{ui:camera.tapeMarkMiddle}}:** Onder het getal van elke meting zit een klein draadkruisknopje. Het zet een [referentiepunt](#referentiepunten) in het midden van de meting: na een klik op een ronde rand, zoals de rand van een gat, in het middelpunt van die cirkel - ook bij een geïmporteerd net, waar anders niets het midden van een gat markeert - en bij een diameter of elke rechte meting halverwege. Een vorm die je sleept snapt dan met zijn midden op het punt. Een punt dat er al is, wordt niet dubbel gemaakt.
+6. **{{ui:camera.tapeMarkMiddle}}:** Onder het getal van elke meting zit een klein draadkruisknopje. Het zet een [referentiepunt](#referentiepunten) in het midden van de meting: na een klik op een ronde rand, zoals de rand van een gat, in het middelpunt van die cirkel - ook bij een geïmporteerd net, waar anders niets het midden van een gat markeert - en bij een diameter of elke rechte meting halverwege. Een vorm die je sleept snapt dan met zijn midden op het punt. Een punt dat er al is, wordt niet dubbel gemaakt. Het meetlint klikt vast aan een referentiepunt zoals aan een hoek: zo meet je vanaf het middelpunt van een cirkel of vanaf het midden van een lijn - punt zetten, dan aanklikken.
 
 [[Esc]] verlaat de meetmodus.
 
@@ -33,7 +33,7 @@ De winkelhaak ligt op het werkvlak. Ligt dat op de zijkant van een lichaam, dan 
 - **De greep slepen** verplaatst hem.
 - **Een korte klik op de greep** draait hem 90°.
 - **Het ×** ernaast verwijdert hem.
-- **Het knopje links van de greep** wisselt waarvandaan gemeten wordt: de buitenkant van een lichaam (eindpunt, een icoon met lijnen) of het midden ervan (middelpunt, een vizierkruis).
+- **Het knopje links van de greep** wisselt waarvandaan gemeten wordt: de buitenkant van een lichaam (eindpunt, een icoon met lijnen) of het midden ervan (middelpunt, een vizierkruis). Naast elk groen getal zit zo'n klein schakelaartje dat alleen dat getal omzet: bij een staande cilinder het midden in de twee armen en de onderkant in de hoogte, bij een liggende het midden dwars en een uiteinde in de lengte. Komen alle drie weer overeen, dan toont het knopje bij de greep de gemeenschappelijke stand.
 
 Staan er lichamen bij een van de armen, dan toont de winkelhaak automatisch hun afmetingen. Dat werkt alleen op de bodemplaat, niet op de zijkant van een lichaam.
 
@@ -69,7 +69,7 @@ Notities worden in het ontwerp opgeslagen, komen in geen enkele export terecht e
 Een referentiepunt is een kaal merkteken in de ruimte, zoals een potloodstreep of een aftekenpunt in een werkplaats: het hoort bij geen enkel lichaam, wordt nooit geprint, en andere dingen klikken eraan vast. Klik met rechts op een lichaam en kies {{ui:contextMenu.markCenter}}, {{ui:contextMenu.markCorners}} of {{ui:contextMenu.markMidpoints}}: de punten verschijnen op het bovenvlak van het lichaam (van de hele selectie, als je er meerdere hebt geselecteerd).
 
 - Sleep een punt om het te verplaatsen, of klik erop om de coördinaten te zien en nieuwe te typen; ze gebruiken de eenheid die je hebt ingesteld. Elke kaart kun je aan zijn titel wegslepen als die iets bedekt, en wel afzonderlijk: de andere blijven waar ze zijn, en een dubbelklik op de titel zet hem terug. De kaart die je het laatst hebt aangeraakt, ligt voor de andere. **Alles verwijderen** in een kaart, of in het rechtsklikmenu, verwijdert alle punten in één keer. {{ui:common.delete}} verwijdert het punt.
-- Het meetlint kan ook een punt zetten: {{ui:camera.tapeMarkMiddle}}, het draadkruisknopje onder een meting, zet er een in het midden, bijvoorbeeld in het middelpunt van een rond gat.
+- Het meetlint kan ook een punt zetten: {{ui:camera.tapeMarkMiddle}}, het draadkruisknopje onder een meting, zet er een in het midden, bijvoorbeeld in het middelpunt van een rond gat. En het meet vanaf een punt: het meetlint klikt vast aan referentiepunten zoals aan hoeken.
 - Sleep je een vorm, dan klikken zijn randen en zijn midden vast aan een punt, zoals ze aan andere vormen vastklikken ({{ui:workspace.objectSnap}}). Ook de winkelhaak klikt vast aan punten.
 - Punten worden in het ontwerp opgeslagen, komen in geen enkele export terecht en worden samen met de notities getoond of verborgen met {{ui:visibility.notes}}.
 - Een AI kan ze markeren, opsommen en verwijderen met `layerling_add_reference_points`, `layerling_list_reference_points` en `layerling_remove_reference_points`.

@@ -24,6 +24,7 @@ apps/web/public/guide/
 apps/web/public/handleiding/
 apps/web/public/guide-fr/
 apps/web/public/instrukcja/
+apps/web/public/ru/
 
 # Environment files
 .env

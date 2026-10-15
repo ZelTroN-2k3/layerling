@@ -10,7 +10,7 @@ import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeome
 import { type AppThemePalette, type ResolvedAppTheme } from "@/lib/appTheme";
 import { t } from "@/lib/i18n";
 import { displayToMillimeters, formatLengthMm, formatMeasurementNumber, lengthDisplayUnit, millimetersToDisplay, parseMeasurementInput } from "@/lib/measurementUnits";
-import { computeCornerRulerRelativeCoordinates, cornerRulerDimensionMatchesFromCorner, cornerRulerFlatRotation, cornerRulerTicks, pointAlongRuler, rulerDimensionMatch, type CornerRulerFrame, type CornerRulerMode, type RulerDimensionField, type RulerDimensionMatch } from "@/lib/rulerDimensions";
+import { computeCornerRulerRelativeCoordinates, cornerRulerAxisModes, cornerRulerDimensionMatchesFromCorner, cornerRulerFlatRotation, cornerRulerTicks, pointAlongRuler, rulerDimensionMatch, type CornerRulerAxis, type CornerRulerAxisModes, type CornerRulerFrame, type CornerRulerMode, type RulerDimensionField, type RulerDimensionMatch } from "@/lib/rulerDimensions";
 import { type PlacementPoint, type PlacementWorkplane } from "@/lib/placementWorkplane";
 import { capturePointer } from "@/lib/pointerCapture";
 import { GuideHelpLink } from "@/components/GuideHelpLink";
@@ -231,6 +231,33 @@ export function projectToScreen(point: THREE.Vector3, state: ThreeState) {
     x: ((projected.x + 1) / 2) * rect.width,
     y: ((1 - projected.y) / 2) * rect.height,
   };
+}
+
+/** How far in front of a perspective camera a point is (negative: behind it); an orthographic camera has no behind. */
+function depthInFrontOfCamera(point: THREE.Vector3, state: ThreeState) {
+  if (!(state.camera instanceof THREE.PerspectiveCamera)) return Number.POSITIVE_INFINITY;
+  state.camera.updateMatrixWorld();
+  return -point.clone().applyMatrix4(state.camera.matrixWorldInverse).z;
+}
+
+/**
+ * The screen line of the world segment a-b, cut off where it passes behind a perspective camera, or
+ * null when all of it is behind. A point behind the camera projects to a mirrored place on the screen,
+ * so drawing it as it is makes a fan of lines (a ruler arm that reaches past a camera hovering above it).
+ * The cut is made 1 mm in front of the camera, so what is drawn stays within a few ten thousand pixels.
+ */
+export function projectSegmentToScreen(a: THREE.Vector3, b: THREE.Vector3, state: ThreeState) {
+  const near = state.camera instanceof THREE.PerspectiveCamera ? Math.max(state.camera.near, 1) : 0;
+  const depthA = depthInFrontOfCamera(a, state);
+  const depthB = depthInFrontOfCamera(b, state);
+  if (depthA < near && depthB < near) return null;
+  let from = a;
+  let to = b;
+  if (depthA < near) from = a.clone().lerp(b, (near - depthA) / (depthB - depthA));
+  else if (depthB < near) to = b.clone().lerp(a, (near - depthB) / (depthA - depthB));
+  const start = projectToScreen(from, state);
+  const end = projectToScreen(to, state);
+  return { x1: start.x, y1: start.y, x2: end.x, y2: end.y };
 }
 
 export function syncMoveDimensionWorldLines(
@@ -1141,6 +1168,8 @@ export type CornerRulerInstance = {
   armLengthX: number;
   armLengthZ: number;
   mode?: CornerRulerMode;
+  /** Single numbers that count differently from `mode`, for instance a standing body: the middle in x and z, the bottom in height. */
+  axisModes?: CornerRulerAxisModes;
 };
 
 type CornerRulerTickScreen = { x1: number; y1: number; x2: number; y2: number };
@@ -1152,6 +1181,7 @@ export type CornerRulerNeighborLabel = { key: string; x: number; y: number; text
 type CornerRulerOverlayItem = {
   id: string;
   mode: CornerRulerMode;
+  modes: Record<CornerRulerAxis, CornerRulerMode>;
   handleX: number;
   handleY: number;
   armXLine: { x1: number; y1: number; x2: number; y2: number };
@@ -1223,15 +1253,19 @@ export function syncCornerRulerToolOverlay(
 
     rulers.forEach((ruler) => {
       const armWidth = CORNER_RULER_ARM_WIDTH;
-      const mode: CornerRulerMode = ruler.mode ?? "endpoint";
+      const modes = cornerRulerAxisModes(ruler.mode, ruler.axisModes);
+      // The one button shows the middle only when all three numbers count to it.
+      const mode: CornerRulerMode = modes.x === "midpoint" && modes.z === "midpoint" && modes.elevation === "midpoint" ? "midpoint" : "endpoint";
       const xAxis = new THREE.Vector3(ruler.frame.xAxis.x, ruler.frame.xAxis.y, ruler.frame.xAxis.z).normalize();
       const zAxis = new THREE.Vector3(ruler.frame.zAxis.x, ruler.frame.zAxis.y, ruler.frame.zAxis.z).normalize();
       const yAxis = new THREE.Vector3(ruler.frame.normal.x, ruler.frame.normal.y, ruler.frame.normal.z).normalize();
       const corner = new THREE.Vector3(ruler.corner.x, ruler.corner.y, ruler.corner.z);
 
       const handleScreen = projectToScreen(corner, state);
-      const armXEndScreen = projectToScreen(corner.clone().addScaledVector(xAxis, ruler.armLengthX), state);
-      const armZEndScreen = projectToScreen(corner.clone().addScaledVector(zAxis, ruler.armLengthZ), state);
+      // A line that is wholly behind the camera has nothing to draw: it collapses onto the handle.
+      const noLine = { x1: handleScreen.x, y1: handleScreen.y, x2: handleScreen.x, y2: handleScreen.y };
+      const armXLine = projectSegmentToScreen(corner, corner.clone().addScaledVector(xAxis, ruler.armLengthX), state) ?? noLine;
+      const armZLine = projectSegmentToScreen(corner, corner.clone().addScaledVector(zAxis, ruler.armLengthZ), state) ?? noLine;
 
       const ticks: CornerRulerTickScreen[] = [];
       const labels: CornerRulerLabelScreen[] = [];
@@ -1239,12 +1273,14 @@ export function syncCornerRulerToolOverlay(
         cornerRulerTicks(length).forEach((tick) => {
           const base = corner.clone().addScaledVector(axisDir, tick.offset);
           const tickHeight = armWidth * (tick.isTen ? 0.62 : tick.isFive ? 0.42 : 0.26);
-          const baseScreen = projectToScreen(base, state);
-          const tipScreen = projectToScreen(base.clone().addScaledVector(acrossDir, tickHeight), state);
-          ticks.push({ x1: baseScreen.x, y1: baseScreen.y, x2: tipScreen.x, y2: tipScreen.y });
+          const tickLine = projectSegmentToScreen(base, base.clone().addScaledVector(acrossDir, tickHeight), state);
+          if (tickLine) ticks.push(tickLine);
           if (tick.isTen && tick.offset > 0) {
-            const labelScreen = projectToScreen(base.clone().addScaledVector(acrossDir, armWidth * 0.95), state);
-            labels.push({ x: labelScreen.x, y: labelScreen.y, text: String(tick.offset) });
+            const labelWorld = base.clone().addScaledVector(acrossDir, armWidth * 0.95);
+            if (depthInFrontOfCamera(labelWorld, state) > 0) {
+              const labelScreen = projectToScreen(labelWorld, state);
+              labels.push({ x: labelScreen.x, y: labelScreen.y, text: String(tick.offset) });
+            }
           }
         });
       };
@@ -1261,16 +1297,20 @@ export function syncCornerRulerToolOverlay(
           rulerCorner: ruler.corner,
           rulerRotation: 0,
           frame: ruler.frame,
-          mode,
+          mode: ruler.mode,
+          axisModes: ruler.axisModes,
           bounds,
         });
 
-        const xEndScreen = projectToScreen(new THREE.Vector3(coords.xEndpointOnAxis.x, coords.xEndpointOnAxis.y, coords.xEndpointOnAxis.z), state);
-        const zEndScreen = projectToScreen(new THREE.Vector3(coords.zEndpointOnAxis.x, coords.zEndpointOnAxis.y, coords.zEndpointOnAxis.z), state);
-        const xTargetScreen = projectToScreen(new THREE.Vector3(coords.xTargetPoint.x, coords.xTargetPoint.y, coords.xTargetPoint.z), state);
-        const zTargetScreen = projectToScreen(new THREE.Vector3(coords.zTargetPoint.x, coords.zTargetPoint.y, coords.zTargetPoint.z), state);
-        const elevBaseScreen = projectToScreen(new THREE.Vector3(coords.elevationBasePoint.x, coords.elevationBasePoint.y, coords.elevationBasePoint.z), state);
-        const elevTargetScreen = projectToScreen(new THREE.Vector3(coords.elevationTargetPoint.x, coords.elevationTargetPoint.y, coords.elevationTargetPoint.z), state);
+        const world = (point: { x: number; y: number; z: number }) => new THREE.Vector3(point.x, point.y, point.z);
+        const xEndWorld = world(coords.xEndpointOnAxis);
+        const zEndWorld = world(coords.zEndpointOnAxis);
+        const xEndScreen = projectToScreen(xEndWorld, state);
+        const zEndScreen = projectToScreen(zEndWorld, state);
+        const elevBaseWorld = world(coords.elevationBasePoint);
+        const elevTargetWorld = world(coords.elevationTargetPoint);
+        const elevBaseScreen = projectToScreen(elevBaseWorld, state);
+        const elevTargetScreen = projectToScreen(elevTargetWorld, state);
 
         const dxX = xEndScreen.x - handleScreen.x;
         const dyX = xEndScreen.y - handleScreen.y;
@@ -1305,11 +1345,11 @@ export function syncCornerRulerToolOverlay(
           xLabel: { x: xLabelPos.x, y: xLabelPos.y, text: formatMeasure(coords.x, accuracy) },
           zLabel: { x: zLabelPos.x, y: zLabelPos.y, text: formatMeasure(coords.z, accuracy) },
           elevationLabel: { x: elevationLabelPos.x, y: elevationLabelPos.y, text: formatMeasure(coords.elevation, accuracy) },
-          xArrowLine: { x1: handleScreen.x, y1: handleScreen.y, x2: xEndScreen.x, y2: xEndScreen.y },
-          zArrowLine: { x1: handleScreen.x, y1: handleScreen.y, x2: zEndScreen.x, y2: zEndScreen.y },
-          elevationArrowLine: { x1: elevBaseScreen.x, y1: elevBaseScreen.y, x2: elevTargetScreen.x, y2: elevTargetScreen.y },
-          xGuideLine: { x1: xEndScreen.x, y1: xEndScreen.y, x2: xTargetScreen.x, y2: xTargetScreen.y },
-          zGuideLine: { x1: zEndScreen.x, y1: zEndScreen.y, x2: zTargetScreen.x, y2: zTargetScreen.y },
+          xArrowLine: projectSegmentToScreen(corner, xEndWorld, state) ?? noLine,
+          zArrowLine: projectSegmentToScreen(corner, zEndWorld, state) ?? noLine,
+          elevationArrowLine: projectSegmentToScreen(elevBaseWorld, elevTargetWorld, state) ?? noLine,
+          xGuideLine: projectSegmentToScreen(xEndWorld, world(coords.xTargetPoint), state) ?? noLine,
+          zGuideLine: projectSegmentToScreen(zEndWorld, world(coords.zTargetPoint), state) ?? noLine,
         };
       }
 
@@ -1357,10 +1397,11 @@ export function syncCornerRulerToolOverlay(
       items.push({
         id: ruler.id,
         mode,
+        modes,
         handleX: handleScreen.x,
         handleY: handleScreen.y,
-        armXLine: { x1: handleScreen.x, y1: handleScreen.y, x2: armXEndScreen.x, y2: armXEndScreen.y },
-        armZLine: { x1: handleScreen.x, y1: handleScreen.y, x2: armZEndScreen.x, y2: armZEndScreen.y },
+        armXLine,
+        armZLine,
         ticks,
         labels,
         neighborLabels,
@@ -1384,6 +1425,7 @@ export function CornerRulerToolOverlay({
   onHandlePointerUp,
   onDelete,
   onToggleMode,
+  onToggleAxisMode,
   onCoordinateClick,
 }: {
   overlay: CornerRulerOverlayState;
@@ -1392,6 +1434,7 @@ export function CornerRulerToolOverlay({
   onHandlePointerUp: (event: ReactPointerEvent<SVGCircleElement>, id: string) => void;
   onDelete: (id: string) => void;
   onToggleMode: (id: string) => void;
+  onToggleAxisMode: (id: string, axis: CornerRulerAxis) => void;
   onCoordinateClick: (rulerId: string, shapeIds: string[], axis: "x" | "z" | "elevation", value: number, x: number, y: number) => void;
 }) {
   if (overlay.items.length === 0) {
@@ -1476,6 +1519,24 @@ export function CornerRulerToolOverlay({
               >
                 {item.selectedCoordinate.elevationLabel.text}
               </button>
+              {(["x", "z", "elevation"] as const).map((axis) => {
+                const label = axis === "x" ? item.selectedCoordinate!.xLabel : axis === "z" ? item.selectedCoordinate!.zLabel : item.selectedCoordinate!.elevationLabel;
+                const middle = item.modes[axis] === "midpoint";
+                return (
+                  <button
+                    key={axis}
+                    type="button"
+                    className="corner-ruler-mode-toggle ruler-axis-mode-toggle"
+                    style={{ left: label.x - Math.max(22, label.text.length * 4 + 12) - 12, top: label.y }}
+                    aria-label={`${t("aria.toggleCornerRulerMode")} (${axis === "x" ? "X" : axis === "z" ? "Y" : "Z"})`}
+                    title={middle ? t("ruler.mode.midpoint") : t("ruler.mode.endpoint")}
+                    onPointerDown={(event) => event.stopPropagation()}
+                    onClick={() => onToggleAxisMode(item.id, axis)}
+                  >
+                    {middle ? <Crosshair size={10} strokeWidth={2.5} aria-hidden="true" /> : <Rows3 size={10} strokeWidth={2.5} aria-hidden="true" />}
+                  </button>
+                );
+              })}
             </>
           ) : null}
           <button

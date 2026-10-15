@@ -79,3 +79,28 @@ describe("sketch stroke (#154)", () => {
     expect(normalizeSketchStroke({ width: 0.2, align: "sideways" })).toEqual({ width: 0.2, align: "center", join: "miter", cap: "flat" });
   });
 });
+
+describe("a stroke for a revolve (#347)", () => {
+  const wall = (stroke: Partial<SketchStroke> = {}) => polyline([[-20, 0], [-20, -10], [-8, -20]], false, { width: 2, ...stroke });
+  const xs = (profile: SketchProfile | null) => (profile?.points ?? []).map((point) => point.x);
+
+  it("keeps a wall left of the axis as it is", () => {
+    const stroked = strokedSketchProfile(runtime, wall(), { clipToRevolveSide: true });
+    expect(stroked).not.toBeNull();
+    expect(Math.max(...xs(stroked))).toBeLessThanOrEqual(0);
+    expect(Math.abs(area(stroked))).toBeCloseTo(Math.abs(area(strokedSketchProfile(runtime, wall()))), 6);
+  });
+
+  it("cuts a wall that reaches across the axis off at the axis", () => {
+    const across = polyline([[-6, 0], [4, 0]], false, { width: 4 });
+    const free = strokedSketchProfile(runtime, across);
+    const clipped = strokedSketchProfile(runtime, across, { clipToRevolveSide: true });
+    expect(Math.max(...xs(free))).toBeCloseTo(4, 6);
+    expect(Math.max(...xs(clipped))).toBeLessThanOrEqual(1e-9);
+    expect(Math.abs(area(clipped))).toBeCloseTo(6 * 4, 6);
+  });
+
+  it("leaves nothing when the whole line lies right of the axis", () => {
+    expect(strokedSketchProfile(runtime, polyline([[5, 0], [15, 0]], false, { width: 2 }), { clipToRevolveSide: true })).toBeNull();
+  });
+});

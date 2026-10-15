@@ -25,6 +25,11 @@ export type GroupBuildResult = {
   hasImportedMesh: boolean;
   consumed: boolean;
   failureNotice: string;
+  /**
+   * The cut was made by the fallback that opens a mesh without closing the cut face, because the
+   * solid's surface has gaps: how many open edges it has. 0 when the cut is closed (#346).
+   */
+  openGapEdges?: number;
 };
 
 type IntersectionAttempt =
@@ -2017,6 +2022,17 @@ function importedCutFailureNotice(selection: WorkplaneShape[], succeeded: boolea
   return fallback;
 }
 
+/**
+ * How many edges of the solids' surface belong to one triangle only: the gaps of a mesh that is not
+ * closed. A STEP part's surface can have a few cracks, and the clean cut refuses such a mesh.
+ */
+export function openSurfaceEdgeCount(solids: WorkplaneShape[]) {
+  return positionsBoundaryEdges(meshDataPositions(mergedSolidMeshData(solids))).length;
+}
+
+/** The fallback cut ("hollow subtraction") takes the material away but does not cap the cut face. */
+const OPEN_CUT_ID = /^grouped-import-(?:rescue-)?hollow-cut/;
+
 export async function buildGroupedShapeFromSelection(groupable: WorkplaneShape[], triangleLimit: number): Promise<GroupBuildResult> {
   const booleanSelection = expandGroupsForBoolean(groupable);
   const hasSolid = booleanSelection.some((shape) => !shape.hole);
@@ -2044,8 +2060,13 @@ export async function buildGroupedShapeFromSelection(groupable: WorkplaneShape[]
       ? bakedImportedMerge ?? groupedShape(groupable)
       : groupedShape(groupable);
   const consumed = !group && hasSolid && hasHole && cutFullyConsumesSolids(booleanSelection);
+  // The cut was made, but the fallback left its face open: say so when the cause is gaps in the surface (#346).
+  const openGapEdges = group && hasImportedMesh && hasSolid && hasHole && OPEN_CUT_ID.test(group.id)
+    ? openSurfaceEdgeCount(booleanSelection.filter((shape) => !shape.hole && !shape.locked))
+    : 0;
   return {
     group,
+    openGapEdges,
     booleanSelection,
     hasSolid,
     hasHole,

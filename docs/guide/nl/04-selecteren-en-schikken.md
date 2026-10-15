@@ -11,7 +11,7 @@ Wat in de weg zit, verberg je ({{ui:editor.tool.hideSelected}}, [[Ctrl]]+[[H]]).
 
 ## De objectlijst
 
-Met veel onderdelen raak je in de weergave makkelijk het overzicht kwijt. De objectlijst ({{ui:editor.tool.showOutliner}} of [[Ctrl]]+[[Shift]]+[[O]]) toont alle vormen als een lijst.
+Met veel onderdelen raak je in de weergave makkelijk het overzicht kwijt. De objectlijst ({{ui:editor.tool.showOutliner}} of [[Ctrl]]+[[Shift]]+[[O]]) toont alle vormen als een lijst. Ze blijft open of dicht zoals je haar achterliet, voor elk ontwerp, tot je haar sluit; de keuze wordt in de browser onthouden.
 
 ![De objectlijst: de groep "Groep" met twee onderdelen en een bol ernaast. Een mappictogram opent de groep.](shot:object-list)
 
@@ -71,6 +71,8 @@ Moet een onderdeel op zijn beste kant liggen om te printen? Selecteer het, klik 
 Moeten twee onderdelen vlak tegen vlak komen, of strak gelijk liggen? Selecteer het onderdeel dat moet bewegen, klik op {{ui:editor.tool.mateFaces}}, klik dan op een vlak ervan en daarna op het vlak van het andere onderdeel. In het paneel zet {{ui:mate.mode.against}} de vlakken tegen elkaar (rug aan rug, rakend), {{ui:mate.mode.flush}} legt ze in één vlak naast elkaar; {{ui:mate.gap}} laat ruimte ertussen, bijvoorbeeld voor speling. {{ui:mate.apply}} verplaatst het onderdeel: het draait de kortste weg tot de vlakken evenwijdig zijn - helemaal niet als ze dat al zijn - en schuift dan alleen in de richting van het andere vlak, zodat het zijdelings op zijn plek blijft. Het andere onderdeel blijft waar het is, en één keer Ongedaan maken draait alles terug.
 
 ![Het paneel Vlakken uitlijnen: het onderdeel dat beweegt is gekozen, een vlak van het andere onderdeel komt daarna, dan vlak tegen vlak of gelijk, en een optionele tussenruimte.](shot:mate-faces)
+
+**Een exacte hoek tussen twee vlakken:** {{ui:editor.tool.mateFaces}} laat de vlakken evenwijdig; voor een hoek ertussen is er geen eigen gereedschap, maar zo kom je er. Breng eerst de vlakken samen met {{ui:editor.tool.mateFaces}}, zodat ze evenwijdig liggen. Zet dan het draaipunt op de rand waar ze elkaar ontmoeten ({{ui:editor.tool.rotationPivot}}, klik de rand of een hoek) en typ de hoek, bijvoorbeeld 15 of 30, in de kaart {{ui:inspector.rotation}} van het onderdeel. Het draait om dat draaipunt. De assen van de kaart zijn de assen van de plaat, dus dit werkt als de rand langs X, Y of Z loopt.
 
 Net zo eenvoudig zijn {{ui:editor.tool.dropToWorkplane}} ([[D]]), dat de selectie op het werkvlak laat zakken, en {{ui:editor.tool.centerOnWorkplane}}.
 

@@ -69,7 +69,7 @@ import { customFontRevision } from "@/lib/textFonts";
 import { readDesignView, writeDesignView } from "@/lib/designView";
 import { DIMENSION_FORMULA_FIELDS, formulaMatchesMillimeters, formulaToRemember, withFieldFormula } from "@/lib/fieldFormulas";
 import { displayToMillimeters, formatLengthMm, lengthDisplayUnit, millimetersToDisplay, parseLengthMm, parseMeasurementInput, resolveLengthMm, setLengthUnit } from "@/lib/measurementUnits";
-import { computeCornerRulerRelativeCoordinates, cornerRulerFrameForWorkplane, cornerRulerShiftVector, pointAlongRuler, rotateCornerRulerFrame, rulerDimensionMatch, type CornerRulerMode, type RulerDimensionField } from "@/lib/rulerDimensions";
+import { computeCornerRulerRelativeCoordinates, cornerRulerAxisModes, cornerRulerFrameForWorkplane, cornerRulerShiftVector, pointAlongRuler, rotateCornerRulerFrame, rulerDimensionMatch, toggledCornerRulerAxis, toggledCornerRulerMode, type CornerRulerAxis, type CornerRulerMode, type RulerDimensionField } from "@/lib/rulerDimensions";
 import { createMoveDimensionOverlay, type MoveDimensionAxis, type MoveDimensionOverlayData } from "@/lib/moveDimensionLines";
 import { computeOriginAxisDistance, createOriginDimensionOverlay, type OriginDimensionOverlayData } from "@/lib/originDimensionLines";
 import {
@@ -88,7 +88,7 @@ import {
 import { capturePointer } from "@/lib/pointerCapture";
 import { printerPresetById } from "@/lib/printBed";
 import { GuideHelpLink } from "@/components/GuideHelpLink";
-import { groundFootprintForFrame, liftGeometryForFrame, type SelectionFrame } from "@/lib/liftGeometry";
+import { groundFootprintForFrame, heightWithFaceOnGrid, liftDeltaOnGrid, liftGeometryForFrame, type SelectionFrame } from "@/lib/liftGeometry";
 import { regularPolygonFootprintScale } from "@/lib/regularPolygonFootprint";
 import { roundSideCount } from "@/lib/roundSideCount";
 import { createPyramidGeometry } from "@/lib/pyramidGeometry";
@@ -105,6 +105,7 @@ import { cleanNearZero, cleanRotationDegrees, isNonSolidShapeKind, mirroredAxisC
 import { sphereTessellation } from "@/lib/sphereTessellation";
 import { torusTessellation } from "@/lib/torusTessellation";
 import type { LayerlingMcpViewFace } from "@/lib/layerlingMcpProtocol";
+import { liftHandleScreenPoint } from "@/components/workplane/transformOverlayTypes";
 import {
   TransformOverlay,
   continuousSnappedWheelRotation,
@@ -136,7 +137,8 @@ import { cuboidCorners, pointAlongAxes, type AlignAxes, type FrameCuboid } from 
 import type { AlignAxis, AlignHandleStatus, AlignTarget, GridSize, MeasurementAccuracy, ShapeAsset, WorkplaneNote, WorkplaneNoteAnchor, WorkplaneShape, WorkplaneWorkspaceSettings } from "@/types/layerling";
 import { referencePoints } from "@/lib/workplaneNotes";
 import { pivotKeptAhead, ZOOM_PIVOT_REACH_MM } from "@/lib/zoomPivot";
-import { measurementMiddle, type ReferencePosition } from "@/lib/referencePoints";
+import { pointerReach } from "@/lib/pointerReach";
+import { measurementMiddle, nearestReferenceOnScreen, type ReferencePosition } from "@/lib/referencePoints";
 import { planarFaceCentroid, planarFaceTriangles, type PivotPoint } from "@/lib/rotationPivot";
 import { outwardFaceNormal } from "@/lib/layFlat";
 import { OVERHANG_PLATE_TOLERANCE, overhangDownwardLimit } from "@/lib/overhangLimits";
@@ -1502,6 +1504,9 @@ function pickModelTapeCandidate(state: ThreeState, shapeIds: string[], clientX: 
   const rect = state.renderer.domElement.getBoundingClientRect();
   const pointerX = clientX - rect.left;
   const pointerY = clientY - rect.top;
+  // A finger reaches further than a mouse pointer (#337).
+  const vertexReach = pointerReach(9);
+  const edgeReach = pointerReach(12);
   const targets = shapeIds.flatMap((id) => {
     const object = findShapeObject(state, id);
     return object ? [object] : [];
@@ -1533,9 +1538,9 @@ function pickModelTapeCandidate(state: ThreeState, shapeIds: string[], clientX: 
         });
         // Anything near the pointer? Only then are the attachments of this path worth building.
         const closeToPointer = screens.some((screen, index) => {
-          if (Math.hypot(pointerX - screen.x, pointerY - screen.y) <= 9) return true;
+          if (Math.hypot(pointerX - screen.x, pointerY - screen.y) <= vertexReach) return true;
           const next = screens[index + 1];
-          return next ? distanceToScreenSegment(pointerX, pointerY, screen.x, screen.y, next.x, next.y) <= 12 : false;
+          return next ? distanceToScreenSegment(pointerX, pointerY, screen.x, screen.y, next.x, next.y) <= edgeReach : false;
         });
         if (!closeToPointer) return;
         const attachments = worldPoints.map((point) => tapeAttachmentFromWorld(state, shapeId, point, "edge"));
@@ -1551,7 +1556,7 @@ function pickModelTapeCandidate(state: ThreeState, shapeIds: string[], clientX: 
         endpointIndexes.forEach((index) => {
           const screen = screens[index];
           const distance = Math.hypot(pointerX - screen.x, pointerY - screen.y);
-          if (distance <= 9) {
+          if (distance <= vertexReach) {
             vertexCandidates.push({
               distance,
               candidate: {
@@ -1571,7 +1576,7 @@ function pickModelTapeCandidate(state: ThreeState, shapeIds: string[], clientX: 
           const dy = bScreen.y - aScreen.y;
           const amount = dx * dx + dy * dy > 0.001 ? clamp(((pointerX - aScreen.x) * dx + (pointerY - aScreen.y) * dy) / (dx * dx + dy * dy), 0, 1) : 0;
           const distance = Math.hypot(pointerX - (aScreen.x + dx * amount), pointerY - (aScreen.y + dy * amount));
-          if (distance <= 12) {
+          if (distance <= edgeReach) {
             const world = worldPoints[index].clone().lerp(worldPoints[index + 1], amount);
             const normalizedA = normalizedPoints[index];
             const normalizedB = normalizedPoints[index + 1];
@@ -1669,6 +1674,7 @@ function pickModifierEdgeFromScreen(state: ThreeState, edges: CadModifierEdge[],
   const pointA = new THREE.Vector3();
   const pointB = new THREE.Vector3();
   const candidates: Array<{ id: number; distance: number; point: THREE.Vector3 }> = [];
+  const pickReach = pointerReach(MODIFIER_EDGE_PICK_RADIUS_PX);
   state.camera.updateMatrixWorld();
   edges.forEach((edge) => {
     let best: { id: number; distance: number; point: THREE.Vector3 } | null = null;
@@ -1679,7 +1685,7 @@ function pickModifierEdgeFromScreen(state: ThreeState, edges: CadModifierEdge[],
       const b = projectCadPointToCanvas(pointB, state, rect);
       if (!a || !b) continue;
       const distance = distanceToScreenSegment(pointerX, pointerY, a.x, a.y, b.x, b.y);
-      if (distance < MODIFIER_EDGE_PICK_RADIUS_PX && (!best || distance < best.distance)) {
+      if (distance < pickReach && (!best || distance < best.distance)) {
         const dx = b.x - a.x;
         const dy = b.y - a.y;
         const lengthSq = dx * dx + dy * dy;
@@ -4472,7 +4478,7 @@ export function WorkplaneViewport({
     const there = projectToScreen(new THREE.Vector3(nx, ny, nz), state);
     const pixelsPerMm = Math.max(1e-6, Math.hypot(there.x - here.x, there.y - here.y));
     const model = sectionMeasureRef.current;
-    return snapSectionPoint(target, model.loops, 12 / pixelsPerMm, model.a && !model.b ? model.a : null);
+    return snapSectionPoint(target, model.loops, pointerReach(12) / pixelsPerMm, model.a && !model.b ? model.a : null);
   }, [toRawPlanePoint]);
 
   const placeSectionMeasurePoint = useCallback((point: SectionPoint) => {
@@ -4733,6 +4739,10 @@ export function WorkplaneViewport({
       const rect = state.renderer.domElement.getBoundingClientRect();
       const localX = clientX - rect.left;
       const localY = clientY - rect.top;
+      // A finger covers more than a mouse pointer does, so it reaches further (#337).
+      const pointReach = pointerReach(12);
+      const lineReach = pointerReach(10);
+      const referenceReach = pointerReach(14);
       // The first point is on a circle: the point across it, which makes the diameter, catches the pointer first.
       if (model.startPointId && model.startEdge && model.startPointId !== ignoredPointId) {
         const start = model.points.find((point) => point.id === model.startPointId);
@@ -4743,7 +4753,7 @@ export function WorkplaneViewport({
         if (point.id === ignoredPointId) return closest;
         const screen = projectToScreen(tapePointWorld(state, point), state);
         const distance = Math.hypot(screen.x - localX, screen.y - localY);
-        if (distance <= 12 && (!closest || distance < closest.distance)) {
+        if (distance <= pointReach && (!closest || distance < closest.distance)) {
           return { point, distance };
         }
         return closest;
@@ -4753,7 +4763,23 @@ export function WorkplaneViewport({
         return { x: world.x, y: world.y, z: world.z, pointId: closestPoint.point.id, attachment: closestPoint.point.attachment };
       }
 
-      const closestSegment = model.segments.reduce<{ world: THREE.Vector3; distance: number } | null>((closest, segment) => {
+      // A reference point catches the pointer like a measuring point does (#334): mark the middle of a circle
+      // or of a line, then measure from there.
+      if (notesVisibleRef.current) {
+        const closestReference = nearestReferenceOnScreen(
+          referencePoints(notesRef.current),
+          (point) => projectToScreen(new THREE.Vector3(point.x, point.y, point.z), state),
+          { x: localX, y: localY },
+          referenceReach,
+        );
+        if (closestReference) {
+          const { x, y, z } = closestReference;
+          const existing = model.points.find((point) => !point.attachment && Math.hypot(point.x - x, point.y - y, point.z - z) < 0.001);
+          return { x, y, z, pointId: existing?.id };
+        }
+      }
+
+      const closestSegment =model.segments.reduce<{ world: THREE.Vector3; distance: number } | null>((closest, segment) => {
         if (segment.startId === ignoredPointId || segment.endId === ignoredPointId) return closest;
         const start = model.points.find((point) => point.id === segment.startId);
         const end = model.points.find((point) => point.id === segment.endId);
@@ -4767,7 +4793,7 @@ export function WorkplaneViewport({
           const dy = b.y - a.y;
           const amount = dx * dx + dy * dy > 0.001 ? clamp(((localX - a.x) * dx + (localY - a.y) * dy) / (dx * dx + dy * dy), 0, 1) : 0;
           const distance = Math.hypot(localX - (a.x + dx * amount), localY - (a.y + dy * amount));
-          if (distance <= 10 && (!closest || distance < closest.distance)) {
+          if (distance <= lineReach && (!closest || distance < closest.distance)) {
             closest = { world: worldPoints[index].clone().lerp(worldPoints[index + 1], amount), distance };
           }
         }
@@ -5290,8 +5316,13 @@ export function WorkplaneViewport({
         const rawFrameHeight = transform.selectionFrame.height + (resizingFromBottom ? -rawDelta : rawDelta);
         const printerHeight = printerPresetById(workspaceRef.current.printer)?.height;
         const maxHeight = Math.max(...transform.items.map((item) => handleDimensionLimit(workspaceRef.current, item.startShape.kind, 180, "height", transform.selectionFrame.height, printerHeight)));
+        // The face you drag lands on the grid of the workplane; a tilted selection keeps the step from where it started.
+        const startLift = liftGeometryForFrame(transform.selectionFrame, placementWorkplaneRef.current);
+        const upright = transform.selectionFrame.yAxis.clone().normalize().dot(startLift.axis) > 0.9999;
         const nextFrameHeight = clamp(
-          transform.selectionFrame.height + snapValue(rawFrameHeight - transform.selectionFrame.height, step),
+          upright
+            ? heightWithFaceOnGrid(startLift.low, transform.selectionFrame.height, rawFrameHeight, resizingFromBottom, step)
+            : transform.selectionFrame.height + snapValue(rawFrameHeight - transform.selectionFrame.height, step),
           MIN_SHAPE_SIZE,
           maxHeight,
         );
@@ -5313,7 +5344,8 @@ export function WorkplaneViewport({
         const rawDelta = currentPoint && transform.liftStartPoint
           ? currentPoint.clone().sub(transform.liftStartPoint).dot(axis)
           : 0;
-        const delta = snapValue(rawDelta, step);
+        // The bottom lands on the grid of the workplane, not a step from where it stood.
+        const delta = liftDeltaOnGrid(liftGeometryForFrame(transform.selectionFrame, placementWorkplaneRef.current).low, rawDelta, step);
         transform.items.forEach((item) => {
           const nextCenter = item.startCenter.clone().addScaledVector(axis, delta);
           onUpdateShape(item.id, {
@@ -5518,9 +5550,16 @@ export function WorkplaneViewport({
     return formulaMatchesMillimeters(formula, extent, parseMeasureMm) ? formula : undefined;
   }, []);
 
+  // Whether the framing square counts this size to the middle of the body: typing it then grows the body to both sides.
+  const rulerCountsToMiddle = useCallback((axis: string) => {
+    const ruler = cornerRulerModelRef.current[0];
+    const modes = cornerRulerAxisModes(ruler?.mode, ruler?.axisModes);
+    return (axis === "width" ? modes.x : axis === "depth" ? modes.z : axis === "height" ? modes.elevation : "endpoint") === "midpoint";
+  }, []);
+
   const beginDimensionEdit = useCallback((mark: DimensionMark) => {
     const id = selectedIdsRef.current[0];
-    const isCornerRulerMidpoint = cornerRulerModelRef.current[0]?.mode === "midpoint";
+    const isCornerRulerMidpoint = rulerCountsToMiddle(mark.axis);
     if (id && (mark.axis === "width" || mark.axis === "depth" || mark.axis === "height") && !isCornerRulerMidpoint) {
       rememberResizeAnchor(id, mark.axis === "height" ? "height" : "scale", mark.handleKey);
     } else {
@@ -5577,7 +5616,7 @@ export function WorkplaneViewport({
         : sizeFrame?.height ?? shape.height;
     const value = resolveMeasureMm(text, currentExtent);
     if (!(Number.isFinite(value) && value > 0)) return null;
-    const isCornerRulerMidpoint = cornerRulerModelRef.current[0]?.mode === "midpoint";
+    const isCornerRulerMidpoint = rulerCountsToMiddle(axis);
     const customLimit = workspaceRef.current.shapeCustomizations[shape.kind]?.maxDimension;
     const nextValue = Math.min(customLimit ?? Number.POSITIVE_INFINITY, Math.max(MIN_SHAPE_SIZE, value));
     const anchor = isCornerRulerMidpoint ? null : lastResizeAnchorRef.current;
@@ -6196,9 +6235,18 @@ export function WorkplaneViewport({
 
   const handleNotePinPointerDown = useCallback((event: ReactPointerEvent<HTMLButtonElement>, noteId: string) => {
     event.stopPropagation();
+    // The tape measure takes a reference point as a measuring point; the pin sits right on the point and would catch the click (#334).
+    const pinned = notesRef.current.find((candidate) => candidate.id === noteId);
+    if (tapeModeRef.current && !tapeMoveModeRef.current && !tapeDeleteModeRef.current && pinned?.kind === "point" && event.button === 0) {
+      event.preventDefault();
+      // The click that follows must not fold the point's card open.
+      noteClickSuppressedRef.current = noteId;
+      selectTapeCandidate({ x: pinned.x, y: pinned.y, z: pinned.z });
+      return;
+    }
     noteDragRef.current = { noteId, pointerId: event.pointerId, moved: false };
     capturePointer(event.currentTarget, event.pointerId);
-  }, []);
+  }, [selectTapeCandidate]);
 
   const handleNotePinPointerMove = useCallback((event: ReactPointerEvent<HTMLButtonElement>, noteId: string) => {
     const drag = noteDragRef.current;
@@ -6280,6 +6328,7 @@ export function WorkplaneViewport({
 
   const placeCornerRuler = useCallback((point: PlacementPoint, workplane: PlacementWorkplane) => {
     const existingMode = cornerRulerModelRef.current[0]?.mode ?? "endpoint";
+    const existingAxisModes = cornerRulerModelRef.current[0]?.axisModes;
     const instance: CornerRulerInstance = {
       id: `corner-ruler-${++cornerRulerIdRef.current}`,
       corner: point,
@@ -6288,6 +6337,7 @@ export function WorkplaneViewport({
       armLengthX: CORNER_RULER_DEFAULT_ARM_X,
       armLengthZ: CORNER_RULER_DEFAULT_ARM_Z,
       mode: existingMode,
+      ...(existingAxisModes ? { axisModes: existingAxisModes } : {}),
     };
     storeCornerRulerModel([instance]);
   }, [storeCornerRulerModel]);
@@ -6296,8 +6346,20 @@ export function WorkplaneViewport({
     storeCornerRulerModel(
       cornerRulerModelRef.current.map((ruler) => {
         if (ruler.id !== id) return ruler;
-        const nextMode: CornerRulerMode = ruler.mode === "midpoint" ? "endpoint" : "midpoint";
-        return { ...ruler, mode: nextMode };
+        const { axisModes: _single, ...rest } = ruler;
+        return { ...rest, ...toggledCornerRulerMode(ruler.mode, ruler.axisModes) };
+      })
+    );
+  }, [storeCornerRulerModel]);
+
+  // One of the three green numbers counts to the edge or the middle on its own.
+  const toggleCornerRulerAxisMode = useCallback((id: string, axis: CornerRulerAxis) => {
+    storeCornerRulerModel(
+      cornerRulerModelRef.current.map((ruler) => {
+        if (ruler.id !== id) return ruler;
+        const { axisModes: _single, ...rest } = ruler;
+        const toggled = toggledCornerRulerAxis(ruler.mode, ruler.axisModes, axis);
+        return { ...rest, mode: toggled.mode, ...(toggled.axisModes ? { axisModes: toggled.axisModes } : {}) };
       })
     );
   }, [storeCornerRulerModel]);
@@ -6341,6 +6403,7 @@ export function WorkplaneViewport({
       rulerRotation: 0,
       frame,
       mode: ruler.mode,
+      axisModes: ruler.axisModes,
       bounds,
     });
     const currentVal = edit.axis === "elevation" ? coords.elevation : edit.axis === "x" ? coords.x : coords.z;
@@ -8598,6 +8661,7 @@ export function WorkplaneViewport({
               onHandlePointerUp={handleCornerRulerHandlePointerUp}
               onDelete={removeCornerRuler}
               onToggleMode={toggleCornerRulerMode}
+              onToggleAxisMode={toggleCornerRulerAxisMode}
               onCoordinateClick={beginRulerCoordinateEdit}
             />
           ) : null}
@@ -10712,8 +10776,9 @@ function syncTransformOverlay(
     left: project(footprintWorld.left),
   };
   const heightPoint = project(showLowerHandles ? lowerCenterWorld : upperCenterWorld);
-  const liftPoint = project(liftHandle);
   const liftBasePoint = project(liftBaseWorld);
+  // A thin body puts the arrow a few pixels from the height handle; it keeps its distance on the screen.
+  const liftPoint = liftHandleScreenPoint(liftBasePoint, project(liftHandle), showLowerLiftHandle);
   const liftTargetAngle = THREE.MathUtils.radToDeg(
     Math.atan2(liftPoint.y - liftBasePoint.y, liftPoint.x - liftBasePoint.x),
   );
@@ -10781,9 +10846,21 @@ function syncTransformOverlay(
       return [handleKey, Array.from(axes).map((axis) => makeFootprintDimensionMark(handleKey, axis))];
     }),
   );
+  // The height runs along the vertical edge that stands furthest right on the screen, outside the
+  // body, not through its middle, where its number sits on the shape (DrJones, forum).
+  let heightEdge: { low: THREE.Vector3; high: THREE.Vector3; outward: THREE.Vector3; screenX: number } | null = null;
+  for (const [cornerX, cornerZ] of [[frame.min.x, frame.min.z], [frame.max.x, frame.min.z], [frame.max.x, frame.max.z], [frame.min.x, frame.max.z]]) {
+    const low = framePoint(frame, cornerX, frame.min.y, cornerZ);
+    const high = framePoint(frame, cornerX, frame.max.y, cornerZ);
+    const screenX = project(low.clone().lerp(high, 0.5)).x;
+    if (heightEdge && screenX <= heightEdge.screenX) continue;
+    const outward = xFootAxis.clone().multiplyScalar(Math.sign(cornerX)).addScaledVector(zFootAxis, Math.sign(cornerZ));
+    heightEdge = { low, high, outward: outward.lengthSq() > 1e-9 ? outward.normalize() : rightOut, screenX };
+  }
+  const heightMark = makeDimensionMark("height", heightHandleKey, "height", heightLabel, heightEdge?.low ?? lowerCenterWorld, heightEdge?.high ?? upperCenterWorld, heightEdge?.outward ?? rightOut, project);
   const dimensionMarks = {
     ...footprintDimensionMarks,
-    [heightHandleKey]: [makeDimensionMark("height", heightHandleKey, "height", heightLabel, lowerCenterWorld, upperCenterWorld, rightOut, project)],
+    [heightHandleKey]: [heightMark],
     [liftHandleKey]: [makeDimensionMark("elevation", liftHandleKey, "elevation", liftLabel, liftAnchor, liftTarget, liftDimensionOutward, project)],
   };
   const screenOffsetFromCenter = (point: { x: number; y: number }, distance: number) => {

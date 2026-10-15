@@ -11,7 +11,7 @@ Was du im Weg hast, blendest du aus ({{ui:editor.tool.hideSelected}}, [[Strg]]+[
 
 ## Die Objektliste
 
-Bei vielen Teilen verliert man in der Ansicht leicht den Überblick. Die Objektliste ({{ui:editor.tool.showOutliner}} oder [[Strg]]+[[Umschalt]]+[[O]]) zeigt alle Formen als Liste.
+Bei vielen Teilen verliert man in der Ansicht leicht den Überblick. Die Objektliste ({{ui:editor.tool.showOutliner}} oder [[Strg]]+[[Umschalt]]+[[O]]) zeigt alle Formen als Liste. Sie bleibt offen oder geschlossen, wie du sie verlassen hast, für jeden Entwurf, bis du sie schließt; die Wahl wird im Browser gemerkt.
 
 ![Die Objektliste: die Gruppe „Gruppe“ mit zwei Teilen und daneben eine Kugel. Ein Ordnersymbol öffnet die Gruppe.](shot:object-list)
 
@@ -71,6 +71,8 @@ Ein Teil soll für den Druck auf seiner besten Seite liegen? Wähle es aus, klic
 Zwei Teile sollen Fläche an Fläche liegen oder bündig abschließen? Wähle das Teil aus, das sich bewegen soll, klicke auf {{ui:editor.tool.mateFaces}}, dann auf seine Fläche und danach auf die Fläche des anderen Teils. Im Panel legt {{ui:mate.mode.against}} die Flächen aneinander (Rücken an Rücken, berührend), {{ui:mate.mode.flush}} legt sie nebeneinander in eine Ebene; {{ui:mate.gap}} lässt Platz dazwischen, etwa als Spiel. {{ui:mate.apply}} bewegt das Teil: Es dreht sich auf kürzestem Weg, bis die Flächen parallel sind – gar nicht, wenn sie es schon sind –, und rückt dann nur auf die andere Fläche zu, behält seine seitliche Lage also. Das andere Teil bleibt, wo es ist, und ein Rückgängig nimmt alles zurück.
 
 ![Das Fenster „Flächen ausrichten“: Das Teil, das sich bewegt, ist gewählt, als Nächstes kommt eine Fläche des anderen Teils, dann „Gegeneinander“ oder „Bündig“ und ein Abstand, wenn du willst.](shot:mate-faces)
+
+**Ein genauer Winkel zwischen zwei Flächen:** {{ui:editor.tool.mateFaces}} lässt die Flächen parallel; für einen Winkel dazwischen gibt es kein eigenes Werkzeug, aber so kommst du hin. Bring zuerst die Flächen mit {{ui:editor.tool.mateFaces}} zusammen, so dass sie parallel liegen. Setze dann den Drehpunkt auf die Kante, an der sie sich treffen ({{ui:editor.tool.rotationPivot}}, Kante oder Ecke anklicken) und tippe den Winkel, etwa 15 oder 30, in der Karte {{ui:inspector.rotation}} des Teils. Es dreht sich um diesen Drehpunkt. Die Achsen der Karte sind die Achsen der Platte, deshalb klappt das, wenn die Kante entlang X, Y oder Z läuft.
 
 Ähnlich einfach sind {{ui:editor.tool.dropToWorkplane}} ([[D]]), das die Auswahl auf die Arbeitsebene absetzt, und {{ui:editor.tool.centerOnWorkplane}}.
 

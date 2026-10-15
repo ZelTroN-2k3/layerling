@@ -171,6 +171,39 @@ export function cornerRulerTicks(length: number): CornerRulerTick[] {
 
 export type CornerRulerMode = "endpoint" | "midpoint";
 
+/** The three numbers a framing square gives a body: along its two arms and in height. */
+export type CornerRulerAxis = "x" | "z" | "elevation";
+
+/** A mode for single axes; what is not named follows the square's overall mode. */
+export type CornerRulerAxisModes = Partial<Record<CornerRulerAxis, CornerRulerMode>>;
+
+const CORNER_RULER_AXES: readonly CornerRulerAxis[] = ["x", "z", "elevation"];
+
+/** What each of the three numbers counts to: the edge of the body or its middle. */
+export function cornerRulerAxisModes(mode: CornerRulerMode | undefined, axisModes?: CornerRulerAxisModes): Record<CornerRulerAxis, CornerRulerMode> {
+  const base: CornerRulerMode = mode === "midpoint" ? "midpoint" : "endpoint";
+  return { x: axisModes?.x ?? base, z: axisModes?.z ?? base, elevation: axisModes?.elevation ?? base };
+}
+
+/**
+ * One axis switched between the edge and the middle, the others as they were. When all three agree
+ * again that is the square's overall mode and no single settings are kept (a standing cylinder:
+ * the middle in x and z, the bottom in height).
+ */
+export function toggledCornerRulerAxis(mode: CornerRulerMode | undefined, axisModes: CornerRulerAxisModes | undefined, axis: CornerRulerAxis): { mode: CornerRulerMode; axisModes?: CornerRulerAxisModes } {
+  const current = cornerRulerAxisModes(mode, axisModes);
+  const next = { ...current, [axis]: current[axis] === "midpoint" ? "endpoint" : "midpoint" } as Record<CornerRulerAxis, CornerRulerMode>;
+  if (CORNER_RULER_AXES.every((entry) => next[entry] === next.x)) return { mode: next.x };
+  return { mode: mode === "midpoint" ? "midpoint" : "endpoint", axisModes: next };
+}
+
+/** The whole square switched at once: to the other mode, or to the edge when the axes differ. */
+export function toggledCornerRulerMode(mode: CornerRulerMode | undefined, axisModes?: CornerRulerAxisModes): { mode: CornerRulerMode; axisModes?: CornerRulerAxisModes } {
+  const current = cornerRulerAxisModes(mode, axisModes);
+  const same = CORNER_RULER_AXES.every((entry) => current[entry] === current.x);
+  return { mode: same && current.x === "endpoint" ? "midpoint" : "endpoint" };
+}
+
 type CornerRulerVector = { x: number; y: number; z: number };
 
 /**
@@ -236,6 +269,8 @@ export type CornerRulerCoordinateInput = {
   /** The plane the square lies in; when given it replaces `rulerRotation`. */
   frame?: CornerRulerFrame;
   mode?: CornerRulerMode;
+  /** Single axes that count differently from `mode`. */
+  axisModes?: CornerRulerAxisModes;
   bounds: {
     min: { x: number; y: number; z: number };
     max: { x: number; y: number; z: number };
@@ -244,6 +279,8 @@ export type CornerRulerCoordinateInput = {
 
 export type CornerRulerRelativeCoordinates = {
   mode: CornerRulerMode;
+  /** What each number counts to, with the single settings applied. */
+  modes: Record<CornerRulerAxis, CornerRulerMode>;
   x: number;
   z: number;
   elevation: number;
@@ -262,6 +299,7 @@ export function computeCornerRulerRelativeCoordinates(
   input: CornerRulerCoordinateInput
 ): CornerRulerRelativeCoordinates {
   const mode: CornerRulerMode = input.mode === "midpoint" ? "midpoint" : "endpoint";
+  const modes = cornerRulerAxisModes(mode, input.axisModes);
   const rulerQuat = quaternionForShape({ rotation: input.rulerRotation });
   const axisX = input.frame ? toVector(input.frame.xAxis).normalize() : new THREE.Vector3(1, 0, 0).applyQuaternion(rulerQuat);
   const axisZ = input.frame ? toVector(input.frame.zAxis).normalize() : new THREE.Vector3(0, 0, 1).applyQuaternion(rulerQuat);
@@ -270,19 +308,9 @@ export function computeCornerRulerRelativeCoordinates(
   const rulerCorner = new THREE.Vector3(input.rulerCorner.x, input.rulerCorner.y ?? 0, input.rulerCorner.z);
   const { min, max } = input.bounds;
 
-  let x: number;
-  let z: number;
-  let elevation: number;
-
-  if (mode === "midpoint") {
-    x = (min.x + max.x) / 2;
-    z = (min.z + max.z) / 2;
-    elevation = (min.y + max.y) / 2;
-  } else {
-    x = min.x;
-    z = min.z;
-    elevation = min.y;
-  }
+  const x = modes.x === "midpoint" ? (min.x + max.x) / 2 : min.x;
+  const z = modes.z === "midpoint" ? (min.z + max.z) / 2 : min.z;
+  const elevation = modes.elevation === "midpoint" ? (min.y + max.y) / 2 : min.y;
 
   const xEndpointOnAxis = rulerCorner.clone().addScaledVector(axisX, x);
   const zEndpointOnAxis = rulerCorner.clone().addScaledVector(axisZ, z);
@@ -298,7 +326,7 @@ export function computeCornerRulerRelativeCoordinates(
   const elevationBasePoint = rulerCorner
     .clone()
     .addScaledVector(axisX, max.x)
-    .addScaledVector(axisZ, mode === "midpoint" ? z : min.z);
+    .addScaledVector(axisZ, modes.z === "midpoint" ? z : min.z);
 
   const elevationTargetPoint = elevationBasePoint
     .clone()
@@ -306,6 +334,7 @@ export function computeCornerRulerRelativeCoordinates(
 
   return {
     mode,
+    modes,
     x,
     z,
     elevation,

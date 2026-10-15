@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   computeCornerRulerRelativeCoordinates,
+  cornerRulerAxisModes,
   computeCornerRulerShift,
   cornerRulerFlatRotation,
   cornerRulerFrameForWorkplane,
@@ -15,6 +16,8 @@ import {
   type CornerRulerPose,
   type RulerCandidatePose,
   type RulerPose,
+  toggledCornerRulerAxis,
+  toggledCornerRulerMode,
 } from "@/lib/rulerDimensions";
 
 function ruler(overrides: Partial<RulerPose> = {}): RulerPose {
@@ -302,3 +305,45 @@ describe("computeCornerRulerShift", () => {
   });
 });
 
+describe("framing square: one mode for each number", () => {
+  const bounds = { min: { x: 10, y: 5, z: 5 }, max: { x: 16.5, y: 15, z: 11.5 } };
+
+  it("counts a standing body to the middle in x and z and to the bottom in height", () => {
+    const coords = computeCornerRulerRelativeCoordinates({ rulerCorner: { x: 0, y: 0, z: 0 }, rulerRotation: 0, mode: "endpoint", axisModes: { x: "midpoint", z: "midpoint" }, bounds });
+    expect(coords.x).toBeCloseTo(13.25, 6);
+    expect(coords.z).toBeCloseTo(8.25, 6);
+    expect(coords.elevation).toBeCloseTo(5, 6);
+    expect(coords.modes).toEqual({ x: "midpoint", z: "midpoint", elevation: "endpoint" });
+    expect(coords.xEndpointOnAxis).toEqual({ x: 13.25, y: 0, z: 0 });
+  });
+
+  it("lets a single axis differ from the overall mode the other way round", () => {
+    const coords = computeCornerRulerRelativeCoordinates({ rulerCorner: { x: 0, y: 0, z: 0 }, rulerRotation: 0, mode: "midpoint", axisModes: { x: "endpoint" }, bounds });
+    expect(coords.x).toBeCloseTo(10, 6);
+    expect(coords.z).toBeCloseTo(8.25, 6);
+    expect(coords.elevation).toBeCloseTo(10, 6);
+  });
+
+  it("knows the modes of the three axes", () => {
+    expect(cornerRulerAxisModes(undefined)).toEqual({ x: "endpoint", z: "endpoint", elevation: "endpoint" });
+    expect(cornerRulerAxisModes("midpoint", { z: "endpoint" })).toEqual({ x: "midpoint", z: "endpoint", elevation: "midpoint" });
+  });
+
+  it("switches one axis and keeps the others", () => {
+    expect(toggledCornerRulerAxis("endpoint", undefined, "z")).toEqual({ mode: "endpoint", axisModes: { x: "endpoint", z: "midpoint", elevation: "endpoint" } });
+    expect(toggledCornerRulerAxis("midpoint", { x: "endpoint" }, "x")).toEqual({ mode: "midpoint" });
+  });
+
+  it("goes back to one overall mode when all three agree", () => {
+    const one = toggledCornerRulerAxis("endpoint", undefined, "x");
+    const two = toggledCornerRulerAxis(one.mode, one.axisModes, "z");
+    const three = toggledCornerRulerAxis(two.mode, two.axisModes, "elevation");
+    expect(three).toEqual({ mode: "midpoint" });
+  });
+
+  it("switches the whole square, and goes to the edge when the axes differ", () => {
+    expect(toggledCornerRulerMode("endpoint")).toEqual({ mode: "midpoint" });
+    expect(toggledCornerRulerMode("midpoint")).toEqual({ mode: "endpoint" });
+    expect(toggledCornerRulerMode("endpoint", { z: "midpoint" })).toEqual({ mode: "endpoint" });
+  });
+});

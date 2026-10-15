@@ -1,6 +1,6 @@
 # Translating layerling
 
-layerling speaks English, German and Dutch in full. Further languages are welcome (see the
+layerling speaks English, German, Dutch and Russian in full. Further languages are welcome (see the
 [discussion](https://github.com/henmedia/layerling/discussions/141)); this page is how to add one. You do not have to
 finish it in one go: a language may start with a few hundred sentences and one chapter of the guide, and everything
 it does not have yet shows in English.
@@ -29,7 +29,7 @@ A language is three things:
    names as the English ones** (`03-shapes.md`), and translate the text. The number in front pairs a chapter with the
    English one. The chapters you leave out are built from the English ones, with a line saying so at the top.
    Buttons are written `{{ui:key}}`, never by hand: the guide takes their names from your sentences, so they always
-   match the interface. The pictures are shared, do not add copies.
+   match the interface. The pictures are shared, do not add copies. The built pages of a guide (`apps/web/public/<guide folder>/`) are generated: add that folder to `.gitignore`, as the others are, so they are not committed.
 
    Once every chapter is translated, a language may give them names of its own, as German and Dutch do
    (`03-vormen.md`): add the names to `GUIDE_CHAPTERS` in `apps/web/src/lib/guideLinks.ts`, and the ids of the

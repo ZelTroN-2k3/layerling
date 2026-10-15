@@ -79,7 +79,7 @@ Met {{ui:inspector.editSketch}} kun je op elk moment terug naar de schets om hem
 
 ### Omwentelen
 
-Bij draaien teken je de halve doorsnede **links van de as** die in de schets getoond wordt. Daarnaast zie je een 3D-voorbeeld van het draaien. Dat laat meteen zien hoe het lichaam eruit gaat zien. De omtrek moet gesloten zijn. Klik aan het eind op {{ui:sketch.finishRevolve}}.
+Bij draaien teken je de halve doorsnede **links van de as** die in de schets getoond wordt. Daarnaast zie je een 3D-voorbeeld van het draaien. Dat laat meteen zien hoe het lichaam eruit gaat zien. De omtrek moet gesloten zijn, of je bouwt een open lijn als lijn met dikte, zie hieronder. Klik aan het eind op {{ui:sketch.finishRevolve}}.
 
 Een gedraaid lichaam is een exact lichaam, net als een geëxtrudeerd: het neemt afschuiningen en afrondingen aan, en je kunt het uithollen, voor een beker of een vaas. Een lichaam dat met een oudere layerling gedraaid is, is een mesh; open {{ui:inspector.editSketch}} en voltooi het opnieuw om het exact te maken. Een profiel dat over de as heen reikt, kan niet exact gebouwd worden en wordt, zoals voorheen, een mesh.
 
@@ -91,7 +91,9 @@ Normaal wordt het vlak binnen een gesloten omtrek het lichaam. Met {{ui:sketch.s
 - Een **open lijn** wordt een strook, gecentreerd op de lijn. {{ui:sketch.strokeCap}} bepaalt hoe de uiteinden eruitzien: {{ui:sketch.strokeCap.flat}}, {{ui:sketch.strokeCap.square}} (een halve breedte langer) of {{ui:sketch.strokeCap.round}}.
 - {{ui:sketch.strokeJoin}} geldt voor beide: {{ui:sketch.strokeJoin.miter}}, {{ui:sketch.strokeJoin.round}} of {{ui:sketch.strokeJoin.bevel}}.
 
-De schets houdt de getekende lijn. Open je hem opnieuw, dan ga je verder met het veranderen van lijn en lijndikte; vink je het vakje uit, dan wordt het vlak weer opgebouwd. Curves worden daarvoor in korte rechte stukjes opgedeeld. Een draaiing heeft geen lijn.
+De schets houdt de getekende lijn. Open je hem opnieuw, dan ga je verder met het veranderen van lijn en lijndikte; vink je het vakje uit, dan wordt het vlak weer opgebouwd. Curves worden daarvoor in korte rechte stukjes opgedeeld.
+
+Bij een draaiing is de lijndikte een dunne wand: teken de wand van een vaas of een beker als **één open lijn** links van de as, vink {{ui:sketch.stroke}} aan en stel de breedte in, dan draait de draaiing die band. Wat over de as heen reikt, wordt aan de as afgesneden.
 
 ## Vulling en silhouet
 

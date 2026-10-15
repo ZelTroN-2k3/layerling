@@ -1,10 +1,12 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import manifoldModule from "manifold-3d";
 import { OcctKernel } from "occt-wasm";
 import { buildRevolvedSketchSolid } from "@/lib/cadSketchRevolve";
 import { shellSolid } from "@/lib/cadShell";
 import { revolveAxisOffset } from "@/lib/revolveAxis";
+import { strokedSketchProfile } from "@/lib/sketchStroke";
 import type { SketchPoint, SketchProfile } from "@/types/layerling";
 
 function polygon(coordinates: Array<[number, number]>): SketchProfile {
@@ -114,5 +116,24 @@ describe("a revolved sketch as an exact solid, with the real OCCT kernel", () =>
     const outerVolume = Math.PI * 20 * 20 * 30;
     const cavity = Math.PI * 18 * 18 * 28;
     expect(kernel.getVolume(hollow)).toBeCloseTo(outerVolume - cavity, 0);
+  });
+
+  // A line with a width turns into a wall (#347): the vase of a Tinkercad video, drawn as one line.
+  it("turns an open line with a width into a thin wall", async () => {
+    const manifold = await manifoldModule();
+    manifold.setup();
+    const line: SketchProfile = {
+      points: [{ id: "a", x: -20, z: 0 }, { id: "b", x: -20, z: 30 }],
+      segments: [{ id: "s", kind: "line", startId: "a", endId: "b" }],
+      stroke: { width: 2, align: "center", join: "miter", cap: "flat" },
+    };
+    const band = strokedSketchProfile(manifold, line, { clipToRevolveSide: true });
+    expect(band).not.toBeNull();
+    const solid = buildRevolvedSketchSolid(kernel, band!, 0, 360);
+    expect(kernel.isValid(solid)).toBe(true);
+    expect(kernel.getVolume(solid)).toBeCloseTo(Math.PI * (21 ** 2 - 19 ** 2) * 30, 0);
+    const bounds = kernel.getBoundingBox(solid, false);
+    expect(bounds.xmax - bounds.xmin).toBeCloseTo(42, 3);
+    expect(bounds.ymax - bounds.ymin).toBeCloseTo(30, 3);
   });
 });

@@ -17,6 +17,7 @@ import { isSegmentCurved } from "@/lib/sketchSegmentCurve";
 import { DEFAULT_SKETCH_BACKGROUND, DEFAULT_SKETCH_GRID_COLOR, DEFAULT_SKETCH_PLATE_COLOR, workplaneGridLayout } from "@/lib/workplaneGrid";
 import { closestPointOnSketchSegment, type SketchSegmentPlacement } from "@/lib/sketchPointRefinement";
 import { isSketchPanGesture, SKETCH_MANUAL_MAX_ZOOM, SKETCH_MAX_ZOOM, SKETCH_WHEEL_ZOOM_BOOST, SKETCH_MIN_ZOOM, sketchWheelZoomFactor, zoomSketchViewAt, type SketchView } from "@/lib/sketchPointerControls";
+import { pickTouchTarget, type TouchCandidate } from "@/lib/sketchTouch";
 import { isSketchPrimitive, type SketchPrimitive } from "@/lib/sketchPrimitives";
 import { mirrorSign, resizedImportedMeshPositions } from "@/lib/workplaneShapes";
 import { DEFAULT_SNAP_GRID, DEFAULT_WORKPLANE_WORKSPACE, keyboardNudgeCoarseFactor, keyboardNudgeStep, normalizeSnapGrid, normalizeWorkspaceSettings, snapGridStep as snapStep, orbitControlsZoomSpeed, zoomDistanceScale } from "@/lib/workplaneSettings";
@@ -1003,8 +1004,65 @@ export function SketchWorkspace({
     setPointerAction({ kind: "pan", pointerId: event.pointerId, clientX: event.clientX, clientY: event.clientY });
   };
 
+  // A finger lands beside the small point or the thin line it means. A press on the plate or on a line
+  // that has a point, a handle or another line within reach goes to that part, as if it had been hit (#337).
+  const touchRetargetingRef = useRef(false);
+  const retargetTouchPress = (event: ReactPointerEvent<SVGSVGElement>) => {
+    if (event.pointerType !== "touch" || event.button !== 0 || touchRetargetingRef.current) return;
+    const svg = svgRef.current;
+    const at = unsnappedPointFromEvent(event);
+    if (!svg || !at) return;
+    const handleKinds = new Set(["handle", "selection-handle", "selection-rotate-handle", "image-handle"]);
+    const hit = (event.target as Element).closest?.("[data-sketch-entity]")?.getAttribute("data-sketch-entity");
+    // Right on a point or a handle: nothing to correct.
+    if (hit && (hit === "point" || handleKinds.has(hit))) return;
+    const candidates: Array<TouchCandidate<Element>> = [];
+    svg.querySelectorAll("[data-sketch-entity]").forEach((element) => {
+      const kind = element.getAttribute("data-sketch-entity") ?? "";
+      const tier = kind === "point" ? "point" : handleKinds.has(kind) ? "handle" : null;
+      if (!tier) return;
+      const box = element.getBoundingClientRect();
+      candidates.push({ target: element, tier, distance: Math.hypot(box.x + box.width / 2 - event.clientX, box.y + box.height / 2 - event.clientY) });
+    });
+    displayProfile.segments.forEach((segment) => {
+      const start = pointById.get(segment.startId);
+      const end = pointById.get(segment.endId);
+      const element = svg.querySelector(`[data-segment-id="${segment.id}"]`);
+      if (!start || !end || !element) return;
+      const nearest = closestPointOnSketchSegment(segment, start, end, at).point;
+      candidates.push({ target: element, tier: "segment", distance: Math.hypot(nearest.x - at.x, nearest.z - at.z) / screenUnit });
+    });
+    const best = pickTouchTarget(candidates);
+    if (!best || best === event.target) return;
+    event.preventDefault();
+    event.stopPropagation();
+    touchRetargetingRef.current = true;
+    try {
+      best.dispatchEvent(new PointerEvent("pointerdown", {
+        bubbles: true,
+        cancelable: true,
+        composed: true,
+        pointerId: event.pointerId,
+        pointerType: event.pointerType,
+        isPrimary: event.isPrimary,
+        button: 0,
+        buttons: 1,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        pressure: event.pressure,
+        shiftKey: event.shiftKey,
+        ctrlKey: event.ctrlKey,
+        altKey: event.altKey,
+        metaKey: event.metaKey,
+      }));
+    } finally {
+      touchRetargetingRef.current = false;
+    }
+  };
+
   const handlePanPointerDownCapture = (event: ReactPointerEvent<SVGSVGElement>) => {
     if (isSketchPanGesture(event)) beginPan(event);
+    else retargetTouchPress(event);
   };
 
   const handlePlanePointerDown = (event: ReactPointerEvent<SVGSVGElement>) => {

@@ -136,3 +136,26 @@ export function measurementMiddle(line: readonly ReferencePosition[]): Reference
   }
   return { ...line[line.length - 1] };
 }
+
+/**
+ * The reference point nearest to a pointer on the screen, within `reach` pixels; null if none is that close.
+ * The tape measure snaps to it like to a measuring point (#334). `project` gives a point's place on the screen.
+ */
+export function nearestReferenceOnScreen<T extends ReferencePosition>(
+  points: readonly T[],
+  project: (point: ReferencePosition) => { x: number; y: number },
+  pointer: { x: number; y: number },
+  reach: number,
+): T | null {
+  let best: T | null = null;
+  let bestDistance = reach;
+  points.forEach((point) => {
+    const screen = project(point);
+    const distance = Math.hypot(screen.x - pointer.x, screen.y - pointer.y);
+    if (distance <= bestDistance) {
+      best = point;
+      bestDistance = distance;
+    }
+  });
+  return best;
+}

@@ -8366,6 +8366,13 @@ html[data-theme="dark"] .inspector-bundle-note {
   transition: all 0.15s ease;
 }
 
+/* The little switch beside each green number: that number counts to the edge or the middle on its own. */
+.ruler-axis-mode-toggle {
+  width: 18px;
+  height: 18px;
+  z-index: 5;
+}
+
 .corner-ruler-mode-toggle:hover {
   background: #e8f5e9;
   border-color: #2e7d32;

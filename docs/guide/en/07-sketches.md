@@ -79,7 +79,7 @@ With {{ui:inspector.editSketch}} you can return to the sketch at any time to cha
 
 ### Revolving
 
-When revolving, you draw half the cross-section **to the left of the axis** shown in the sketch. Next to it you see a 3D preview of the revolve. It shows at once what the body will look like. The outline must be closed. At the end click {{ui:sketch.finishRevolve}}.
+When revolving, you draw half the cross-section **to the left of the axis** shown in the sketch. Next to it you see a 3D preview of the revolve. It shows at once what the body will look like. The outline must be closed, or you build an open line as a stroke, see below. At the end click {{ui:sketch.finishRevolve}}.
 
 A revolved body is an exact body, like an extruded one: it takes chamfers and fillets, and you can hollow it, for a cup or a vase. A body revolved with an older layerling is a mesh; open {{ui:inspector.editSketch}} and finish it again to make it exact. A profile that reaches across the axis cannot be built exactly and becomes a mesh, as before.
 
@@ -91,7 +91,9 @@ Normally the area inside a closed outline becomes the body. With {{ui:sketch.str
 - An **open line** becomes a stripe, centred on the line. {{ui:sketch.strokeCap}} sets how its ends look: {{ui:sketch.strokeCap.flat}}, {{ui:sketch.strokeCap.square}} (longer by half the width) or {{ui:sketch.strokeCap.round}}.
 - {{ui:sketch.strokeJoin}} applies to both: {{ui:sketch.strokeJoin.miter}}, {{ui:sketch.strokeJoin.round}} or {{ui:sketch.strokeJoin.bevel}}.
 
-The sketch keeps the drawn line. Open it again and you go on changing line and stroke; untick the box and the area is built again. Curves are broken into short straight pieces for it. A revolve has no stroke.
+The sketch keeps the drawn line. Open it again and you go on changing line and stroke; untick the box and the area is built again. Curves are broken into short straight pieces for it.
+
+In a revolve the stroke is a thin wall: draw the wall of a vase or a cup as **one open line** to the left of the axis, tick {{ui:sketch.stroke}} and set the width, and the revolve turns that band. What reaches across the axis is cut off at it.
 
 ## Fill and silhouette
 

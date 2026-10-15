@@ -10,7 +10,7 @@
  *
  * To add a language, see docs/TRANSLATING.md.
  */
-export const LANGUAGES = ["en", "de", "nl", "fr", "pl"] as const;
+export const LANGUAGES = ["en", "de", "nl", "fr", "pl", "ru"] as const;
 export type Language = (typeof LANGUAGES)[number];
 export const DEFAULT_LANGUAGE: Language = "en";
 
@@ -277,6 +277,43 @@ export const LANGUAGE_INFO: Readonly<Record<Language, LanguageInfo>> = {
       printAllLead: "Wszystkie rozdziały jeden po drugim, do wydrukowania lub zapisania jako PDF: naciśnij Ctrl+P i wyłącz w ustawieniach drukowania „Nagłówki i stopki”. Aby wydrukować tylko część, wybierz tam numery stron.",
       printContents: "Spis treści",
       printButton: "Drukuj",
+    },
+  },
+  ru: {
+    name: "Русский",
+    htmlLang: "ru",
+    numberLocale: "ru-RU",
+    quotes: ["«", "»"],
+    guideDir: "ru",
+    communityUrl: GITHUB_DISCUSSIONS,
+    readme: "README.md",
+    quickstartAnchor: "windows-quickstart",
+    legal: { imprint: "Выходные данные", privacy: "Политика конфиденциальности" },
+    keyNames: { Ctrl: "Ctrl", Shift: "Shift", Delete: "Del", Backspace: "Backspace", Home: "Home", Click: "Щёлчок", RightClick: "Правый клик", Drag: "Перетаскивание" },
+    asciiUmlauts: false,
+    complete: true,
+    guide: {
+      site: "Руководство layerling",
+      home: "Руководство",
+      openEditor: "Открыть редактор",
+      backToEditor: "Вернуться в редактор",
+      editorElsewhere: "Редактор уже открыт в другой вкладке — просто переключитесь туда.",
+      chapters: "Главы",
+      onThisPage: "На этой странице",
+      previous: "Предыдущая глава",
+      next: "Следующая глава",
+      overviewLead: "Всё, что умеет layerling, шаг за шагом. Картинки сняты с работающей программы и обновляются с каждой версией.",
+      sourceNote: "Это руководство растёт вместе с программой. Если чего-то не хватает или что-то не так — напишите в",
+      forum: "обсуждениях",
+      notTranslated: "Эта глава ещё не переведена на ваш язык. Ниже идёт английский текст.",
+      languageMenu: "Язык",
+      search: "Поиск по руководству",
+      searchNothing: "Ничего не найдено.",
+      printAll: "Всё руководство для печати",
+      printAllTitle: "Всё руководство на одной странице",
+      printAllLead: "Все главы подряд — чтобы распечатать или сохранить как PDF: нажмите Ctrl+P и отключите в настройках печати «Колонтитулы». Если нужно распечатать только часть, выберите там номера страниц.",
+      printContents: "Содержание",
+      printButton: "Печать",
     },
   },
 };

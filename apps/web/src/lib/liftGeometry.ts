@@ -47,6 +47,30 @@ export function liftGeometryForFrame(frame: SelectionFrame, workplane: Placement
   };
 }
 
+const onGrid = (value: number, step: number) => Math.round(value / step) * step;
+const cleanSum = (value: number) => Math.round(value * 1e9) / 1e9;
+
+/**
+ * The height a selection gets when the face being dragged lands on the grid of the workplane, not
+ * one grid step from where it started (#329): a body 0.5 mm high on a 1 mm grid goes to 1.0 mm, not
+ * 1.5 mm. `startBottom` is where the bottom stands above the workplane, `rawHeight` the height the
+ * pointer asks for, `fromBottom` whether the bottom face is the one being dragged.
+ */
+export function heightWithFaceOnGrid(startBottom: number, startHeight: number, rawHeight: number, fromBottom: boolean, step: number): number {
+  if (!(step > 0)) return rawHeight;
+  if (fromBottom) {
+    const top = startBottom + startHeight;
+    return cleanSum(top - onGrid(top - rawHeight, step));
+  }
+  return cleanSum(onGrid(startBottom + rawHeight, step) - startBottom);
+}
+
+/** How far the lift arrow moves a selection when its bottom has to land on the grid of the workplane. */
+export function liftDeltaOnGrid(startBottom: number, rawDelta: number, step: number): number {
+  if (!(step > 0)) return rawDelta;
+  return cleanSum(onGrid(startBottom + rawDelta, step) - startBottom);
+}
+
 /** How far a selection has to clear the workplane before its footprint is drawn. */
 const GROUND_FOOTPRINT_MIN_GAP = 0.08;
 /** Lifts the footprint just off the plane so it does not fight with the grid. */

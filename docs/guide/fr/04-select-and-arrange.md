@@ -72,6 +72,8 @@ Deux parties doivent-elles se rencontrer face à face ou s'aligner à égalité�
 
 ![Le panneau Aligner les faces : la pièce qui bouge est sélectionnée, une face de l'autre pièce vient ensuite, puis face à face ou à fleur, et un espace optionnel.](shot:mate-faces)
 
+**Un angle exact entre deux faces :** {{ui:editor.tool.mateFaces}} laisse les faces parallèles ; il n'y a pas d'outil dédié pour définir un angle entre elles, mais cette méthode y parvient. Amenez d'abord les faces ensemble avec {{ui:editor.tool.mateFaces}} afin qu'elles soient parallèles. Placez ensuite le pivot sur l'arête où elles se rencontrent ({{ui:editor.tool.rotationPivot}}, cliquez sur l'arête ou un coin) et saisissez l'angle souhaité (par exemple 15 ou 30) dans la carte {{ui:inspector.rotation}} de la pièce. Elle tourne autour de ce pivot. Les axes de la carte correspondent à ceux du plateau, cela fonctionne donc lorsque l'arête suit l'axe X, Y ou Z.
+
 {{ui:editor.tool.dropToWorkplane}} ([[D]]), qui dépose la sélection sur le plan de travail, et {{ui:editor.tool.centerOnWorkplane}} sont tout aussi simples.
 
 [[C]] reprend la sélection, comme Cruise dans Tinkercad : il suit le pointeur de la souris et se couche sur le visage d'un autre corps sur lequel vous vous trouvez, incliné également. Un clic le dépose là, [[Esc]] le laisse là où il était. Son dessous repose alors sur le visage, aligné avec les bords du visage comme le serait une nouvelle forme ; il garde son propre tour autour de son axe ascendant. Plusieurs pièces voyagent ensemble et gardent leur espacement. Au-dessus de la plaque vide, [[C]] place à nouveau une pièce inclinée à la verticale sur le plan de travail.

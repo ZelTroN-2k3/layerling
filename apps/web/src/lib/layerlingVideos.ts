@@ -12,10 +12,11 @@ export const LAYERLING_VIDEOS = [
     url: "https://youtu.be/GIoG-IHPXyg",
   },
   {
-    title: "Meet Layerling Free Browser Based CAD that EXTENDS Tinkercad!",
+    // A whole playlist, so new videos in it arrive here without a release.
+    title: "Layerling Tutorials",
     channel: "HL ModTech",
     lang: "EN",
-    url: "https://youtu.be/979_Ohy9ESM",
+    url: "https://www.youtube.com/playlist?list=PLZ-ZWS0D1JIk",
   },
   {
     // A whole playlist, so new videos in it arrive here without a release.

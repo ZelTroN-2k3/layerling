@@ -10,6 +10,7 @@ import { buildSketchRevolveMesh, normalizeSketchRevolveSettings } from "@/lib/sk
 import { placementWorkplaneCoordinates, type PlacementWorkplane } from "@/lib/placementWorkplane";
 import { silhouetteSketchProfile } from "@/lib/sketchCadProfile";
 import { filledGrowPockets, strokedSketchProfile } from "@/lib/sketchStroke";
+import type { ManifoldToplevel } from "manifold-3d";
 import type { CadModifierDeflection } from "@/lib/cadModifierTypes";
 import { SKETCH_STROKE_UNSUPPORTED, type SketchCadBuildResponse } from "@/lib/sketchCadTypes";
 import type { ParametricSource, ShapeKind, SketchProfile, SketchRevolveSettings, SketchStroke, WorkplaneShape } from "@/types/layerling";
@@ -126,10 +127,23 @@ export async function cadShapeFromSketchProfile(profile: SketchProfile, height: 
  * triangles, not tens of thousands (#167). Null when the profile cannot be built that way (it
  * crosses the axis) or the kernel refuses; the mesh revolve takes over then.
  */
+/**
+ * What a revolve turns: the sketch as drawn, or, with a stroke, the band the line makes - an open
+ * line of a width turns into a thin wall, as a vase is drawn in Tinkercad (#347). The band is
+ * cut off at the axis. The body keeps the drawn line, as an extruded stroke does.
+ */
+export function revolveBuildProfile(runtime: ManifoldToplevel, profile: SketchProfile): SketchProfile {
+  if (!profile.stroke) return profile;
+  const stroked = strokedSketchProfile(runtime, profile, { clipToRevolveSide: true });
+  if (!stroked) throw new Error(t("sketch.strokeEmpty"));
+  return stroked;
+}
+
 async function cadShapeFromSketchRevolve(
   profile: SketchProfile,
   settings: SketchRevolveSettings,
   existing?: WorkplaneShape | null,
+  drawn: SketchProfile = profile,
 ): Promise<WorkplaneShape | null> {
   if (!revolveProfileFitsAxis(profile)) return null;
   try {
@@ -164,7 +178,7 @@ async function cadShapeFromSketchRevolve(
       depth: 1,
       height: MIN_SHAPE_DIMENSION,
       rotation: 0,
-      sketchProfile: cloneSketchProfile(profile),
+      sketchProfile: cloneSketchProfile(drawn),
       sketchOperation: "revolve",
       sketchRevolve: settings,
       locked: existing?.locked ?? false,
@@ -179,7 +193,7 @@ async function cadShapeFromSketchRevolve(
       x: existing?.x ?? 0,
       z: existing?.z ?? 0,
       elevation: existing?.elevation ?? 0,
-      sketchProfile: cloneSketchProfile(profile),
+      sketchProfile: cloneSketchProfile(drawn),
       sketchOperation: "revolve",
       sketchRevolve: settings,
     });
@@ -193,11 +207,12 @@ export async function shapeFromRevolvedSketchProfile(
   settings: Partial<SketchRevolveSettings>,
   existing?: WorkplaneShape | null,
 ) {
-  const exact = await cadShapeFromSketchRevolve(profile, normalizeSketchRevolveSettings(settings), existing);
-  if (exact) return exact;
   const runtime = await getManifoldRuntime();
+  const buildProfile = revolveBuildProfile(runtime, profile);
+  const exact = await cadShapeFromSketchRevolve(buildProfile, normalizeSketchRevolveSettings(settings), existing, profile);
+  if (exact) return exact;
   const normalizedSettings = normalizeSketchRevolveSettings(settings);
-  const mesh = buildSketchRevolveMesh(runtime, profile, normalizedSettings);
+  const mesh = buildSketchRevolveMesh(runtime, buildProfile, normalizedSettings);
   return canonicalizeShape({
     id: existing?.id ?? createLocalId("sketch-revolve"),
     name: existing?.name ?? "Sketch revolve",

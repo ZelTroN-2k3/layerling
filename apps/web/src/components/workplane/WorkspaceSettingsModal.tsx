@@ -858,6 +858,7 @@ export function WorkspaceSettingsModal({
                       value={workspace.shadowStrength}
                       disabled={!workspace.showShadows || workspace.fastMode}
                       onChange={(event) => patchWorkspace({ shadowStrength: Number(event.currentTarget.value) })}
+                      onDoubleClick={() => patchWorkspace({ shadowStrength: DEFAULT_WORKPLANE_WORKSPACE.shadowStrength })}
                     />
                   </label>
                   <label className="workspace-range">
@@ -870,6 +871,7 @@ export function WorkspaceSettingsModal({
                       value={workspace.shadowSoftness}
                       disabled={!workspace.showShadows || workspace.fastMode}
                       onChange={(event) => patchWorkspace({ shadowSoftness: Number(event.currentTarget.value) })}
+                      onDoubleClick={() => patchWorkspace({ shadowSoftness: DEFAULT_WORKPLANE_WORKSPACE.shadowSoftness })}
                     />
                     <small>
                       <span>{t("workspace.shadowCrisp")}</span>
@@ -885,6 +887,7 @@ export function WorkspaceSettingsModal({
                       step={5}
                       value={workspace.lightAzimuth}
                       onChange={(event) => patchWorkspace({ lightAzimuth: Number(event.currentTarget.value) })}
+                      onDoubleClick={() => patchWorkspace({ lightAzimuth: DEFAULT_WORKPLANE_WORKSPACE.lightAzimuth })}
                     />
                     <small>
                       <span>{t("workspace.lightFromLeft")}</span>
@@ -901,6 +904,7 @@ export function WorkspaceSettingsModal({
                       step={5}
                       value={workspace.lightElevation}
                       onChange={(event) => patchWorkspace({ lightElevation: Number(event.currentTarget.value) })}
+                      onDoubleClick={() => patchWorkspace({ lightElevation: DEFAULT_WORKPLANE_WORKSPACE.lightElevation })}
                     />
                     <small>
                       <span>{t("workspace.lightLow")}</span>
@@ -916,6 +920,7 @@ export function WorkspaceSettingsModal({
                       step={5}
                       value={workspace.shadeContrast}
                       onChange={(event) => patchWorkspace({ shadeContrast: Number(event.currentTarget.value) })}
+                      onDoubleClick={() => patchWorkspace({ shadeContrast: DEFAULT_WORKPLANE_WORKSPACE.shadeContrast })}
                     />
                     <small>
                       <span>{t("workspace.shadeSoft")}</span>
@@ -953,6 +958,7 @@ export function WorkspaceSettingsModal({
                       step={5}
                       value={workspace.overhangAngle}
                       onChange={(event) => patchWorkspace({ overhangAngle: Number(event.currentTarget.value) })}
+                      onDoubleClick={() => patchWorkspace({ overhangAngle: DEFAULT_WORKPLANE_WORKSPACE.overhangAngle })}
                     />
                     <small>
                       <span>{t("workspace.overhangStrict")}</span>
@@ -972,6 +978,7 @@ export function WorkspaceSettingsModal({
                       max={10}
                       value={workspace.zoomSpeed}
                       onChange={(event) => patchWorkspace({ zoomSpeed: Number(event.currentTarget.value) })}
+                      onDoubleClick={() => patchWorkspace({ zoomSpeed: DEFAULT_WORKPLANE_WORKSPACE.zoomSpeed })}
                     />
                     <small>
                       <span>{t("workspace.slow")}</span>

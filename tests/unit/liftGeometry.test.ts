@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as THREE from "three";
-import { groundFootprintForFrame, liftGeometryForFrame, type SelectionFrame } from "@/lib/liftGeometry";
+import { groundFootprintForFrame, heightWithFaceOnGrid, liftDeltaOnGrid, liftGeometryForFrame, type SelectionFrame } from "@/lib/liftGeometry";
 import { horizontalPlacementWorkplane, type PlacementWorkplane } from "@/lib/placementWorkplane";
 
 function createSelectionFrame(overrides: Partial<SelectionFrame> = {}): SelectionFrame {
@@ -303,5 +303,35 @@ describe("groundFootprintForFrame", () => {
   it("draws a footprint for a shape below the workplane", () => {
     const frame = createSelectionFrame({ center: new THREE.Vector3(0, -20, 0) });
     expect(groundFootprintForFrame(frame, basePlane)).toHaveLength(4);
+  });
+});
+
+describe("snapping the dragged face to the grid of the workplane (#329)", () => {
+  it("takes a 0.5 mm body to 1.0 mm, not 1.5 mm, when its top is dragged a little", () => {
+    expect(heightWithFaceOnGrid(0, 0.5, 0.6, false, 1)).toBe(1);
+    expect(heightWithFaceOnGrid(0, 0.5, 1.4, false, 1)).toBe(1);
+    expect(heightWithFaceOnGrid(0, 0.5, 1.6, false, 1)).toBe(2);
+  });
+
+  it("puts the top of a lifted body on the grid", () => {
+    // Bottom at 0.3, top dragged to about 2.2 mm above the plate: the top lands on 2, so the height is 1.7.
+    expect(heightWithFaceOnGrid(0.3, 1, 1.9, false, 1)).toBeCloseTo(1.7, 9);
+  });
+
+  it("puts the bottom on the grid and keeps the top where it is when the bottom is dragged", () => {
+    // Top at 10.5; the bottom is dragged to about 3.2 mm, which lands on 3: the height is 7.5.
+    expect(heightWithFaceOnGrid(0, 10.5, 7.3, true, 1)).toBeCloseTo(7.5, 9);
+  });
+
+  it("leaves the height as it is without a grid", () => {
+    expect(heightWithFaceOnGrid(0.3, 1, 1.234, false, 0)).toBe(1.234);
+  });
+
+  it("lands the bottom of a lifted body on the grid", () => {
+    expect(liftDeltaOnGrid(0.5, 0.1, 1)).toBe(0.5);
+    expect(liftDeltaOnGrid(0.5, 0.6, 1)).toBe(0.5);
+    expect(liftDeltaOnGrid(0.5, 1.2, 1)).toBe(1.5);
+    expect(liftDeltaOnGrid(0, 0.4, 1)).toBe(0);
+    expect(liftDeltaOnGrid(0.5, 0.123, 0)).toBe(0.123);
   });
 });

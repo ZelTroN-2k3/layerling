@@ -68,6 +68,25 @@ export function transformOverlayScreenPoint(
   };
 }
 
+/**
+ * Smallest screen distance between the lift arrow and the height handle it stands above.
+ * The arrow sits a world distance (2 mm at least) over the handle, which is a few pixels for
+ * a thin body and nothing at all when looking straight down, so it would cover the handle.
+ */
+export const LIFT_HANDLE_MIN_SCREEN_DISTANCE = 30;
+
+/** Keeps the lift arrow at least that far from the height handle on the screen, along the way it already points. */
+export function liftHandleScreenPoint<T extends { x: number; y: number }>(base: { x: number; y: number }, lifted: T, below: boolean): T {
+  const dx = lifted.x - base.x;
+  const dy = lifted.y - base.y;
+  const length = Math.hypot(dx, dy);
+  if (length >= LIFT_HANDLE_MIN_SCREEN_DISTANCE) return lifted;
+  // Straight along the view the axis has no direction on the screen: up (or down, for the lower arrow).
+  const unitX = length > 1e-6 ? dx / length : 0;
+  const unitY = length > 1e-6 ? dy / length : below ? 1 : -1;
+  return { ...lifted, x: base.x + unitX * LIFT_HANDLE_MIN_SCREEN_DISTANCE, y: base.y + unitY * LIFT_HANDLE_MIN_SCREEN_DISTANCE };
+}
+
 /** Inside the wheel the turn snaps to the drawn ticks, one every 22.5°; Shift halves the step. */
 export const ROTATION_WHEEL_SNAP_DEGREES = 22.5;
 export const ROTATION_WHEEL_SHIFT_SNAP_DEGREES = 11.25;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Archive, Clock3, Copy, EllipsisVertical, FolderInput, FolderKanban, FolderPlus, FolderUp, Grid3X3, List, Pencil, Plus, RefreshCw, Search, Server, SlidersHorizontal, Sparkles, Trash2, X } from "lucide-react";
+import { Archive, ArrowLeft, Clock3, Copy, EllipsisVertical, FolderInput, FolderKanban, FolderPlus, FolderUp, Grid3X3, List, Pencil, Plus, RefreshCw, Search, Server, SlidersHorizontal, Sparkles, Trash2, X } from "lucide-react";
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type DragEvent } from "react";
 import { AppFooter } from "@/components/AppFooter";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
@@ -2162,6 +2162,10 @@ export default function Home() {
           onQueryChange={setQuery}
           onRenameProject={renameProject}
           onRefreshSharedProjects={() => void refreshSharedProjects()}
+          onLocalProjects={() => {
+            setDashboardSection("home");
+            setDashboardNotice("");
+          }}
           onSharedProjects={() => {
             setDashboardSection("shared");
             setDashboardNotice("");
@@ -2363,6 +2367,7 @@ function Dashboard({
   onQueryChange,
   onRenameProject,
   onRefreshSharedProjects,
+  onLocalProjects,
   onSharedProjects,
   onSortModeChange,
   onViewModeChange,
@@ -2406,6 +2411,8 @@ function Dashboard({
   onQueryChange: (value: string) => void;
   onRenameProject: (projectId: string, name: string) => void;
   onRefreshSharedProjects: (path?: string) => void;
+  /** The way back from the server folder to the designs of this browser. */
+  onLocalProjects: () => void;
   onSharedProjects: () => void;
   onSortModeChange: (value: string) => void;
   onViewModeChange: (value: ViewMode) => void;
@@ -2647,6 +2654,10 @@ function Dashboard({
                   )}
                 </div>
                 <div className="shared-projects-actions">
+                  <button className="shared-projects-refresh" type="button" onClick={onLocalProjects}>
+                    <ArrowLeft size={16} />
+                    <span>{t("shared.backToLocal")}</span>
+                  </button>
                   {/* Anlegen gehoert in einen Ordner. In einer Trefferliste
                       steht stattdessen der Weg zurueck in den Ordner. */}
                   {searchResults ? (

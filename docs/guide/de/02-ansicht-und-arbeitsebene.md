@@ -21,6 +21,8 @@ Auf einem Tablet oder Handy zoomen zwei Finger (spreizen und zusammenziehen) und
 
 Ein Grafiktablett mit Stift verhält sich wie eine Maus: Die Spitze ist die linke Taste, die Seitentaste am Stift die rechte, zum Drehen der Ansicht und für das Menü. Die Schnelltasten des Tabletts belegst du in dessen Treiber mit layerlings [Tastenkürzeln](chapter:tastenkuerzel).
 
+**Arbeite auf einem Tablet möglichst mit einem Stift.** Seine Spitze ist viel feiner als eine Fingerkuppe und verdeckt nicht, was du treffen willst: kleine Punkte, dünne Linien und Griffe in einer Skizze, Messpunkte und Kanten sitzen genau, und längeres Arbeiten ermüdet weniger. layerling lässt einen Finger zu Punkten, Linien, Griffen und Kanten schon etwas weiter greifen als einen Mauszeiger, aber mit einem Stift bleibt es genauer.
+
 ### Der Ansichtswürfel
 
 Der Würfel links oben zeigt, wohin du gerade schaust. Ein Klick auf eine seiner Seiten springt in die gerade Ansicht von oben, unten, vorn, hinten, links oder rechts. Ein Klick auf eine Ecke des Würfels schaut schräg von dieser Ecke auf das Modell, ein Klick nahe einer Kante von dieser Kante, also zwischen zwei Seiten hindurch; die Stelle färbt sich, sobald der Zeiger darüber steht. Die geraden Ansichten gehen auch mit den Zifferntasten [[1]] bis [[6]]. Hältst du dabei [[Umschalt]] gedrückt, zoomt die Ansicht zugleich auf die Auswahl, wie mit [[Umschalt]]+[[F]].

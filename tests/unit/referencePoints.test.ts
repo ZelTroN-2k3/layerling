@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanReferencePosition, measurementMiddle, newReferencePositions, referencePointsForBox, unionReferenceBoxes } from "@/lib/referencePoints";
+import { cleanReferencePosition, measurementMiddle, nearestReferenceOnScreen, newReferencePositions, referencePointsForBox, unionReferenceBoxes } from "@/lib/referencePoints";
 import { normalizeNotes, notesSignature, referencePoints } from "@/lib/workplaneNotes";
 
 const box = { minX: -20, maxX: 40, minY: 0, maxY: 8, minZ: 10, maxZ: 30 };
@@ -68,5 +68,21 @@ describe("the middle of a measurement", () => {
   it("is halfway along an open edge, and nothing for a single point", () => {
     expect(measurementMiddle([{ x: 0, y: 0, z: 0 }, { x: 10, y: 0, z: 0 }, { x: 10, y: 0, z: 10 }])).toEqual({ x: 10, y: 0, z: 0 });
     expect(measurementMiddle([{ x: 1, y: 2, z: 3 }])).toBeNull();
+  });
+});
+
+describe("the reference point under the tape measure's pointer (#334)", () => {
+  const points = [{ x: 0, y: 0, z: 0 }, { x: 10, y: 0, z: 0 }];
+  // The screen shows x as pixels, 5 to the unit.
+  const project = (point: { x: number; z: number }) => ({ x: point.x * 5, y: point.z * 5 });
+
+  it("takes the nearest point within reach", () => {
+    expect(nearestReferenceOnScreen(points, project, { x: 48, y: 3 }, 14)).toBe(points[1]);
+    expect(nearestReferenceOnScreen(points, project, { x: 4, y: 0 }, 14)).toBe(points[0]);
+  });
+
+  it("takes none when the pointer is too far away, and none for no points", () => {
+    expect(nearestReferenceOnScreen(points, project, { x: 25, y: 40 }, 14)).toBeNull();
+    expect(nearestReferenceOnScreen([], project, { x: 0, y: 0 }, 14)).toBeNull();
   });
 });

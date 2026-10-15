@@ -16,7 +16,7 @@ The tape measure sits at the lower end of the camera bar on the left edge ({{ui:
 3. **{{ui:camera.deleteMeasurement}}:** Afterwards click a measurement to remove it.
 4. **{{ui:camera.tapeWholeEdges}}:** A click on an edge measures all of it, the length of a circle for example. With this switched off, a click puts a point on the edge instead, and the second point goes anywhere, so you can measure the diameter or any other distance. [[Alt]] turns the switch round for one click. On a circle, the point across from the first one snaps in when the pointer comes near, and the points sit on the true circle, so the diameter comes out exact.
 5. **{{ui:camera.deleteAllMeasurements}}:** Removes every measurement at once. Because this cannot be undone, layerling asks first; with no measurements there is nothing to do.
-6. **{{ui:camera.tapeMarkMiddle}}:** Under the number of every measurement sits a small crosshair button. It puts a [reference point](#reference-points) in the middle of the measurement: after a click on a round edge, such as the rim of a hole, in the centre of that circle - on an imported mesh too, where nothing else marks the middle of a hole - and for a diameter or any straight measurement halfway along it. A shape you drag then snaps to the point with its centre. A point that is there already is not made twice.
+6. **{{ui:camera.tapeMarkMiddle}}:** Under the number of every measurement sits a small crosshair button. It puts a [reference point](#reference-points) in the middle of the measurement: after a click on a round edge, such as the rim of a hole, in the centre of that circle - on an imported mesh too, where nothing else marks the middle of a hole - and for a diameter or any straight measurement halfway along it. A shape you drag then snaps to the point with its centre. A point that is there already is not made twice. The tape measure snaps to a reference point like to a corner, so you can measure from the centre of a circle or from the middle of a line: mark it, then click the point.
 
 [[Esc]] leaves measuring mode.
 
@@ -33,7 +33,7 @@ The framing square lies on the workplane. If that sits on the side of a body, th
 - **Dragging the handle** moves it.
 - **A short click on the handle** turns it by 90°.
 - **The ×** beside it removes it.
-- **The small button left of the handle** switches what is measured from: the outside of a body (endpoint, an icon with lines) or its middle (midpoint, a crosshair).
+- **The small button left of the handle** switches what is measured from: the outside of a body (endpoint, an icon with lines) or its middle (midpoint, a crosshair). A small switch of the same kind sits beside each green number and sets that number alone: for a standing cylinder the middle in the two arms and the bottom in height, for a lying one the middle across and an end along. When all three agree again, the button at the handle shows the common mode.
 
 If bodies stand at one of the arms, the framing square shows their dimensions automatically. That works on the base plate only, not on the side of a body.
 
@@ -69,7 +69,7 @@ Notes are saved in the design, appear in no export and can be shown or hidden wi
 A reference point is a bare mark in space, like a pencil mark or a layout point in a workshop: it belongs to no body, is never printed, and other things snap to it. Right-click a body and choose {{ui:contextMenu.markCenter}}, {{ui:contextMenu.markCorners}} or {{ui:contextMenu.markMidpoints}}: the points appear on the top face of the body (of the whole selection, if you selected several).
 
 - Drag a point to move it, or click it to see its coordinates and type new ones; they use the unit you set. Each card can be dragged away by its title if it covers something, on its own: the others stay where they are, and a double-click on the title puts it back. The card you touched last stands in front of the others. **Delete all** in a card, or in the right-click menu, deletes every point at once. {{ui:common.delete}} removes it.
-- The tape measure can mark a point too: {{ui:camera.tapeMarkMiddle}}, the crosshair button under a measurement, puts one in its middle, in the centre of a round hole for example.
+- The tape measure can mark a point too: {{ui:camera.tapeMarkMiddle}}, the crosshair button under a measurement, puts one in its middle, in the centre of a round hole for example. And it measures from a point: the tape snaps to reference points like to corners.
 - When you drag a shape, its edges and its centre snap to a point, like they snap to other shapes ({{ui:workspace.objectSnap}}). The framing square snaps to points too.
 - Points are saved in the design, appear in no export, and are shown or hidden together with the notes by {{ui:visibility.notes}}.
 - An AI can mark, list and remove them with `layerling_add_reference_points`, `layerling_list_reference_points` and `layerling_remove_reference_points`.

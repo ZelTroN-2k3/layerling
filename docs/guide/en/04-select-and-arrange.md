@@ -11,7 +11,7 @@ What is in your way you hide ({{ui:editor.tool.hideSelected}}, [[Ctrl]]+[[H]]). 
 
 ## The object list
 
-With many parts it is easy to lose track in the view. The object list ({{ui:editor.tool.showOutliner}} or [[Ctrl]]+[[Shift]]+[[O]]) shows all shapes as a list.
+With many parts it is easy to lose track in the view. The object list ({{ui:editor.tool.showOutliner}} or [[Ctrl]]+[[Shift]]+[[O]]) shows all shapes as a list. It stays open or closed as you left it, for every design, until you close it; the choice is kept in the browser.
 
 ![The object list: the group "Group" with two parts and a sphere beside it. A folder icon opens the group.](shot:object-list)
 
@@ -71,6 +71,8 @@ Should a part lie on its best side for printing? Select it, click {{ui:editor.to
 Two parts should meet face to face, or line up flush? Select the part that should move, click {{ui:editor.tool.mateFaces}}, then click its face and after that the face of the other part. In the panel, {{ui:mate.mode.against}} puts the faces against each other (back to back, touching), {{ui:mate.mode.flush}} lays them in one plane side by side; {{ui:mate.gap}} leaves room between them, for example for clearance. {{ui:mate.apply}} moves the part: it turns the shortest way until the faces are parallel - not at all if they already are - and then slides only towards the other face, so it keeps its place sideways. The other part stays where it is, and one Undo takes it all back.
 
 ![The Align faces panel: the part that moves is picked, a face of the other part comes next, then face to face or flush, and an optional gap.](shot:mate-faces)
+
+**An exact angle between two faces:** {{ui:editor.tool.mateFaces}} leaves the faces parallel; there is no tool of its own for an angle between them, but this gets you there. First bring the faces together with {{ui:editor.tool.mateFaces}}, so they are parallel. Then set the pivot on the edge where they meet ({{ui:editor.tool.rotationPivot}}, click the edge or a corner) and type the angle, 15 or 30 say, in the {{ui:inspector.rotation}} card of the part. It turns about that pivot. The card's axes are the axes of the plate, so this works when the edge runs along X, Y or Z.
 
 Just as simple are {{ui:editor.tool.dropToWorkplane}} ([[D]]), which drops the selection onto the workplane, and {{ui:editor.tool.centerOnWorkplane}}.
 

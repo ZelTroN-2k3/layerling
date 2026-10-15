@@ -3,6 +3,8 @@ import * as THREE from "three";
 import {
   continuousSnappedWheelRotation,
   isPointInsideTransformBounds,
+  LIFT_HANDLE_MIN_SCREEN_DISTANCE,
+  liftHandleScreenPoint,
   ROTATION_WHEEL_SHIFT_SNAP_DEGREES,
   ROTATION_WHEEL_SNAP_DEGREES,
   normalizedRotationPlaneBasis,
@@ -311,5 +313,27 @@ describe("the arrow of a rotate handle", () => {
     expect(all.every(Number.isFinite)).toBe(true);
     const ys = numbers(arrow.arc).filter((_, index) => index % 2 === 1);
     expect(Math.max(...ys) - Math.min(...ys)).toBeGreaterThan(2);
+  });
+});
+
+describe("lift arrow distance", () => {
+  const base = { x: 100, y: 200 };
+
+  it("keeps a far arrow where it is", () => {
+    const lifted = { x: 100, y: 140, visible: true };
+    expect(liftHandleScreenPoint(base, lifted, false)).toBe(lifted);
+  });
+
+  it("pushes a close arrow out along its own direction", () => {
+    const point = liftHandleScreenPoint(base, { x: 103, y: 196, visible: true }, false);
+    expect(Math.hypot(point.x - base.x, point.y - base.y)).toBeCloseTo(LIFT_HANDLE_MIN_SCREEN_DISTANCE, 6);
+    expect(point.x - base.x).toBeCloseTo(LIFT_HANDLE_MIN_SCREEN_DISTANCE * 0.6, 6);
+    expect(point.y - base.y).toBeCloseTo(-LIFT_HANDLE_MIN_SCREEN_DISTANCE * 0.8, 6);
+    expect(point.visible).toBe(true);
+  });
+
+  it("goes up on the screen when the axis points straight at the camera, and down for the lower arrow", () => {
+    expect(liftHandleScreenPoint(base, { x: 100, y: 200 }, false).y).toBe(200 - LIFT_HANDLE_MIN_SCREEN_DISTANCE);
+    expect(liftHandleScreenPoint(base, { x: 100, y: 200 }, true).y).toBe(200 + LIFT_HANDLE_MIN_SCREEN_DISTANCE);
   });
 });

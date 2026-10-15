@@ -596,7 +596,8 @@ export function buildSvgExtrusionFromPaths(paths: readonly THREE.ShapePath[]) {
       throw new Error(`SVG is too complex (maximum ${MAX_SVG_TRIANGLES} triangles)`);
     }
     if (candidateAnalysis) {
-      rawPositions.push(...candidatePositions);
+      // A loop, not push(...list): a detailed outline has more numbers than a call can take (#340).
+      for (let index = 0; index < candidatePositions.length; index += 1) rawPositions.push(candidatePositions[index]);
       acceptedAnalyses.push(candidateAnalysis);
     } else {
       skippedShapes += 1;

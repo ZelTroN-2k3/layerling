@@ -3560,7 +3560,9 @@ function ShapePropertyRows({
     }
     const differs = typeof fallback === "number" && Math.abs(fallback - property.value) > Math.max(1e-6, (property.step ?? 0.01) / 10);
     const onReset = differs ? () => property.onChange(fallback as number) : undefined;
-    return <RangeProperty {...property} key={property.id} workspace={workspace} disabled={disabled || property.disabled} onReset={onReset} formula={formulas?.[property.id]} onFormula={onFormula ? (text) => onFormula(property.id, text) : undefined} onInteractionActiveChange={onInteractionActiveChange} />;
+    // A double click on the slider goes back to the default, also when the first click of it has just moved the value.
+    const onDefault = typeof fallback === "number" ? () => property.onChange(fallback) : undefined;
+    return <RangeProperty {...property} key={property.id} workspace={workspace} disabled={disabled || property.disabled} onReset={onReset} onDefault={onDefault} formula={formulas?.[property.id]} onFormula={onFormula ? (text) => onFormula(property.id, text) : undefined} onInteractionActiveChange={onInteractionActiveChange} />;
   });
 }
 
@@ -3716,10 +3718,11 @@ function RangeProperty({
   disabled,
   onChange,
   onReset,
+  onDefault,
   formula,
   onFormula,
   onInteractionActiveChange,
-}: RangePropertyConfig & { workspace: WorkplaneWorkspaceSettings; disabled?: boolean; onReset?: () => void; formula?: string; onFormula?: (text: string | null | undefined) => void; onInteractionActiveChange?: (active: boolean) => void }) {
+}: RangePropertyConfig & { workspace: WorkplaneWorkspaceSettings; disabled?: boolean; onReset?: () => void; onDefault?: () => void; formula?: string; onFormula?: (text: string | null | undefined) => void; onInteractionActiveChange?: (active: boolean) => void }) {
   const holdInteraction = useInteractionHold(onInteractionActiveChange);
   const snapStepMm = useContext(SliderSnapContext);
   const draggingSliderRef = useRef(false);
@@ -3839,6 +3842,7 @@ function RangeProperty({
             holdInteraction(false);
           }}
           onChange={(event) => handleSliderChange(Number(event.currentTarget.value))}
+          onDoubleClick={() => onDefault?.()}
         />
       </div>
     </label>

@@ -79,7 +79,7 @@ Mit {{ui:inspector.editSketch}} kehrst du jederzeit in die Skizze zurück, um si
 
 ### Rotieren
 
-Beim Rotieren zeichnest du den halben Querschnitt **links von der Achse**, die in der Skizze eingezeichnet ist. Daneben siehst du eine 3D-Vorschau der Drehung. Sie zeigt sofort, wie der Körper aussieht. Der Umriss muss geschlossen sein. Zum Schluss klickst du auf {{ui:sketch.finishRevolve}}.
+Beim Rotieren zeichnest du den halben Querschnitt **links von der Achse**, die in der Skizze eingezeichnet ist. Daneben siehst du eine 3D-Vorschau der Drehung. Sie zeigt sofort, wie der Körper aussieht. Der Umriss muss geschlossen sein, oder du baust eine offene Linie als Kontur, siehe unten. Zum Schluss klickst du auf {{ui:sketch.finishRevolve}}.
 
 Ein gedrehter Körper ist ein exakter Körper wie ein ausgezogener: Er nimmt Fasen und Verrundungen an, und du kannst ihn aushöhlen, für einen Becher oder eine Vase. Ein Körper, der mit einer älteren layerling-Fassung gedreht wurde, ist ein Netz; öffne {{ui:inspector.editSketch}} und schließe ihn neu ab, dann ist er exakt. Ein Umriss, der über die Achse hinausreicht, lässt sich nicht exakt bauen und wird wie bisher ein Netz.
 
@@ -91,7 +91,9 @@ Normalerweise wird die Fläche innerhalb eines geschlossenen Umrisses zum Körpe
 - Eine **offene Linie** wird zu einem Streifen, mittig auf der Linie. Unter {{ui:sketch.strokeCap}} wählst du, wie ihre Enden aussehen: {{ui:sketch.strokeCap.flat}}, {{ui:sketch.strokeCap.square}} (um die halbe Breite verlängert) oder {{ui:sketch.strokeCap.round}}.
 - {{ui:sketch.strokeJoin}} gilt für beide: {{ui:sketch.strokeJoin.miter}}, {{ui:sketch.strokeJoin.round}} oder {{ui:sketch.strokeJoin.bevel}}.
 
-Die Skizze behält die gezeichnete Linie. Öffnest du sie wieder, änderst du Linie und Kontur weiter, und ohne Häkchen wird wieder die Fläche gebaut. Kurven werden dabei in kurze gerade Stücke zerlegt. Beim Rotieren gibt es die Kontur nicht.
+Die Skizze behält die gezeichnete Linie. Öffnest du sie wieder, änderst du Linie und Kontur weiter, und ohne Häkchen wird wieder die Fläche gebaut. Kurven werden dabei in kurze gerade Stücke zerlegt.
+
+Beim Rotieren ist die Kontur eine dünne Wand: Zeichne die Wand einer Vase oder eines Bechers als **eine offene Linie** links von der Achse, setze das Häkchen bei {{ui:sketch.stroke}} und stelle die Breite ein, dann dreht die Rotation dieses Band. Was über die Achse hinausreicht, wird an ihr abgeschnitten.
 
 ## Füllung und Silhouette
 

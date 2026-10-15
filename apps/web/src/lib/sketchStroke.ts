@@ -175,7 +175,7 @@ function strokeClosedPaths(runtime: ManifoldToplevel, keep: Keep, loops: Vec[][]
  * The outline the stroked sketch fills, as a sketch of straight lines the usual extrusion builds.
  * Null when there is nothing to stroke (no stroke set, or the lines left no area).
  */
-export function strokedSketchProfile(runtime: ManifoldToplevel, profile: SketchProfile): SketchProfile | null {
+export function strokedSketchProfile(runtime: ManifoldToplevel, profile: SketchProfile, options: { clipToRevolveSide?: boolean } = {}): SketchProfile | null {
   const stroke = normalizeSketchStroke(profile.stroke);
   if (!stroke) return null;
   const paths = orderedCadSketchPaths(profile);
@@ -191,7 +191,11 @@ export function strokedSketchProfile(runtime: ManifoldToplevel, profile: SketchP
     const parts = [strokeClosedPaths(runtime, keep, closed, stroke), ...open.map((line) => strokeOpenPath(runtime, keep, line, stroke))]
       .filter((part): part is CrossSection => Boolean(part));
     if (!parts.length) return null;
-    const result = keep(keep(runtime.CrossSection.union(parts)).simplify(1e-6));
+    const stroked = keep(keep(runtime.CrossSection.union(parts)).simplify(1e-6));
+    // A revolve turns what lies left of its axis (x <= 0); a wide line near the axis may reach across it.
+    const result = options.clipToRevolveSide
+      ? keep(stroked.intersect(keep(new runtime.CrossSection([[[-1e6, -1e6], [0, -1e6], [0, 1e6], [-1e6, 1e6]]]))))
+      : stroked;
     polygons = result.toPolygons();
     if (!polygons.length || result.area() <= 1e-9) return null;
   } finally {

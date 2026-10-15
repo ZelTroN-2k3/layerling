@@ -99,10 +99,27 @@ export function escapeHtml(text) {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+/**
+ * Cyrillic has no letters of its own in an id, and the rule below drops what it
+ * cannot keep: a Russian heading would leave an empty id, and every heading of a
+ * chapter would share it. The letters are spelled out instead, the way the old
+ * branch wrote them, so the ids of the Russian guide do not change.
+ */
+const CYRILLIC_TRANSLITERATION = {
+  а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i",
+  й: "y", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r", с: "s", т: "t",
+  у: "u", ф: "f", х: "kh", ц: "ts", ч: "ch", ш: "sh", щ: "shch", ъ: "", ы: "y",
+  ь: "", э: "e", ю: "yu", я: "ya",
+};
+
 export function slugify(text) {
   return text
     .toLowerCase()
     .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
+    // Cyrillic is spelled out first - the accent stripping below would take the
+    // breve off "й" and leave "и", which would spell "Настройки" as "nastroiki"
+    // and move the id a Russian heading already had.
+    .replace(/[а-яё]/g, (letter) => CYRILLIC_TRANSLITERATION[letter] ?? letter)
     // Other accents lose their mark, so Dutch "geïmporteerde" reads "geimporteerde", not "ge-mporteerde".
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/<[^>]*>/g, "")
@@ -231,8 +248,10 @@ export function renderBlocks(markdown, context) {
       context.references?.shots.add(name);
       const size = context.imageSize?.(name);
       const dimensions = size ? ` width="${size.width}" height="${size.height}"` : "";
-      const dir = GUIDE_LANGUAGES[context.language].dir;
-      html.push(`<figure><img src="/${dir}/img/${name}.webp" alt="${escapeHtml(alt)}"${dimensions} loading="lazy"><figcaption>${renderInline(alt, context)}</figcaption></figure>`);
+      // A language that has no picture of its own uses the English one where it
+      // lies, instead of a copy of it in its own folder (see the copy below).
+      const source = context.imageSrc?.(name) ?? `/${GUIDE_LANGUAGES[context.language].dir}/img/${name}.webp`;
+      html.push(`<figure><img src="${source}" alt="${escapeHtml(alt)}"${dimensions} loading="lazy"><figcaption>${renderInline(alt, context)}</figcaption></figure>`);
       index += 1;
       continue;
     }
@@ -763,16 +782,26 @@ export async function buildGuide({ log = console.log } = {}) {
     await rm(outputRoot, { recursive: true, force: true });
     await mkdir(join(outputRoot, "img"), { recursive: true });
 
-    // The pictures are shared: those of the English interface first, and a language's own over them.
+    // The pictures are shared: a language copies only the ones it has of its own,
+    // and every other picture is taken where the English guide keeps it. Copying
+    // them into each language folder cost 3 MB per language in the export, which
+    // the desktop package pays for in its budget.
+    const ownPictures = new Set();
     const imageSizes = new Map();
-    for (const code of language === "en" ? ["en"] : ["en", language]) {
-      const imageDirectory = join(guideSource, "images", code);
-      if (!existsSync(imageDirectory)) continue;
-      for (const file of await readdir(imageDirectory)) {
+    const ownImageDirectory = join(guideSource, "images", language);
+    if (existsSync(ownImageDirectory)) {
+      for (const file of await readdir(ownImageDirectory)) {
         if (!file.endsWith(".webp")) continue;
-        await copyFile(join(imageDirectory, file), join(outputRoot, "img", file));
-        imageSizes.set(file.slice(0, -5), webpSize(await readFile(join(imageDirectory, file))));
+        ownPictures.add(file.slice(0, -5));
+        await copyFile(join(ownImageDirectory, file), join(outputRoot, "img", file));
+        imageSizes.set(file.slice(0, -5), webpSize(await readFile(join(ownImageDirectory, file))));
       }
+    }
+    for (const file of await readdir(join(guideSource, "images", "en"))) {
+      if (!file.endsWith(".webp")) continue;
+      const name = file.slice(0, -5);
+      if (imageSizes.has(name)) continue;
+      imageSizes.set(name, webpSize(await readFile(join(guideSource, "images", "en", file))));
     }
 
     /** Where a chapter lives in each language (the same page in the others), or their overview when it does not exist there. */
@@ -791,6 +820,7 @@ export async function buildGuide({ log = console.log } = {}) {
         values,
         shortcutsHtml,
         imageSize: (name) => imageSizes.get(name) ?? null,
+        imageSrc: (name) => (ownPictures.has(name) ? `/${strings.dir}/img/${name}.webp` : `/${GUIDE_LANGUAGES.en.dir}/img/${name}.webp`),
         references: { uiKeys: new Set(), shots: new Set(), chapters: new Set() },
       };
       let rendered;

@@ -21,6 +21,8 @@ Op een tablet of telefoon zoomen twee vingers (spreiden en knijpen) en verschuiv
 
 Een tekentablet met pen gedraagt zich als een muis: de punt is de linkerknop, de knop op de pen de rechter, voor het draaien van de weergave en voor het menu. De sneltoetsen van het tablet kun je in de driver instellen op de [sneltoetsen](chapter:sneltoetsen) van layerling.
 
+**Werk op een tablet het liefst met een stylus.** De punt is veel fijner dan een vingertop en bedekt niet wat je wilt raken, dus kleine punten, dunne lijnen en grepen in een schets, meetpunten en randen worden precies geraakt, en langer werken is minder vermoeiend. layerling laat een vinger al wat verder reiken naar punten, lijnen, grepen en randen dan een muisaanwijzer, maar met een stylus blijft het nauwkeuriger.
+
 ### De weergavekubus
 
 De kubus linksboven laat zien waar je naar kijkt. Een klik op een van de zijden springt naar het rechte aanzicht van boven, onder, voren, achteren, links of rechts. Een klik op een hoek van de kubus bekijkt het model schuin vanuit die hoek, en een klik vlak bij een rand kijkt vanaf die rand, tussen twee zijden in; de plek licht op zolang de aanwijzer erop staat. De cijfertoetsen [[1]] tot en met [[6]] geven ook de rechte aanzichten. Houd daarbij [[Shift]] ingedrukt en de weergave zoomt ook in op de selectie, zoals [[Shift]]+[[F]] doet.

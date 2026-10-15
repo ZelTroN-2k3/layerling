@@ -1,5 +1,171 @@
 [
   {
+    "version": "1.74.0",
+    "items": [
+      {
+        "title": {
+          "de": "Russisch als Sprache",
+          "en": "Russian as a language",
+          "fr": "Russe comme langue"
+        },
+        "body": {
+          "de": "layerling gibt es jetzt auch auf Russisch: die ganze Oberfläche und die 16 Kapitel der Anleitung. Die Sprache wird für einen Browser mit russischer Einstellung von selbst gewählt und lässt sich in der Sprachliste ändern. Übersetzt mit einem KI-Assistenten; falsche Wörter lassen sich mit einem kleinen Pull Request auf GitHub verbessern.",
+          "en": "layerling now speaks Russian: the whole interface and the 16 chapters of the guide. The language is chosen automatically for a browser set to Russian and can be changed in the language list. It was translated with an AI assistant; wrong words are fixed with a small pull request on GitHub.",
+          "fr": "layerling est désormais disponible en russe : l'ensemble de l'interface et les 16 chapitres du guide. La langue est sélectionnée automatiquement pour un navigateur défini sur le russe et peut être modifiée dans la liste des langues. Traduit avec l'aide d'un assistant IA ; les corrections peuvent être proposées via une petite pull request sur GitHub."
+        }
+      },
+      {
+        "title": {
+          "de": "Rotation aus einer Linie mit Breite",
+          "en": "Revolve from a line with a width",
+          "fr": "Révolution à partir d'une ligne avec épaisseur"
+        },
+        "body": {
+          "de": "In einer Rotationsskizze gibt es den Knopf Kontur wieder. Zeichne die Wand einer Vase oder eines Bechers als eine offene Linie links von der Achse, setze das Häkchen bei Kontur und stelle die Breite ein: Die Rotation dreht dieses Band zu einer dünnen Wand, wie in Tinkercad. Was über die Achse hinausreicht, wird abgeschnitten. Der Körper behält die gezeichnete Linie, mit „Skizze bearbeiten“ machst du dort weiter.",
+          "en": "A revolve sketch has the Stroke button again. Draw the wall of a vase or a cup as one open line to the left of the axis, tick the stroke and set the width: the revolve turns that band into a thin wall, as in Tinkercad. What reaches across the axis is cut off. The body keeps the drawn line, so Edit sketch goes on from there.",
+          "fr": "Dans une esquisse de révolution, le bouton Trait est de retour. Dessinez la paroi d'un vase ou d'une tasse comme une ligne ouverte à gauche de l'axe, cochez le trait et réglez l'épaisseur : la révolution transforme cette bande en une fine paroi, comme dans Tinkercad. Ce qui traverse l'axe est coupé. Le corps conserve la ligne tracée, de sorte que l'édition de l'esquisse reprend à partir de là."
+        }
+      },
+      {
+        "title": {
+          "de": "Die Objektliste bleibt offen",
+          "en": "The object list stays open",
+          "fr": "La liste des objets reste ouverte"
+        },
+        "body": {
+          "de": "Die Objektliste (Strg+Umschalt+O) begann bei jedem Entwurf und nach jedem Neuladen geschlossen. Jetzt bleibt sie offen oder geschlossen, wie du sie verlassen hast, für alle Entwürfe, in diesem Browser.",
+          "en": "The object list (Ctrl+Shift+O) started closed with every design and after every reload. It now stays open or closed as you left it, for all designs, in this browser.",
+          "fr": "La liste des objets (Ctrl+Maj+O) s'ouvrait fermée à chaque nouveau projet ou rechargement. Elle reste désormais ouverte ou fermée selon l'état où vous l'avez laissée, pour toutes les conceptions, dans ce navigateur."
+        }
+      },
+      {
+        "title": {
+          "de": "Ausrichten und Raster-Einrasten unter Anordnen",
+          "en": "Align and Snap to Grid under Arrange",
+          "fr": "Aligner et Aligner sur la grille sous Arranger"
+        },
+        "body": {
+          "de": "Ausrichten und Am Raster ausrichten standen im Menüband unter Anpassen, bei Fase, Verrundung und Aushöhlen. Sie platzieren eine Form, sie verändern sie nicht, und stehen jetzt ganz vorn in der Gruppe Anordnen, neben Auf die Arbeitsebene fallen lassen, Auf Fläche legen und Zentrieren.",
+          "en": "Align and Snap to Grid sat in the ribbon under Modify, beside Chamfer, Fillet and Hollow. They place a shape and do not change it, so they now head the Arrange group, beside Drop to workplane, Lay flat and Center on workplane.",
+          "fr": "Aligner et Aligner sur la grille se trouvaient dans le ruban sous Modifier, à côté de Chanfrein, Congé et Évider. Ils positionnent une forme sans la modifier : ils ouvrent désormais le groupe Arranger, aux côtés de Poser sur le plan de travail, Poser à plat et Centrer sur le plan de travail."
+        }
+      },
+      {
+        "title": {
+          "de": "Offener Schnitt wird gemeldet",
+          "en": "An open cut is reported",
+          "fr": "Alerte en cas de coupe laissée ouverte"
+        },
+        "body": {
+          "de": "Hat die Oberfläche eines importierten Teils Lücken, etwa ein STEP-Teil mit kleinen Rissen im Netz, bleibt die Schnittfläche beim Gruppieren mit einem Loch offen, und das Teil ist innen hohl. Die Meldung danach sagt das jetzt mit der Zahl der offenen Kanten und schlägt vor, das Teil als STL oder 3MF zu importieren.",
+          "en": "When the surface of an imported part has gaps, a STEP part with a few cracks in its mesh for example, the cut face stays open when you group it with a hole, and the part is hollow inside. The message afterwards now says so, with the number of open edges, and suggests importing the part as STL or 3MF.",
+          "fr": "Si la surface d'une pièce importée présente des discontinuités (comme une pièce STEP dont le maillage a quelques fissures), la face découpée reste ouverte lors du regroupement avec un perçage et la pièce est creuse. Le message signale désormais cela avec le nombre d'arêtes ouvertes et suggère d'importer la pièce en STL ou 3MF."
+        }
+      },
+      {
+        "title": {
+          "de": "Winkellineal: jede Zahl für sich",
+          "en": "Framing square: every number on its own",
+          "fr": "Équerre d'encadrement : chaque mesure est indépendante"
+        },
+        "body": {
+          "de": "Neben jeder grünen Zahl des Winkellineals sitzt ein kleiner Schalter: Die Zahl zählt bis zum Rand oder bis zur Mitte des Körpers, jede für sich. So setzt du einen stehenden Zylinder mit der Mitte in den beiden Armen und der Unterseite in der Höhe, einen liegenden mit der Mitte quer und einem Ende längs. Der Knopf am Griff schaltet weiter alle drei zugleich. Die Höhenbemaßung steht jetzt außerhalb des Körpers, an der Kante, die auf dem Bildschirm am weitesten rechts liegt.",
+          "en": "Beside each green number of the framing square sits a small switch: the number counts to the edge or to the middle of the body, each on its own. A standing cylinder is placed by its middle in the two arms and its bottom in height, a lying one by its middle across and an end along. The button at the handle still switches all three at once. The height dimension now stands outside the body, on the edge furthest right on the screen.",
+          "fr": "À côté de chaque chiffre vert de l'équerre d'encadrement se trouve un petit commutateur : la valeur mesure jusqu'au bord ou jusqu'au centre du corps, de façon indépendante. Un cylindre vertical peut ainsi être calé par son centre sur les deux bras et par sa base en hauteur. Le bouton sur la poignée bascule toujours les trois axes ensemble. La dimension de hauteur s'affiche désormais à l'extérieur du corps, sur l'arête la plus à droite de l'écran."
+        }
+      },
+      {
+        "title": {
+          "de": "Neuer Name beim STL-Export fragt nach einer neuen Datei",
+          "en": "A new name in the STL export asks for a new file",
+          "fr": "Un nouveau nom lors de l'export STL demande un nouveau fichier"
+        },
+        "body": {
+          "de": "In Chrome und Edge schrieb jeder STL-Export in die Datei, die du beim ersten Mal gewählt hast, und das Dateinamenfeld tat nichts mehr. Tippst du dort jetzt einen anderen Namen, fragt layerling, wo die neue Datei liegen soll. Unter dem Fenster steht, ob in die bisherige Datei geschrieben wird oder gefragt wird.",
+          "en": "In Chrome and Edge every STL export wrote into the file you chose the first time, and the file name field did nothing any more. If you now type another name there, layerling asks where the new file should go. The line under the window says whether the old file is written or you are asked.",
+          "fr": "Dans Chrome et Edge, chaque export STL écrivait dans le fichier choisi la première fois, et le champ du nom de fichier ne réagissait plus. Si vous saisissez un autre nom, layerling vous demande où enregistrer le nouveau fichier. La mention sous la fenêtre indique si l'ancien fichier est écrasé ou si un nouvel emplacement est demandé."
+        }
+      },
+      {
+        "title": {
+          "de": "Doppelklick auf einen Schieber setzt ihn zurück",
+          "en": "A double click on a slider resets it",
+          "fr": "Un double-clic sur un curseur réinitialise sa valeur"
+        },
+        "body": {
+          "de": "Ein Doppelklick auf einen Schieber in den Einstellungen einer Form setzt den Wert auf seine Vorgabe zurück, wie der kleine Pfeil neben dem Namen. Das gilt auch für sieben Schieber der Arbeitsbereich-Einstellungen, etwa Zoomgeschwindigkeit und Schattenstärke.",
+          "en": "A double click on a slider in a shape's settings sets the value back to its default, like the small arrow next to its name. It works for seven sliders of the workspace settings as well, such as zoom speed and shadow strength.",
+          "fr": "Un double-clic sur un curseur dans les paramètres d'une forme rétablit sa valeur par défaut, tout comme la petite flèche à côté de son nom. Cela s'applique également à sept curseurs des paramètres de l'espace de travail (vitesse de zoom, intensité et douceur des ombres, etc.)."
+        }
+      },
+      {
+        "title": {
+          "de": "Raster: die gezogene Fläche landet auf dem Raster",
+          "en": "Snap grid: the dragged face lands on the grid",
+          "fr": "Grille magnétique : la face déplacée s'aligne sur la grille"
+        },
+        "body": {
+          "de": "Beim Ziehen des Höhenpfeils rastete die Änderung der Höhe in ganzen Rasterschritten ein: Ein 0,5 mm hoher Körper ging auf einem 1-mm-Raster auf 1,5 mm. Jetzt landet die gezogene Fläche selbst auf dem Raster der Arbeitsebene (oben, beim unteren Griff die Unterseite), der Körper geht also auf 1,0 mm. Der Hebepfeil setzt die Unterseite genauso aufs Raster. Eine gekippte Auswahl behält den alten Schritt.",
+          "en": "Dragging the height handle snapped the change of the height by whole grid steps: a body 0.5 mm high on a 1 mm grid went to 1.5 mm. Now the face you drag lands on the grid of the workplane (the top, or the bottom for the lower handle), so it goes to 1.0 mm. The lift arrow puts the bottom of the body on the grid the same way. A tilted selection keeps the old step.",
+          "fr": "Lors du réglage de la hauteur avec la poignée, la face déplacée (le haut, ou le bas pour la poignée inférieure) s'aligne désormais directement sur le quadrillage du plan de travail : un corps de 0,5 mm sur une grille de 1 mm passe ainsi à 1,0 mm au lieu de 1,5 mm. La flèche d'élévation place la base du corps sur la grille de la même manière."
+        }
+      }
+    ]
+  },
+  {
+    "version": "1.73.0",
+    "items": [
+      {
+        "title": {
+          "de": "Maßband rastet an Bezugspunkten ein",
+          "en": "The tape measure snaps to reference points",
+          "fr": "Le ruban à mesurer s'aimante aux points de référence"
+        },
+        "body": {
+          "de": "Markiere die Mitte eines Kreises oder die Mitte einer Linie als Bezugspunkt (Fadenkreuz-Knopf unter einer Messung oder Rechtsklickmenü) und klicke diesen Punkt dann mit dem Maßband an: Du misst von dort aus. Das Maßband rastet an Bezugspunkten ein wie an Ecken.",
+          "en": "Mark the centre of a circle or the middle of a line as a reference point (the crosshair button under a measurement, or the right-click menu) and then click that point with the tape measure: you measure from there. The tape measure snaps to reference points like to corners.",
+          "fr": "Désignez le centre d'un cercle ou le milieu d'une arête comme point de référence (bouton réticule sous une mesure ou menu clic droit), puis cliquez sur ce point avec le mètre ruban pour mesurer à partir de lui. Le ruban s'aimante aux points de référence comme aux sommets."
+        }
+      },
+      {
+        "title": {
+          "de": "Touch: ein Finger greift weiter",
+          "en": "Touch screens: a finger reaches further",
+          "fr": "Écrans tactiles : interaction tactile plus précise"
+        },
+        "body": {
+          "de": "Auf einem Touchscreen trifft ein Finger kleine Ziele jetzt leichter. In der Skizze geht ein Druck neben einen Punkt, einen Griff oder eine dünne Linie an dieses Teil. Maßband, Schnittmessung und die Kanten bei Fase und Verrundung greifen für einen Finger aus größerer Entfernung. Maus und Stift behalten ihre bisherige Reichweite. Auf einem Tablet bleibt ein Stift die genauere Wahl.",
+          "en": "On a touch screen a finger now hits small targets more easily. In the sketch, a press beside a point, a handle or a thin line goes to that part. The tape measure, the section measure and the edges of the chamfer and fillet tools catch a finger from a larger distance. A mouse and a stylus keep the reach they had. On a tablet a stylus remains the more precise choice.",
+          "fr": "Sur écran tactile, un doigt atteint plus facilement les petites cibles. Dans l'esquisse, appuyer à côté d'un point, d'une poignée ou d'une ligne fine sélectionne cet élément. Le ruban à mesurer, la coupe et les arêtes des outils congé/chanfrein réagissent à plus grande distance pour un doigt. La souris et le stylet conservent leur précision habituelle."
+        }
+      },
+      {
+        "title": {
+          "de": "Detailreiche SVG-Dateien lassen sich wieder importieren",
+          "en": "Detailed SVG files import again",
+          "fr": "Import à nouveau fonctionnel des SVG très détaillés"
+        },
+        "body": {
+          "de": "Eine SVG mit einer sehr detailreichen Kontur, etwa eine nachgezeichnete Grafik, brach mit „Maximum call stack size exceeded“ ab und kam nicht herein. Beim Bau des Körpers wurden alle Dreiecke in einem einzigen Aufruf übergeben, und der hat eine Größengrenze, die tausende Punkte überschreiten. Jetzt werden sie einzeln angefügt, und die Datei importiert.",
+          "en": "An SVG with one very detailed outline, such as a traced drawing, stopped with \"Maximum call stack size exceeded\" and did not come in. Building the body handed all its triangles over in one call, which has a size limit that thousands of points overrun. They are now added one at a time, and the file imports.",
+          "fr": "Un fichier SVG avec un contour très riche en points (comme un tracé vectorisé) pouvait planter avec l'erreur « Maximum call stack size exceeded ». Les triangles du corps sont désormais ajoutés un par un plutôt qu'en un seul bloc, évitant tout dépassement de pile."
+        }
+      },
+      {
+        "title": {
+          "de": "Winkellineal: kein Linienfächer mehr",
+          "en": "Corner ruler: no more fan of lines",
+          "fr": "Règle d'angle : correction des lignes parasites en éventail"
+        },
+        "body": {
+          "de": "Schwebt die Kamera dicht über dem Winkellineal, wurde der Teil eines Arms hinter der Kamera gespiegelt gezeichnet und ergab einen Fächer feiner Linien quer über das Bild. Linien, Teilstriche, Zahlen und Maßpfeile des Lineals werden jetzt an der Kamera abgeschnitten, gezeichnet wird nur, was davor liegt.",
+          "en": "With the camera hovering close above the corner ruler, the part of an arm behind the camera was drawn mirrored and made a fan of fine lines across the picture. The ruler's lines, ticks, numbers and distance arrows are now cut off at the camera, and only what is in front of it is drawn.",
+          "fr": "Lorsque la caméra était très proche de la règle d'angle, la portion d'un bras située derrière l'objectif apparaissait en miroir sur l'écran sous forme d'un faisceau de lignes. Les lignes, graduations, chiffres et flèches de mesure sont désormais masqués dès qu'ils passent derrière la caméra."
+        }
+      }
+    ]
+  },
+  {
     "version": "1.72.3",
     "items": [
       {

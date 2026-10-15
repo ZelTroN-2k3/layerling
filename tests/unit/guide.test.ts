@@ -19,7 +19,7 @@ import { tools } from "../../scripts/layerling-mcp-tools.mjs";
 import { GUIDE_CHAPTERS, GUIDE_SECTIONS, guideChapterForShape, guideHref, guideSectionForShape } from "@/lib/guideLinks";
 
 const root = join(__dirname, "..", "..");
-const LANGUAGES = ["de", "en", "nl"] as const;
+const LANGUAGES = ["de", "en", "nl", "ru"] as const;
 
 async function contextFor(language: (typeof LANGUAGES)[number]) {
   return {
@@ -91,6 +91,11 @@ describe("guide markdown", () => {
     expect(slugify("Körper & Aussparungen")).toBe("koerper-aussparungen");
   });
 
+  it("spells a heading in Cyrillic out, so it has an id of its own", () => {
+    expect(slugify("Резьба и механика")).toBe("rezba-i-mekhanika");
+    expect(slugify("Как отменить обработку кромки")).toBe("kak-otmenit-obrabotku-kromki");
+  });
+
   it("reads the size of a WebP picture", () => {
     const directory = join(root, "docs", "guide", "images", "de");
     const file = readdirSync(directory).find((name) => name.endsWith(".webp"));
@@ -129,11 +134,12 @@ describe("guide footer", () => {
 
 describe("guide content", () => {
   it("has the same chapters in every language", async () => {
-    const [de, en, nl] = await Promise.all(LANGUAGES.map((language) => readChapters(language)));
+    const [de, en, nl, ru] = await Promise.all(LANGUAGES.map((language) => readChapters(language)));
     expect(de.length).toBeGreaterThan(10);
     expect(en.map((chapter: { number: string }) => chapter.number)).toEqual(de.map((chapter: { number: string }) => chapter.number));
     expect(nl.map((chapter: { number: string }) => chapter.number)).toEqual(en.map((chapter: { number: string }) => chapter.number));
-    for (const chapter of [...de, ...en, ...nl]) {
+    expect(ru.map((chapter: { number: string }) => chapter.number)).toEqual(en.map((chapter: { number: string }) => chapter.number));
+    for (const chapter of [...de, ...en, ...nl, ...ru]) {
       expect(chapter.title, chapter.file).not.toBe(chapter.slug);
       expect(chapter.summary, chapter.file).not.toBe("");
     }
@@ -159,6 +165,44 @@ describe("guide content", () => {
     }
   });
 
+  it("stands opposite the English section it answers, in every language", async () => {
+    // The sections run in the same order in every language, and the names inside
+    // one (interface keys, pictures) stay the same in a translation: a section
+    // put in the wrong place, or two of them the other way round, shows up here.
+    const names = (text: string) =>
+      [...text.matchAll(/\{\{ui:[^}]+\}\}|\[\[[^\]]+\]\]|\(shot:[\w-]+\)/g)].map((match) => match[0].toLowerCase());
+    const sectionsOf = (body: string) =>
+      body
+        .split(/\r?\n(?=## )/)
+        .filter((part) => part.startsWith("## "))
+        .map((part) => names(part));
+    const overlap = (left: string[], right: string[]) => {
+      const a = new Set(left);
+      const b = new Set(right);
+      if (a.size === 0 || b.size === 0) return 0;
+      let common = 0;
+      for (const name of a) if (b.has(name)) common += 1;
+      return common / (a.size + b.size - common);
+    };
+    const english = await readChapters("en");
+    for (const language of LANGUAGES.filter((code) => code !== "en")) {
+      const other = await readChapters(language);
+      for (const chapter of english) {
+        const mine = other.find((entry: { number: string }) => entry.number === chapter.number);
+        expect(mine, `${language}: chapter ${chapter.number}`).toBeDefined();
+        const here = sectionsOf(chapter.body);
+        const there = sectionsOf(mine!.body);
+        expect(there.length, `${language}/${chapter.file}`).toBe(here.length);
+        for (let index = 0; index < here.length; index += 1) {
+          if (here[index].length === 0) continue;
+          const scores = here.map((names, at) => ({ at, score: overlap(there[index], names) }));
+          const best = scores.reduce((left, right) => (right.score > left.score ? right : left));
+          expect(best.at, `${language}/${chapter.file}: section ${index + 1} of ${here.length}`).toBe(index);
+        }
+      }
+    }
+  });
+
   it("shows the same pictures in every language", async () => {
     const shots = async (language: (typeof LANGUAGES)[number]) => {
       const names = new Set<string>();
@@ -169,6 +213,7 @@ describe("guide content", () => {
     };
     expect(await shots("en")).toEqual(await shots("de"));
     expect(await shots("nl")).toEqual(await shots("en"));
+    expect(await shots("ru")).toEqual(await shots("en"));
   });
 
   it("has a scene for every picture", async () => {
