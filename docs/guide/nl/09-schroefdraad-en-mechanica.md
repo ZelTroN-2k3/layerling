@@ -1,0 +1,146 @@
+---
+title: Schroefdraad, tandwielen en andere onderdelen
+summary: Schroeven, moeren en getapte gaten die op elkaar passen, plus tandwiel, veer, gebogen buis, zwaluwstaart, druppelgat, verzinkboring en verzinking.
+---
+
+Naast de basisvormen bevat de bibliotheek een paar onderdelen die je zelf maar moeizaam in elkaar zou zetten. Ze zijn allemaal achteraf aan te passen in hun instellingen.
+
+## Schroefdraad
+
+Kies {{ui:shape.thread}} in de vormenbibliotheek. Onder {{ui:inspector.threadRole}} bepaal je wat het moet worden:
+
+- **{{ui:thread.rod}}:** een cilinder met schroefdraad, bijvoorbeeld een schroef zonder kop.
+- **{{ui:thread.screw}}:** met een kop. Je kiest de {{ui:inspector.threadHead}}: {{ui:thread.headCylinder}}, {{ui:thread.headCountersunk}} of {{ui:thread.headHex}}.
+- **{{ui:thread.nut}}:** de bijpassende moer.
+- **{{ui:thread.bore}}:** een getapt gat. Het is een gat. Sleep het in een onderdeel, groepeer de twee, en het onderdeel heeft binnendraad.
+
+![Een schroef met een cilinderkop. Rechts: soort en kopvorm, verder omlaag maat, spoed en profiel.](shot:thread-screw)
+
+De maat kies je onder {{ui:prop.threadSize}} uit een lijst: metrisch van M2 tot M12, de inchmaten UNC en UNF van No. 4 tot 1 inch, en de pijpdraden G1/16 tot G4. Kies je {{ui:thread.customSize}}, dan stel je {{ui:prop.diameter}} en {{ui:prop.pitch}} zelf in. Bij een inchmaat of een G-maat vraagt het veld om {{ui:prop.threadsPerInch}} in plaats van de spoed in millimeters.
+
+De lijst groepeert de maten per serie, en een regel onder het veld noemt de serie van de maat die je koos, met voorbeelden die je uit het dagelijks leven kent:
+
+- **M, metrisch grof:** de ISO metrische grove draad volgens ISO 261, zoals op standaard schroeven en moeren.
+- **UNC, Amerikaanse inch grof:** de camera- en statiefschroef is 1/4"-20 UNC (ISO 1222), grotere statiefkoppen gebruiken 3/8"-16 UNC.
+- **UNF, Amerikaanse inch fijn:** dezelfde diameters als UNC met een fijnere spoed (ASME B1.1).
+- **G, pijpdraad:** een doucheslang sluit aan met G1/2, een toevoerslang van een wasmachine met G3/4. Een buitenkraan eindigt in G3/4, kleinere kranen in G1/2; daar schroef je de kraanaansluiting van een kliksysteem voor tuinslangen op.
+
+De G-maten zijn de cilindrische Whitworth-pijpdraden volgens ISO 228-1, te vinden op fittingen voor water, gas, hydrauliek en pneumatiek. De maat noemt de pijp, niet de draad: een G1 meet 33,249 mm over de draad. Kies je een G-maat, dan wordt het profiel {{ui:thread.profileWhitworth}}, en kies je een metrische of inchmaat, dan gaat het terug naar {{ui:thread.profileV}}. Een {{ui:thread.profileTrapezoidal}}- of {{ui:thread.profileRound}}-profiel dat je zelf koos, blijft staan. De norm legt alleen de draad vast, dus de kop van een schroef en een moer op een G-maat krijgen dezelfde verhoudingen als op een diameter die je zelf instelt. De conische pijpdraden R, Rc en Rp zitten er niet bij.
+
+Meer instellingen:
+
+- **{{ui:prop.threadHand}}:** {{ui:thread.right}} of {{ui:thread.left}}.
+- **{{ui:prop.threadProfile}}:** {{ui:thread.profileV}} is het standaardprofiel van metrische en inchdraden, {{ui:thread.profileWhitworth}} dat van de G-pijpdraden: 55° met afgeronde toppen en bodems. {{ui:thread.profileTrapezoidal}} en {{ui:thread.profileRound}} hebben vlakke toppen en bodems. Dat print meestal betrouwbaarder, omdat er geen dunne punten ontstaan.
+- **{{ui:thread.profileCustom}}:** Een trapezium dat je zelf vormgeeft, met een vlakke top en een vlakke bodem van dezelfde breedte. {{ui:prop.threadFlankAngle}} is de hoek tussen de twee flanken van een tand: 60° is de scherpe V-draad, 30° de trapeziumdraad, en bij 90° of minder is geen flank vlakker dan 45°, zodat de draad zonder ondersteuning print. {{ui:prop.threadDepth}} en {{ui:prop.threadCoreDiameter}} zijn één maat op twee manieren gezegd: de kerndiameter is de diameter min tweemaal de diepte, en verander je de een, dan verandert de ander mee. Een nieuw eigen profiel begint met de diepte van de V-draad bij 60°. De diepte heeft grenzen die van de hoek en de spoed afhangen: niet ondieper dan een tiende van de spoed, niet dieper dan 40 % van de diameter, en niet zo diep dat de twee flanken meer dan negen tiende van de spoed innemen. Verander je de spoed, dan schaalt de diepte naar verhouding mee; schaal je de schroefdraad, dan ook. De speling en de afschuiningen werken zoals bij de andere profielen. Via de MCP-koppeling is het profiel `custom` met `threadFlankAngle` en `threadDepth`.
+- **{{ui:prop.clearance}}:** Voor moer en getapt gat de ruimte die ervoor zorgt dat een geprint paar echt draait. Hoe grover je printer werkt, hoe meer speling het paar nodig heeft. Het is de extra ruimte over de hele diameter, en de spleet tussen de flanken van een V-draad is maar ongeveer de helft daarvan, dus een geprint paar heeft meer nodig dan je zou verwachten: nieuwe moeren beginnen op 0,4 mm, 0,3 is krap en 0,5 ruim. Print eerst een testpaar. Draadeinden en schroeven hebben hier een eigen speling, die de bout in diameter zoveel dunner maakt. Die staat op 0. Welke kant de ruimte krijgt, hangt af van wat je combineert:
+  - **Geprinte schroef en geprinte moer:** laat de schroef op 0 en geef de moer de ruimte (de 0,4 mm waarmee hij begint).
+  - **Echte schroef in een geprinte moer of getapt gat:** de geprinte kant neemt alles, dus de moer houdt zijn 0,4 mm. Een krappere 0,3 mm is een test waard als de schroef wiebelt.
+  - **Geprinte schroef in een echte moer:** de echte moer heeft geen speling, dus moet de schroef dunner: hier 0,3 tot 0,4 mm, net zoveel als een geprinte moer zou hebben.
+- **{{ui:prop.axialClearance}}:** Voor moer en getapt gat de speling langs de as, bovenop de {{ui:prop.clearance}}. Elke tand van de moer wordt zoveel dunner, de diameter blijft zoals hij is. De reden: de {{ui:prop.clearance}} werkt alleen op de diameter en opent de flanken van een V-draad tot ongeveer 0,58 van zijn waarde. Wie lucht tussen de flanken wil, moet de diameter ver openen en krijgt daar zijdelingse speling voor terug. De speling langs de as haalt die twee uit elkaar. Hij staat op 0, zodat een opgeslagen schroefdraad niet verandert, en gaat tot hoogstens een vijfde van de spoed, omdat er daarboven niets van de tanden van de moer overblijft. Het veld bestaat alleen voor moer en getapt gat; draadeind en schroef houden hun eigen speling. Meer hieronder bij "Schroefdraad voor 3D-printen".
+- **{{ui:prop.threadChamferTop}}, {{ui:prop.threadChamferBottom}}, {{ui:prop.headChamfer}} en {{ui:prop.rimChamfer}}:** Afschuiningen aan de uiteinden, zodat de draad netjes begint en de kop geen scherpe rand heeft. Elk uiteinde van een draadeind, moer of getapt gat heeft een eigen afschuining, dus de bovenkant kan lang zijn en de onderkant kort of zonder. Een schroef heeft er maar één, aan zijn punt, met het label {{ui:prop.chamfer}}. Bij een moer of getapt gat is de afschuining de ruimte die de opening verder opent dan de buitendiameter; de kegel loopt onder 45 graden door tot aan de kern van de draad, zodat er bij de buitendiameter geen richel overblijft.
+
+Wissel je een schroefdraad tussen {{ui:thread.rod}} en {{ui:thread.bore}}, dan houdt hij zijn lengte. Een moer en een schroef beginnen vanuit hun standaardmaten.
+- **{{ui:prop.quality}}:** Hoe fijn de schroefdraad wordt berekend. Hoger is nauwkeuriger, maar trager.
+
+Geprinte schroefdraad is een onderwerp op zich. Maak eerst het paar van schroef en moer als test voordat je een groot onderdeel print, en stem de speling af op je printer.
+
+## Schroefdraad voor 3D-printen
+
+Een geprinte schroefdraad heeft op twee plekken lucht nodig, en die werken verschillend:
+
+- **Speling in de diameter ({{ui:prop.clearance}}):** maakt de moer wijder. De schroef heeft dan aan elke kant de halve waarde als lucht, 0,2 mm bij 0,4 mm. De draad loopt soepel, maar de schroef kan zijwaarts wiebelen.
+- **Speling langs de as ({{ui:prop.axialClearance}}):** maakt de tanden van de moer dunner. De schroef kan dan, als hij niet is aangedraaid, met die waarde heen en weer bewegen langs de as. Er komt geen extra lucht aan de zijkant bij.
+
+Samen vormen ze de spleet tussen de flanken: ongeveer 0,58 keer de speling in de diameter plus de speling langs de as. Een voorbeeld voor een spleet van 0,3 mm: vroeger was daar 0,5 mm in de diameter voor nodig, dat is 0,25 mm lucht aan elke kant. Nu doen 0,2 mm in de diameter (0,1 mm aan elke kant) en 0,2 mm langs de as het, en de spleet is 0,32 mm.
+
+**Gevolgen die je moet kennen**
+
+- **De schroef heeft speling langs de as.** Zonder belasting kan hij met die waarde heen en weer bewegen. Voor bevestigingen, deksels en behuizingen maakt dat niet uit; voor een spindel die precies moet positioneren wel, dus houd hem daar klein of op 0.
+- **De tanden van de moer worden dunner.** Met 0,3 mm bij een spoed van 1,75 mm is elke tand in het midden bijna een derde dunner en dus duidelijk minder sterk. Neem voor zwaar belaste onderdelen liever een grovere draad.
+- **Meer te berekenen.** De tandvorm krijgt extra punten, dus de schroefdraad heeft meer driehoeken en het berekenen duurt iets langer.
+- **Geen echte boog in de STEP-export bij het Whitworth-profiel.** Een {{ui:thread.profileWhitworth}}-draad met speling langs de as gaat naar het randgereedschap en de STEP-export als een tandvorm van rechte stukjes, niet met de echte cirkelbogen. Bij 0 blijft alles zoals voorheen.
+
+**Tips**
+
+1. **Eerst een testpaar.** Een schroef en een moer, elk maar 4 tot 6 mm hoog, kosten een paar minuten. Print drie paren met verschillende speling naast elkaar en neem het paar dat soepel draait en niet wiebelt.
+2. **Begin met waarden die vaak passen.** Speling in de diameter 0,2 tot 0,3 mm en speling langs de as 0,2 mm. Wiebelt de schroef zijwaarts, verlaag dan de speling in de diameter; loopt hij vast, verhoog dan de speling langs de as. Wil je liever zonder speling langs de as, gebruik dan zoals vroeger 0,4 mm in de diameter.
+3. **De speling langs de as moet minstens één laaghoogte zijn.** Wat kleiner is dan één laag, lost de printer niet op. Bij een laaghoogte van 0,2 mm is 0,2 mm een goed begin; bij 0,1 mm is minder genoeg.
+4. **Print schroef en moer rechtop.** De as wijst omhoog, zodat elke winding in hele lagen ligt en de flanken netjes worden. Liggend zakken de flanken door.
+5. **Fijne spoeden zijn lastig.** Onder ongeveer 1 mm spoed smelten de windingen vaak samen. Een grovere draad, of een {{ui:thread.profileTrapezoidal}}-profiel met vlakke toppen, print betrouwbaarder dan een fijne V-draad.
+6. **Vermijd dunne punten.** De V-draad heeft een smalle punt die de printer met zijn nozzlebreedte nauwelijks raakt. De profielen {{ui:thread.profileTrapezoidal}} en {{ui:thread.profileRound}} hebben vlakkere tanden.
+7. **Ontbramen en inlopen.** De eerste windingen zijn vaak stroef, omdat er kleine printresten op de flanken staan. Draai hem een paar keer heen en weer en hij loopt soepeler. De afschuining aan het begin helpt bij het indraaien.
+8. **Andere printer of ander filament.** De speling hangt af van de printer, het materiaal en de nozzle. Print het testpaar opnieuw als je een van die dingen verandert.
+
+Het randgereedschap neemt een schroefdraad als zijn exacte lichaam. Je kunt het onderdeel dat de draad draagt afschuinen of afronden terwijl de draad er al in zit, of de randen van een schroefkop, zie [Randen breken en lichamen uithollen](chapter:randen-en-uithollen). Het uitrekenen van de randen van een schroefdraad duurt even: een paar seconden voor een M6, ongeveer een halve minuut voor een G1/2-pijpdraad. De snelste manier om de rand van een schroefkop te breken is nog steeds de kopafschuining in de eigenschappen.
+
+## Tandwielen
+
+{{ui:shape.gear}} is er als {{ui:gear.spur}}, {{ui:gear.helical}}, {{ui:gear.herringbone}} en {{ui:gear.bevel}}, en als {{ui:gear.internal}} en {{ui:gear.rack}} (verderop). Nieuwe tandwielen hebben {{ui:gear.profileInvolute}} onder {{ui:prop.gearProfile}}: tanden met evolvente flanken, zoals tandwielgeneratoren en de techniek ze gebruiken. Zulke tanden rollen netjes over elkaar af. Je stelt het aantal {{ui:prop.teeth}} en de {{ui:prop.gearModule}} in, en de maat volgt daaruit: de buitendiameter is module × (tanden + 2), de steekcirkel module × tanden. Nieuwe tandwielen beginnen bij module 2. Twee tandwielen grijpen in elkaar als ze dezelfde module en dezelfde {{ui:prop.gearPressureAngle}} hebben (meestal 20°) en hun middelpunten (tanden + tanden) × module / 2 uit elkaar staan. Selecteer beide tandwielen en het eigenschappenpaneel geeft die hartafstand en hoe ver de middelpunten nu uit elkaar staan. Komt er dan een tand op een tand terecht in plaats van in een tussenruimte, draai dan een van de tandwielen een halve tand, dat is 180° gedeeld door zijn aantal tanden. {{ui:prop.gearBacklash}} haalt een beetje van de tanden af, zodat een geprint paar niet klemt. De waarde geldt voor het paar, en elk tandwiel neemt de helft; 0,2 mm is een goed begin, 0 geeft het exacte tandwiel. Onder de grondcirkel loopt de flank recht omlaag naar de voet en wordt hij niet ondersneden zoals een frees dat zou doen. Dat past bij printen, maar een heel klein rondsel onder ongeveer 17 tanden kan aan de voet licht aanlopen.
+
+Een tandwiel met schuine tanden krijgt er de {{ui:prop.helixAngle}} bij. Bij evolvente tanden is dat de echte schroefhoek op de steekcirkel: twee tandwielen met schuine tanden grijpen in elkaar als ze dezelfde module en dezelfde hoek hebben, de een positief en de ander negatief. Het {{ui:gear.herringbone}} bestaat uit twee schuine helften die tegengesteld draaien: de tanden lopen tot halverwege de hoogte de ene kant op en daarna terug, als een pijl. Dat heeft voor 3D-printen twee voordelen: het tandwiel centreert zich op zijn as, en het heeft geen axiale kracht, omdat de krachten van de twee helften elkaar opheffen. Een tandwiel met schuine tanden duwt daarentegen zijwaarts langs zijn as. Je stelt de {{ui:prop.helixAngle}} en de {{ui:prop.helixQuality}} in zoals bij het tandwiel met schuine tanden; de hoek geldt voor elke helft. Twee visgraattandwielen grijpen in elkaar als ze dezelfde module en dezelfde hoek met tegengesteld teken hebben, de een positief en de ander negatief. Er zit geen groef in het midden, zoals bij gefreesde visgraattandwielen: de twee helften lopen zonder trede in elkaar over. Het randgereedschap en de STEP-export nemen het visgraattandwiel als driehoeksmesh, niet als exact lichaam.
+
+Het kegeltandwiel neemt de evolvente tanden en maakt ze naar boven toe kleiner. Dat is een benadering, geen exact uitgewerkt kegelwielpaar.
+
+{{ui:gear.profileRound}} zijn ronde tanden uit bogen, zoals het Useful gear van Tinkercad: top en tussenruimte lopen zonder hoek in elkaar over. Kleine tandwielen printen zo vergevingsgezinder en draaien soepeler, en op een knop geven de tanden een prettige grip. Ook ronde tanden stel je in met {{ui:prop.teeth}}, {{ui:prop.gearModule}} en {{ui:prop.gearBacklash}}; ze hebben geen drukhoek. Ze zijn lager dan evolvente tanden, dus de buitendiameter is module × (tanden + 1,2). Ronde tandwielen met dezelfde module grijpen in elkaar, op dezelfde hartafstand als evolvente; met een evolvent tandwiel passen ze niet.
+
+{{ui:gear.profileSimple}} zijn de rechte tanden die elk tandwiel tot nu toe had. Daar stel je {{ui:prop.toothSize}} en {{ui:prop.toothWidth}} met de hand in. Oudere ontwerpen houden ze tot je de tandvorm verandert. Alle drie de tandvormen hebben het {{ui:prop.centerHole}}.
+
+Het {{ui:gear.internal}} heeft zijn tanden naar binnen gericht: een ring waarin een kleiner tandwiel loopt, zoals het buitenwiel van een planetaire overbrenging. Je stelt het in zoals een evolvent of rond tandwiel, met {{ui:prop.teeth}}, {{ui:prop.gearModule}} en {{ui:prop.gearBacklash}}, plus de {{ui:prop.gearRim}}, de ring buiten de tanden. De buitendiameter is module × (tanden + 2,5) plus tweemaal de velg, met ronde tanden module × (tanden + 1,7). Een tandwiel met dezelfde module loopt erin als zijn middelpunt (ringtanden − zijn tanden) × module / 2 van het middelpunt van de ring staat; selecteer beide en het eigenschappenpaneel geeft die afstand. Voor een planetaire overbrenging geldt: ringtanden = zontanden + 2 × planeettanden, bijvoorbeeld 30 = 12 + 2 × 9. Een binnentandwiel heeft geen middengat, het is zelf de ring. Tussen 26 en 33 tanden zijn de toppen tot een kwart module korter, omdat er anders een piepklein randje bij de grondcirkel ontstaat; het ingrijpen verandert daar niet door.
+
+De {{ui:gear.rack}} is het tandwiel met een oneindige straal: een staaf met tanden langs één kant, waarvan de flanken bij evolvente tanden rechte lijnen onder de drukhoek zijn. De breedte (langs X) is tanden × steek, waarbij de steek π × module is, zodat tandheugels van één module aan elkaar sluiten, met elk uiteinde in een tussenruimte. De lengte (langs Y) is de dikte van de staaf en vrij te kiezen, zolang de tanden en een halve millimeter staaf erin passen. De tanden wijzen naar voren, naar de kijker in de beginweergave; draai de tandheugel zoals je hem nodig hebt. Een tandwiel met dezelfde module rolt erover als zijn middelpunt zijn tanden × module / 2 vóór de steeklijn staat; de steeklijn ligt een module achter de tandtoppen, met ronde tanden 0,6 module. Binnentandwiel en tandheugel zijn er met evolvente en met ronde tanden, niet met eenvoudige; wissel je van tandwielsoort, dan blijft de module behouden.
+
+Het randgereedschap en de STEP-export nemen elk tandwiel als zijn exacte lichaam, evolvente flanken als vloeiende krommen. Een tandwiel met schuine tanden op een ovale voetafdruk blijft een driehoeksmesh, en dat geldt ook voor een tandwiel met schuine evolvente tanden vanaf ongeveer 31 tanden. Kleine tanden beperken hoe ver randen afgerond kunnen worden: bij een tandwiel met eenvoudige tanden, 30 mm doorsnee met 12 tanden, is het vlakke stuk tussen twee tanden aan de voet maar ongeveer 0,65 mm breed, dus het afronden van alle randen lukt tot ongeveer 0,5 mm, en bij een kegeltandwiel, waarvan de bovenkant kleiner is, tot ongeveer 0,4 mm. De tanden van een tandwiel met schuine tanden hellen, waardoor dat vlakke stuk over de schuine randen smaller wordt: hoe groter de schroefhoek ten opzichte van de hoogte van het tandwiel, hoe kleiner de afronding die past. De randen van de twee vlakke uiteinden kunnen worden afgerond, maar alleen die randen afschuinen mislukt in de CAD-kernel; rond ze af, of schuin alle randen samen af met een kleinere maat, zoals 0,2 mm.
+
+## Veren
+
+De {{ui:shape.spring}} heeft {{ui:prop.turns}} en een {{ui:prop.wire}}. Samen met de hoogte bepalen die hoe zacht de veer is. {{ui:prop.springHand}} bepaalt welke kant de draad op loopt: {{ui:spring.right}} zoals bij een gewone drukveer, of {{ui:spring.left}}.
+
+Het randgereedschap en de STEP-export nemen een veer als zijn exacte lichaam: een ronde draad langs een schroeflijn, aan beide uiteinden recht afgesneden. Die twee draaduiteinden kun je bijvoorbeeld afronden of afschuinen.
+
+## Gebogen buizen
+
+Een {{ui:shape.bentTube}} bestaat uit maximaal twaalf secties: een recht stuk gevolgd door een bocht. Voor elke sectie stel je de {{ui:prop.bentTubeSegmentLength}}, de {{ui:prop.bentTubeBendAngle}}, de {{ui:prop.bentTubeBendRadius}} en de {{ui:prop.bentTubeRoll}} in. De sectie die je bewerkt, licht oranje op op de buis, zodat je de volgorde kunt volgen. Een rolhoek van 0° buigt binnen het vlak van het werkvlak, bij 90° buigt de buis omhoog. Het profiel kan rond, vierkant, zeshoekig of achthoekig zijn, de binnenkant net zo, of helemaal massief. Loopt de buis door zichzelf heen, dan waarschuwt layerling je.
+
+## Loft
+
+De {{ui:shape.loft}} verbindt een omtrek aan de onderkant met een andere aan de bovenkant, zoals een loft in Fusion: een slangverloop van de ene diameter naar de andere, een vierkante ventilator op een ronde buis, een standaard die naar boven toe rond wordt. Voor elk uiteinde kies je {{ui:prop.loftBottomOutline}} en {{ui:prop.loftTopOutline}}: {{ui:loft.round}}, {{ui:loft.rectangle}} met {{ui:prop.loftBottomCorner}}, of {{ui:loft.polygon}} met zijn aantal hoeken, plus de breedte en lengte van elk uiteinde en de hoogte. {{ui:prop.loftOffsetX}} en {{ui:prop.loftOffsetZ}} verschuiven het bovenste uiteinde zijwaarts voor een schuine overgang; het onderste uiteinde blijft waar het is.
+
+{{ui:prop.loftWall}} maakt van het massieve lichaam een buis die aan boven- en onderkant open is. De opening is aan beide uiteinden kleiner met de wand, dwars gemeten; waar de wand schuin loopt, is hij iets dunner. Sleep het kader groter en beide uiteinden groeien mee, terwijl de hoekradius en de wand hun maat houden.
+
+{{ui:prop.loftSmooth}} maakt de overgang vloeiend. Bij 0 lopen de zijkanten recht van onder naar boven, zoals bij een kegel. Bij 100 verlaten ze beide uiteinden recht omhoog en veranderen ze daartussen van maat langs een S-curve: een slangverloop dat vloeiend van een smalle naar een brede buis uitloopt, in plaats van als een trechter te lopen. Daartussen mengt de schuifregelaar de twee. Een vloeiende overgang werkt samen met {{ui:prop.loftWall}}, een draaiing, een kanteling en een zijwaartse verschuiving; een buis met een wand blijft aan beide uiteinden open. Het is een exact lichaam, net als het rechte, dus de randen kunnen worden afgeschuind en afgerond, maar het wordt opgebouwd uit meerdere secties en het berekenen duurt iets langer.
+
+{{ui:prop.loftTwist}} draait de doorsnede op weg naar boven gelijkmatig om de verticaal, tot 360° naar beide kanten; de zijkanten winden dan rond. {{ui:prop.loftTiltX}} en {{ui:prop.loftTiltZ}} kantelen het bovenste uiteinde, tot 45°: een positieve waarde brengt de voorrand of de rechterkant omhoog. De secties daartussen kantelen naar hun deel mee, zodat de wand vloeiend in de schuinte overloopt. Het hoogste punt blijft op de ingestelde hoogte. Wordt de hoogte later zo klein dat het schuine uiteinde onder de plaat zou komen, dan geeft de kanteling mee tot het past. Een bocht langs een pad, zoals een buisbocht, doet de loft niet.
+
+De loft is een exact lichaam, ook gedraaid en gekanteld: de randen kunnen worden afgeschuind en afgerond, en de STEP-export behoudt hem. Voeg zoals gewoonlijk een flens met schroefgaten toe en groepeer ze.
+
+## Scharnier
+
+Het {{ui:shape.hinge}} print in één stuk en beweegt daarna (print-in-place): twee bladen die open plat op de plaat liggen, met afwisselende knokkels op één as ertussen. De pen hoort bij het achterste blad en loopt met speling door de knokkels van het voorste. Je stelt de {{ui:prop.hingeLength}}, de {{ui:prop.hingeOpenWidth}} en de {{ui:prop.hingeKnuckleDiameter}} in, plus het aantal {{ui:prop.hingeKnuckles}} (oneven, zodat de pen aan beide uiteinden vastzit), de {{ui:prop.hingePinDiameter}} en de {{ui:prop.hingeLeafThickness}}.
+
+{{ui:prop.hingeClearance}} is de spleet tussen de bewegende delen: rond de pen, tussen de knokkels en voor de bladen. Met 0,4 mm komt het bij een goed afgestelde printer meestal met een kleine draai los; smelten de delen samen, verhoog het dan, wiebelt het te veel, verlaag het dan. Print het scharnier liggend zoals het op de plaat staat, zonder ondersteuning. Je kunt gaten in de bladen maken of ze groeperen tot een groter onderdeel, zoals een deksel.
+
+## Kartel
+
+De {{ui:shape.knurl}} is een ronde greep met groeven rondom, voor knoppen, duimwielen en gereedschapshandvatten. Onder {{ui:prop.knurlPattern}} kies je {{ui:knurl.straight}}, groeven langs de as zoals op een regelknop, {{ui:knurl.diamond}}: twee schuine rijen groeven kruisen elkaar tot kleine ruitjes, of {{ui:knurl.round}}: groeven en ribbels langs de as als een zachte golf van bogen, een prettige grip zonder scherpe ribbels. Ronde groeven blijven ondieper dan een halve steek, anders zouden de ribbels aan hun voet uitstulpen; een te grote diepte geeft mee. Je stelt de {{ui:prop.diameter}} en de {{ui:prop.height}} in, het aantal {{ui:prop.knurlCount}} en de {{ui:prop.knurlDepth}}; bij gekruiste kartels ook de {{ui:prop.knurlAngle}} ten opzichte van de as. De {{ui:prop.knurlChamfer}} breekt beide uiteinden onder 45 graden, zoals op een gedraaide knop; 0 laat ze scherp.
+
+Rechte en ronde kartels zijn exacte lichamen, dus de randen kunnen worden gebroken en afgerond. Gekruiste kartels blijven een mesh, omdat het als exact lichaam met 30 groeven bijna een minuut zou duren om te berekenen. Voor een knop op een as groepeer je de kartel met een gat, zoals een {{ui:shape.thread}} ingesteld als getapt gat. Groeven ondieper dan 0,4 mm print bijna geen printer netjes, en layerling zet ze rondom de greep niet dichter dan 0,8 mm bij elkaar: een dunne greep krijgt er minder.
+
+## Zwaluwstaart
+
+De {{ui:shape.dovetail}} is de verbinding waarbij twee delen in elkaar haken en alleen zijwaarts in elkaar geschoven kunnen worden. Je stelt de breedte aan het brede uiteinde in, de {{ui:prop.dovetailNeckWidth}} en de lengte van de staart. Kopieer de staart voor de andere kant en maak van de kopie een gat: {{ui:prop.dovetailClearance}} geeft dan een beetje speling, zodat de verbinding na het printen niet klemt.
+
+> **Tip:** Een getapt gat snijdt bij het groeperen in het onderdeel dat het overlapt. Zet het dus een stukje in het materiaal, in plaats van dat het het oppervlak net raakt.
+
+## Druppelgat
+
+Een gat dat op zijn kant ligt, krijgt bij het printen een brug over de bovenkant, en die brug zakt door. Het {{ui:shape.teardrop}} heeft daarom een punt aan de bovenkant: elke laag rust op de laag eronder, en het gat wordt zonder ondersteuning rond genoeg. Stel de {{ui:prop.teardropDiameter}} in op de maat van het gat, ongeveer 3,4 mm voor een M3-schroef, en de {{ui:prop.teardropLength}} lang genoeg om door het onderdeel heen te reiken. De {{ui:prop.teardropTipAngle}} is 90°, zodat de flanken onder 45° samenkomen. De meeste printers kunnen dat netjes aan; een vlakkere punt heeft meer hoogte nodig, een steilere bespaart die.
+
+Maak van het druppelgat een gat en groepeer het met het onderdeel. De lengte loopt langs de diepte en de punt wijst omhoog. Voor een gat in de andere richting draai je het 90° om de verticale as.
+
+Een **getapt gat** op zijn zij zakt aan de bovenkant op dezelfde manier door. Geef het een eigen druppelgat: voeg een {{ui:shape.teardrop}} toe als gat, met als {{ui:prop.teardropDiameter}} de kern van de schroefdraad, de diameter die zijn tanden vrijlaten (bij M10 ongeveer 8,4 mm), even lang als het getapte gat, en selecteer beide. Klik op {{ui:editor.tool.align}} en lijn ze uit in het midden - het midden van het druppelgat is het midden van zijn ronde deel, niet van zijn doos met de punt, dus de twee cirkels liggen precies op elkaar - en groepeer beide met het onderdeel. De schroefdraad wordt zoals gewoonlijk gesneden en de punt opent de bovenkant van het gat, zodat het zonder steunen print.
+
+## Verzinkboring en verzinking
+
+Een schroefkop moet vaak niet uitsteken. De {{ui:shape.counterbore}} snijdt een ronde kamer voor een cilinderkopschroef met binnenzeskant (DIN 912), de {{ui:shape.countersink}} een kegel voor een verzonken schroef (DIN 7991). Beide staan met het kopeinde omhoog: de {{ui:prop.screwHoleHead}} is de diameter van de kamer of de kegel, de {{ui:prop.screwHoleShaft}} de boring eronder, de {{ui:prop.screwHoleLength}} de hele lengte. Bij de verzinkboring stel je de {{ui:prop.screwHoleHeadDepth}} in, bij de verzinking de {{ui:prop.screwHoleAngle}} (90° past bij verzonken schroeven). De standaardwaarden passen bij een M3-schroef.
+
+Maak van de vorm een gat en groepeer het met het onderdeel. Laat de bovenkant een stukje boven het oppervlak uitkomen waarop de kop moet rusten, zodat de kamer netjes opent. Voor de kamer van een zeskantmoer gebruik je een {{ui:shape.polygon}} met zes zijden als gat.

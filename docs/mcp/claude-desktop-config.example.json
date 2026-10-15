@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "layerling": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/layerling/scripts/layerling-mcp-server.mjs"
+      ]
+    }
+  }
+}

@@ -1,0 +1,95 @@
+---
+title: Bestanden, opslaan en delen
+summary: Waar je ontwerpen staan, hoe je er een back-up van maakt, welke formaten layerling importeert en exporteert, en wat er mogelijk is op een gedeelde server.
+---
+
+## Waar je ontwerpen staan
+
+layerling slaat alles op in de browser op je computer. Er is geen account en er wordt niets geüpload. Elke wijziging slaat zichzelf op. De voorbeeldafbeelding op de startpagina toont de weergave die je het laatst voor je had toen je met {{ui:editor.homeDashboard}} terugging. Open je layerling dagen later in dezelfde browser, dan staat alles er nog.
+
+Ga je terug naar de startpagina vanuit een ontwerp waar niets in staat, dan vraagt layerling of het bewaard moet blijven. {{ui:confirm.yes}} of [[Enter]] bewaart het, {{ui:confirm.no}} verwijdert het, zodat lege ontwerpen zich niet opstapelen. Bij ontwerpen in een gedeelde map op een server wordt dat niet gevraagd.
+
+Dat heeft een keerzijde: wie de browseropslag wist of op een andere computer verdergaat, is de ontwerpen kwijt. **Maak van belangrijk werk dus een back-up in een bestand.**
+
+## Back-up maken en doorgeven
+
+Op de startpagina heeft elk ontwerp een menu met de opties hernoemen, dupliceren en verwijderen. Met {{ui:dashboard.backupAll}} pak je alle ontwerpen in één enkel bestand in. Via {{ui:dashboard.importGeometry}} komen ze terug, ook in een andere browser of op een andere computer. De {{ui:myShapes.title}} van deze browser reizen mee in hetzelfde bestand, in de map `Custom shapes`, zie [Vormen](chapter:vormen).
+
+Een losse back-up van één ontwerp maak je in de editor: {{ui:editor.export}}, kies het formaat **LYL** en klik op {{ui:export.saveProject}}. Het LYL-bestand is het eigen ontwerpformaat van layerling en bevat alles: vormen, groepen, schetsen, CAD-gegevens, geïmporteerde bronnen en de geschiedenis, dus de stappen voor ongedaan maken. Onder {{ui:export.historyTitle}} kies je hoeveel van de laatste stappen meegaan; het begint bij wat de instellingen (het tandwiel in het lint) bewaren onder {{ui:workspace.history}}. De laatste stand, {{ui:export.historyNone}}, slaat het ontwerp op met alleen zijn huidige toestand - zo deel je een bestand zonder de stappen voor ongedaan maken. De export is een kopie onder de {{ui:export.fileName}} die je opgeeft; het ontwerp in je browser houdt zijn geschiedenis. Oudere `.skf`-bestanden uit eerdere versies kun je nog steeds openen; ze worden dan als `.lyl` opgeslagen.
+
+**Opslaan in je eigen map (Chrome en Edge).** Daar opent de knop het opslagvenster van je systeem, zodat je de map en de naam zelf kiest en een bestaand bestand kunt vervangen. Daarna slaat [[Ctrl]]+[[S]] het ontwerp opnieuw op in datzelfde bestand, zonder venster. Een ontwerp dat je uit een `.lyl`-bestand hebt geopend met {{ui:dashboard.importGeometry}} of met de openknop van het exportvenster, slaat ook weer op in dat bestand. De browser kan één keer om toestemming vragen om het bestand te wijzigen. Nadat de pagina opnieuw is geladen, vergeet het ontwerp zijn bestand en vraagt de volgende [[Ctrl]]+[[S]] er weer om; het venster begint in de map die je het laatst gebruikte. Firefox en Safari staan een pagina niet toe om zo in bestanden te schrijven. Daar wordt het bestand zoals vroeger in de map Downloads gedownload, en [[Ctrl]]+[[S]] downloadt het opnieuw; Firefox kun je onder Instellingen, Algemeen, Downloads zo instellen dat het elke keer naar de map vraagt.
+
+## Exporteren
+
+Klik op {{ui:editor.export}} of druk op [[Ctrl]]+[[E]].
+
+![Het exportvenster met de formaten STL, 3MF, OBJ, STEP, SVG, PNG, LYL en 2D.](shot:export-panel)
+
+Bovenaan staat de bestandsnaam, daaronder kies je het formaat. Is er iets geselecteerd, dan wordt alleen de selectie geëxporteerd, anders het hele ontwerp. Laat de selectie zichtbare delen weg, dan zegt een melding in het venster dat duidelijk, en {{ui:export.selectAll}} selecteert met één klik alles wat zichtbaar is. Zodra het bestand is geschreven, sluit het venster vanzelf; mislukt de export, dan blijft het open met de melding.
+
+| Formaat | Voor | Wat je moet weten |
+| --- | --- | --- |
+| **STL** | slicer en 3D-printen | Een driehoeksmesh. Het eenvoudigste en meest verspreide formaat. |
+| **3MF** | slicer met kleuren | Elk lichaam blijft een eigen onderdeel met naam en kleur. Overlappende lichamen worden alleen samengevoegd als ze dezelfde kleur hebben; waar een vorm in een vorm van een andere kleur zit, zeg een logo in een plaat, maakt de vorm die het eerst is gebouwd ruimte voor de latere. Geschikt voor PrusaSlicer, Bambu Studio, OrcaSlicer en Cura. Bambu Studio en OrcaSlicer vragen bij het openen hoe de kleuren aan je filamenten moeten worden gekoppeld, en noemen het bestand "niet van Bambu" - die melding is onschuldig. |
+| **OBJ** | modelleren en uitwisselen | Een breed ondersteund meshformaat. Kleuren worden als hoekpuntkleuren in hetzelfde bestand opgeslagen, zonder extra `.mtl`. Bambu Studio en OrcaSlicer lezen ze en vragen, net als bij 3MF, hoe ze aan je filamenten moeten worden gekoppeld; andere programma's zien alleen de vorm. Net als bij 3MF worden overlappende lichamen alleen samengevoegd als ze dezelfde kleur hebben. |
+| **STEP** | een volwaardig CAD-programma | Bewaart blokken, cilinders, bollen en kegels als exacte geometrie, en zo ook vormen die uit een contour zijn gemaakt (ster, hart, ellips, buis, halve bol, rond dak, afgerond blok, zwaluwstaart, de boringen en meer), de gebogen buis, schroefdraad, veren en tandwielen, plus afrondingen en afschuiningen. De eerste STEP-export in een sessie laadt eenmalig de CAD-kernel (ongeveer 22 MB). |
+| **SVG** | lasersnijder en plotter | Een net bovenaanzicht in millimeters, inclusief gaten en gebogen contouren. |
+| **PNG** | forumberichten, printsites, vragen | Een afbeelding van de weergave zoals die is, op dubbele resolutie en zonder grepen, selectiekaders en maten. {{ui:export.png.plate}} en {{ui:export.png.transparent}} kies je in het venster. Draai en zoom eerst tot de afbeelding goed is; de selectie doet er hier niet toe. |
+| **LYL** | layerling zelf | Het bewerkbare ontwerp met alles wat erbij hoort. |
+| **2D** | werkplaats, draaibank en freesmachine, documentatie | Een tekening op 1:1 als PDF of SVG: voor-, boven- en rechterzijaanzicht op een ISO-blad. Zie hieronder. |
+
+**STL in je eigen map (Chrome en Edge).** Daar opent de eerste STL-export van een ontwerp het opslagvenster van je systeem, zodat je de map en de naam zelf kiest en een bestaand bestand kunt vervangen. Daarna schrijft elke STL-export van het ontwerp zonder venster in datzelfde bestand; het exportvenster toont welk bestand, en **Opslaan als…** naast de exportknop kiest een ander. Het venster onthoudt zijn eigen map, los van die voor ontwerpen, zodat de slicerbestanden bij de slicer kunnen blijven. Nadat de pagina opnieuw is geladen, vergeet het ontwerp zijn STL-bestand en vraagt de volgende export er weer om. Firefox en Safari downloaden het bestand zoals vroeger.
+
+Een gat dat je niet hebt gegroepeerd, wordt bij het exporteren uit elk lichaam gehaald dat het raakt, zoals de weergave het toont. Je hoeft dus niet voor elke export te groeperen. Met een selectie tellen alleen de geselecteerde gaten. Een gat kan niet op zichzelf worden geëxporteerd; layerling wijst je daarop.
+
+STEP bevat alleen exacte CAD-lichamen. Wat niet exact kan worden geschreven, zoals een als STL geïmporteerde mesh, wordt weggelaten. De melding na de export noemt die lichamen en zegt waarom. Gebruik voor de printer STL of 3MF, die alles bevatten.
+
+### Een tekening voor de werkplaats
+
+Kies het formaat **2D** (houd de muis erboven en er staat Tekening) en, onder de bestandsnaam, PDF of SVG. Met een selectie wordt alleen de selectie getekend, anders het hele zichtbare ontwerp; gaten die je niet hebt gegroepeerd, snijden nog steeds in de onderdelen die ze raken.
+
+layerling tekent het voor-, boven- en rechterzijaanzicht in Europese projectie (het rechterzijaanzicht links van het vooraanzicht, het bovenaanzicht eronder) op het kleinste ISO-blad waar het op past, van A4 tot A0, of een groter blad als het onderdeel dat nodig heeft. Het is altijd 1:1. Elk aanzicht krijgt zijn totale breedte en hoogte, en randen die je niet kunt zien, zijn gestippeld. Ronde boringen die evenwijdig aan een kijkrichting lopen, krijgen een hartkruis en een label (F1, T1, R1), en een tabel onderaan geeft hun diameter en positie, gemeten vanaf de linkeronderhoek van het aanzicht. Het titelblok rechtsonder bevat de naam, schaal, eenheden, datum en bladnummer. De woorden op het blad volgen de taal van de interface.
+
+Print op 100 % of "werkelijke grootte", anders kloppen de lengtes niet. Wat de tekening niet doet: schroefdraad, diepten, toleranties en schuine boringen worden niet bemaat, en de maten komen uit het model als mesh, dus het zijn nominale maten. Een heel gedetailleerd onderdeel (meer dan 100.000 driehoeken) of meer dan 200 boringen wordt met een melding geweigerd; kies dan minder objecten.
+
+De projectie is gebaseerd op het tekenwerk van Cadverix-3D door WC3D.
+
+### Hoeveel filament kost het?
+
+Bij STL, 3MF, OBJ en STEP toont het vak {{ui:export.estimateTitle}} het volume, het gewicht en de lengte aan filament van 1,75 mm van wat wordt geëxporteerd. Het telt zoals het bestand: alleen zichtbare lichamen, gaten eraf, overlappingen maar één keer. Rechts kies je het filament - PLA, PETG, ABS, ASA, TPU of PA (nylon) - en het gewicht volgt de dichtheid ervan. Het volume is dat van het lichaam. Gewicht en filament zijn een grove schatting voor een print met wanden en vulling: onder de kop stel je de {{ui:export.estimateInfillLabel}} (eerst 15 %) en de {{ui:export.estimateWallsLabel}} (2) in, en het vak zegt wat het heeft geteld en hoeveel hetzelfde onderdeel massief zou wegen. De instellingen van je slicer bepalen het echte getal, neem het dus als richtwaarde, goed om ontwerpen te vergelijken en om te zien of de spoel genoeg is. Bij 100 % vulling telt het vak het onderdeel als massief, de bovengrens, goed om te vergelijken en om te zien of de spoel genoeg is.
+
+## Importeren
+
+Met {{ui:editor.import}} of [[Ctrl]]+[[I]] haal je bestanden van buiten in het ontwerp.
+
+![Het importvenster: ontwerpen openen of invoegen en geometrie neerzetten.](shot:import-panel)
+
+- **{{ui:import.openProject}}:** Een layerling-ontwerp (`.lyl`, of een ouder `.skf`) komt terug als nieuw ontwerp.
+- **{{ui:import.insertProject}}:** De lichamen van een layerling-ontwerp worden aan het geopende ontwerp toegevoegd. Handig voor basisvormen die je steeds weer nodig hebt: bouw ze één keer, sla ze op en haal ze elke keer binnen.
+- **Geometrie toevoegen:** Sleep STL-, OBJ-, 3MF-, STEP- of SVG-bestanden in het venster of klik om een bestand te kiezen. Geïmporteerde meshes kun je draaien, verplaatsen, met gaten snijden en erop verder bouwen. Een SVG komt binnen als schetslichaam, ook een uit een tracer zoals picsvg.com of "Bitmap overtrekken" van Inkscape: de contouren worden de lijnen en bochten van een schets, 4 mm hoog en van bovenaf leesbaar zoals in de tekening. In de eigenschappen stel je de {{ui:prop.sketchFill}} in, een vlak of een lijn aan de buitenkant, binnenkant of in het midden, en {{ui:prop.sketchSilhouette}} laat de gaten weg, zie [Schetsen](chapter:schetsen), "Vulling en silhouet". De punten zelf wijzig je in de schetsmodus. Alleen een heel ingewikkelde SVG met meer dan 2500 lijnen en bochten komt binnen als vaste mesh. Een vorm die niet tot een massief lichaam kan worden gebouwd, zoals een contour die zichzelf kruist of zichzelf in een punt raakt, wordt weggelaten, en na de import zegt layerling hoeveel het er waren. Dan helpt het om overlappende stukken in het tekenprogramma samen te voegen, de contouren te sluiten en het bestand opnieuw op te slaan. Tekeningen die op één pagina zijn gemaakt, zoals de lagen van één document die als losse bestanden zijn geëxporteerd, liggen weer goed ten opzichte van elkaar als je {{ui:import.keepSvgPage}} in het importvenster aanzet voordat je ze importeert: elk houdt zijn plek op de pagina, waar anders elk op zichzelf wordt gecentreerd. Een gekleurde OBJ of 3MF komt binnen als één lichaam per kleur, elk op zijn plek. In een OBJ staan de kleuren óf in het bestand zelf, zoals in een OBJ uit layerling, óf in een `.mtl` ernaast. Selecteer die dan ook, of importeer de hele ZIP zoals Tinkercad zijn OBJ aanlevert. Een 3MF draagt zijn kleuren zelf, en in een project uit Bambu Studio, OrcaSlicer of PrusaSlicer krijgt elk onderdeel de kleur van zijn filament. Een 3MF met meerdere objecten, zoals een project met één object per plaat, komt binnen als één lichaam per object; modifiers, negatieve volumes en supportblokkers uit de slicer worden weggelaten. Kleur die in de slicer op vlakken is geschilderd, wordt niet gelezen.
+
+Een ontwerp dat met een **nieuwere layerling** is opgeslagen, kan dingen bevatten die jouw versie nog niet kent, zoals een nieuwe vorm, een nieuwe instelling of eigen lettertypen. Kan layerling het daardoor niet openen, dan noemt de melding beide versies. Opent het wel, dan zegt de melding dat nieuwere dingen er hier anders uit kunnen zien. Hoe dan ook helpt het om de pagina opnieuw te laden: layerling.com levert altijd de nieuwste versie. De geïnstalleerde app haalt hem op bij de volgende keer starten; op je eigen server installeer je de update.
+
+Sjabloonafbeeldingen voeg je toe in de schetsmodus, zie [Schetsen](chapter:schetsen).
+
+## Een geïmporteerde mesh vereenvoudigen
+
+Een gescande of geboetseerde mesh heeft vaak veel meer driehoeken dan zijn vorm nodig heeft, en elk daarvan wordt meegesleept terwijl je verplaatst, snijdt en opslaat. {{ui:simplify.title}} in de groep Aanpassen (of in het rechtsklikmenu van het lichaam) toont de mesh zoals hij is naast wat een gekozen deel van zijn driehoeken ervan zou overlaten; beide weergaven draaien en zoomen samen met de muisknoppen van het werkvlak. Stel in hoeveel er moet blijven, als percentage of als aantal driehoeken, en {{ui:simplify.apply}} neemt de lichtere mesh over. Het resultaat is een gewone mesh: bij het resultaat van een snede of samenvoeging worden {{ui:group.edit}} en de oorspronkelijke onderdelen opgegeven.
+
+Snijden, samenvoegen en doorsnijden van een geïmporteerde mesh wordt in je browser berekend, dus de werkruimte-instellingen beperken hoeveel driehoeken zo'n mesh mag hebben ({{ui:workspace.booleanTriangleLimit}}). Een mesh boven de limiet wordt niet verwerkt, en de melding noemt zijn aantal driehoeken; vereenvoudig de mesh eerst, of verhoog de limiet als je computer het aankan.
+
+## Een fout melden
+
+Doet layerling iets onverwachts, sla dan een {{ui:editor.bugReport}} op: de link staat in de voettekst onderaan, naast het forum. Het is een ZIP-bestand, omdat GitHub en veel forums een kaal .lyl weigeren: erin zitten je ontwerp als .lyl en een kort tekstbestand met de versie, de browser, de schermgrootte, de laatste meldingen en eventuele fouten. De startpagina opent de ZIP zoals een back-up, of je pakt hem uit en opent het .lyl. Er staat niets persoonlijks in. Voeg het bestand toe aan je bericht op het forum of op GitHub, zodat het probleem met precies jouw ontwerp kan worden nagespeeld.
+
+Stopt layerling met een fout, dan verschijnt er een venster met de foutmelding in plaats van een lege pagina. Van daaruit kun je de toestand van het ontwerp die het laatst in de browser is opgeslagen als .lyl-bestand bewaren, teruggaan naar het overzicht of een nieuw ontwerp beginnen. De foutmelding uit het venster en het opgeslagen bestand helpen als je het meldt.
+
+## Gedeelde ontwerpen op een server
+
+Draait layerling op je eigen computer of webserver, dan kan het een gedeelde map aanbieden waarin alle gebruikers ontwerpen bewaren. Op de startpagina verschijnt die dan als {{ui:dashboard.sharedProjects}}. Je maakt daar mappen, verplaatst ontwerpen door te slepen en zoekt in de hele map. Een ontwerp dat daar staat, slaat zichzelf daar weer op. Een ontwerp uit deze browser zet je op de server door zijn kaart naar de servertegel te slepen, of met {{ui:dashboard.sendToServer}} in het menu van de kaart. Een back-up die je opent, komt eerst in deze browser terecht, zoals elk ontwerp dat je opent; zet de ontwerpen van daaruit op de server. De startpagina toont een ontwerp met zijn bestandsnaam, dus als je een ontwerp hernoemt, op zijn kaart of bovenaan in de editor, wordt ook het bestand op de server hernoemd. Een ontwerp of een map verwijderen haalt het definitief weg, samen met de werkkopie in deze browser. Eigen vormen die op de server worden bewaard, staan in de map `Custom shapes` daarvan, zie [Vormen](chapter:vormen).
+
+Twee dingen maken dat sneller: {{ui:dashboard.sendAllToServer}} op de startpagina zet alle ontwerpen van deze browser in één keer op de server, en met het vinkje bij {{ui:dashboard.newOnServer}} begint elk nieuw ontwerp meteen in de servermap en wordt het daar vanaf de eerste wijziging opgeslagen. Het vinkje blijft in deze browser bewaard. Een ontwerp dat niet mee kan - bijvoorbeeld omdat de naam op de server al bezet is - blijft in de browser, en de melding zegt hoeveel het er zijn.
+
+Dat is geen gelijktijdig bewerken: wie een bestand opent, werkt aan een eigen kopie. Heeft iemand anders het bestand in de tussentijd gewijzigd, dan weigert layerling het te overschrijven.
+
+Op layerling.com staat deze functie niet aan. Hoe je hem op je eigen server instelt, staat in de [README op GitHub](https://github.com/henmedia/layerling/blob/main/README.nl.md#gedeelde-ontwerpen-in-een-netwerk).

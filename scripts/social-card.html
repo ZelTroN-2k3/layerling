@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>layerling social card</title>
+    <!--
+      Die Vorlage fuer apps/web/public/assets/layerling/layerling-social.png -
+      das Bild, das erscheint, wenn jemand layerling.com irgendwo einfuegt.
+
+      Es ist derselbe Namenszug wie oben links auf der Seite, nur gross: heller
+      Grund, das Zeichen ohne eigene Flaeche daneben, Name und Zeile
+      untereinander. Die Groessen stehen als Vielfaches von --mark, im
+      Verhaeltnis von .dashboard-brand in globals.css (44 / 23 / 12.5 / 12).
+
+      Warum eine HTML-Seite und nicht das Werkzeug, das die uebrigen Symbole
+      zeichnet: Auf dieser Karte steht Schrift, und Schrift zu rastern heisst
+      eine Schriftdatei zu lesen. Ein Browser kann das laengst. Erzeugt wird
+      das Bild mit `npm run icons:social`, und zwar einmal - danach liegt das
+      PNG im Baum und niemand braucht dafuer einen Browser.
+    -->
+    <style>
+      :root {
+        --mark: 224px;
+        --ground: #fafaf9;
+        --ink: #231a11;
+        --ink-soft: #7a6650;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 640px;
+      }
+      body {
+        background: var(--ground);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: calc(var(--mark) * 12 / 44);
+        padding: 0 80px;
+        /* Derselbe Satz wie in der Seite selbst. */
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      svg {
+        height: var(--mark);
+        width: auto;
+        flex: none;
+      }
+      h1 {
+        font-size: calc(var(--mark) * 23 / 44);
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        line-height: 1.4;
+      }
+      p {
+        font-size: calc(var(--mark) * 12.5 / 44);
+        font-weight: 600;
+        color: var(--ink-soft);
+        letter-spacing: 0.005em;
+        line-height: 1.2;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hier setzt render-social-card.mjs das Zeichen aus
+         assets/layerling/layerling-logo.svg ein - dasselbe, das die Seite im
+         Kopf traegt. Abgeschrieben wird es nicht: Sonst haette die Marke zwei
+         Quellen, und eine davon veraltet. -->
+    <!--MARKE-->
+    <div>
+      <h1>layerling</h1>
+      <p>Easy 3D CAD for 3D printing</p>
+    </div>
+  </body>
+</html>

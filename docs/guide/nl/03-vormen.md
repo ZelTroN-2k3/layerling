@@ -1,0 +1,136 @@
+---
+title: Vormen plaatsen en aanpassen
+summary: De vormenbibliotheek, maten als getal en met grepen, kleur, draaien, taps maken en tordieren.
+---
+
+Elk onderdeel in layerling begint met een vorm. Daarmee bouw je al het andere: vormen vullen elkaar aan, snijden elkaar weg of worden samengevoegd tot een nieuwe vorm.
+
+## Een vorm toevoegen
+
+Klik op {{ui:editor.addShape}} in het lint. De vormenbibliotheek gaat open.
+
+![De vormenbibliotheek. Elk plaatje wordt getekend uit de echte geometrie van de vorm.](shot:shape-menu)
+
+Kies een vorm. Die hangt nu aan de muisaanwijzer en landt waar je klikt. Beweeg je hem over een lichaam, dan gaat hij op het vlak onder de aanwijzer liggen, ook op schuine vlakken, net als Cruise in Tinkercad; boven de lege plaat landt hij op het werkvlak. [[Esc]] breekt het plaatsen af. Een gereedschap dat op een klik wacht, zoals het meetlint, de winkelhaak, een notitie, {{ui:camera.placeWorkplane}}, {{ui:editor.tool.layFlat}} of de randgereedschappen, wordt uitgezet zodra je een vorm kiest, zodat de klik de vorm plaatst. Andersom zet het aanzetten van zo'n gereedschap de vorm weer neer. Wil je liever dat de vorm midden op de plaat verschijnt, dan kun je plaatsen met een klik uitzetten in de instellingen (onderdeel {{ui:workspace.appearance}}, schakelaar {{ui:workspace.cruise}}).
+
+Wat de bibliotheek te bieden heeft:
+
+- **Basisvormen:** {{ui:shape.box}}, {{ui:shape.roundedBox}}, {{ui:shape.cylinder}}, {{ui:shape.slot}}, {{ui:shape.ellipse}}, {{ui:shape.polygon}} (drie tot vierentwintig zijden), {{ui:shape.sphere}}, {{ui:shape.cone}}, {{ui:shape.pyramid}} (met drie tot vierentwintig zijden, dus ook driezijdig), {{ui:shape.wedge}}, {{ui:shape.roundRoof}}, {{ui:shape.halfSphere}} en {{ui:shape.torus}}.
+- **Buizen:** {{ui:shape.tube}} en {{ui:shape.bentTube}}, opgebouwd uit maximaal twaalf rechte stukken met bochten ertussen, en de {{ui:shape.loft}} van de ene omtrek naar de andere, bijvoorbeeld van vierkant naar rond.
+- **Decoratieve vormen:** {{ui:shape.star}}, {{ui:shape.heart}} en {{ui:shape.crescent}}.
+- **Belettering:** {{ui:shape.text}}, ook langs een cirkelboog. Meer in [Tekst](chapter:tekst).
+- **Mechanica:** {{ui:shape.thread}} (draadstang, schroef, moer en getapt gat), {{ui:shape.spring}}, {{ui:shape.gear}} en de {{ui:shape.knurl}} voor handgrepen. Meer in [Schroefdraad en mechanica](chapter:schroefdraad-en-mechanica).
+- **Voor constructies:** het in één keer te printen {{ui:shape.hinge}}, {{ui:shape.dovetail}}, het {{ui:shape.teardrop}} voor horizontale gaten, de {{ui:shape.counterbore}} en {{ui:shape.countersink}} voor schroefkoppen en de {{ui:shape.ruler}}, die alleen een meetinstrument is en nooit in een export terechtkomt.
+
+Een driehoek krijg je op twee manieren: de {{ui:shape.polygon}} met drie zijden is een gelijkbenige driehoek, het "Roof" van Tinkercad, en de {{ui:shape.wedge}} is een rechthoekige driehoek. Beide zijn echte driehoekige prisma's. Voor een driehoekig gat kopieer je de vorm, maak je de kopie kleiner, markeer je hem als gat en lijn je hem uit met {{ui:editor.tool.centerOnWorkplane}} of {{ui:editor.tool.align}}. Beide werken met de omhullende doos van de vorm, de kleinste doos waar hij in past, dus een gehalveerd vierkant telt nog steeds als een heel vierkant. Opdrachten zoeken ([[Ctrl]]+[[K]]) vindt beide vormen ook onder "driehoek" of "dak".
+
+De {{ui:shape.slot}} kan aan het ene uiteinde smaller zijn dan aan het andere, bijvoorbeeld voor een kap over een riem tussen twee poelies. Stel onder {{ui:inspector.properties}} de {{ui:prop.slotSmallEnd}} in; het brede uiteinde is zo breed als de capsule, en de zijden lopen recht van de ene boog naar de andere. {{ui:prop.slotCentreDistance}} is de afstand tussen de middelpunten van de twee bogen, dus hoe ver de poelies uit elkaar staan. Verander je het smalle uiteinde, dan blijft de hartafstand gelijk en wordt de capsule langer of korter. Ook de taps toelopende capsule blijft een exact lichaam, voor afrondingen en STEP.
+
+## De instellingen van de vorm
+
+Zodra een vorm geselecteerd is, verschijnen rechts zijn instellingen. Bovenaan staat de naam; met het potlood ernaast ({{ui:outliner.rename}}) typ je een nieuwe. [[Enter]] bewaart hem, [[Esc]] breekt af, en een lege naam brengt de standaardnaam van de vorm terug. Verder naar rechts vergrendelt het hangslot de vorm tegen per ongeluk verplaatsen en verbergt het oog hem. Het pijltje helemaal links klapt de instellingen in tot hun titelbalk.
+
+De instellingen zijn vastgezet aan de rechterrand. Zitten ze in de weg, sleep ze dan aan hun titelbalk en ze zweven waar je ze loslaat; daar blijven ze ook voor de volgende vorm. Laat je ze weer rechtsboven los, of dubbelklik je op de titelbalk, dan zitten ze weer vast. Zolang ze zweven of ingeklapt zijn, verhuist de snapstap van de onderkant van de instellingen naar rechtsonder in het werkvlak.
+
+![De instellingen van een cilinder: massief of gat, diameter en hoogte als getal en als schuifregelaar.](shot:editor-overview)
+
+- **{{ui:inspector.solid}} of {{ui:inspector.hole}}:** Een massief lichaam blijft, een gat haalt materiaal weg. Een klik op {{ui:inspector.solid}} opent de kleuren; eigen kleuren die je daar mengt, staan daarna klaar onder {{ui:inspector.recentColors}}, de laatste acht. Meer in [Lichamen en gaten](chapter:lichamen-en-gaten).
+- **{{ui:inspector.transparent}}:** Laat je door het lichaam heen kijken, bijvoorbeeld om een vorm erachter te zien.
+- **{{ui:inspector.multicolor}}:** Alleen voor een groep. Staat het aan, dan toont elk onderdeel van de groep zijn eigen kleur, ook in een groep die met gaten tot één lichaam is gesneden (de wanden die een gat achterlaat, krijgen de kleur van het lichaam waarin het gesneden is). Een kleur kiezen voor de groep zet het uit en kleurt de hele groep. Bundels houden altijd de kleuren van hun onderdelen. In een 3MF-export houdt elk onderdeel zijn kleur, zodat de slicer de onderdelen aan filamenten kan koppelen; OBJ draagt de kleuren op zijn punten, dus de grens tussen twee kleuren is daar wat ruwer.
+- **{{ui:inspector.properties}}:** De maten en alles wat bij deze vorm hoort. Bij een cilinder de diameter, de hoogte en het aantal zijden. Bij een tandwiel de tanden, bij een veer de windingen. Een waarde die je van zijn standaard hebt veranderd, krijgt een klein pijltje naast zijn naam: een klik zet precies die waarde terug, wat je verder ook gedaan hebt, anders dan Ongedaan maken. Sleep je met de muis, dan klikt de schuifregelaar van een lengte vast op de snapstap, zodat een hoogte op hele millimeters uitkomt (niet met het raster uit, en niet bij korte schuifregelaars); een getypte waarde en de pijltjestoetsen op de schuifregelaar blijven exact. {{ui:inspector.saveDefaults}} onderaan maakt de huidige waarden de startwaarden van dit soort vorm (hetzelfde als {{ui:workspace.shapeDefaults}} in de instellingen), en {{ui:inspector.resetDefaults}} gaat terug naar die van de app zelf.
+- **{{ui:inspector.makeEllipse}}:** Alleen bij een cilinder. Een cilinder is altijd rond: hij heeft één diameter en elke greep verandert beide kanten samen. Voor een ovaal klik je hierop en hij wordt een {{ui:shape.ellipse}} - hetzelfde lichaam, waarvan je lengte en breedte dan afzonderlijk instelt. Een cilinder met afschuining, afronding of wand, een gedraaide of gegroepeerde kan zo niet worden omgezet; neem daarvoor meteen de {{ui:shape.ellipse}}.
+- **{{ui:inspector.taper}}:** Verschillende maten aan boven- en onderkant, bijvoorbeeld voor een helling of een trechter.
+- **{{ui:inspector.twist}}:** Draait de bovenkant ten opzichte van de onderkant of verschuift hem opzij. Zo krijg je gedraaide zuilen en scheve torens.
+
+![Een groep van een oranje blok, een blauwe pen en een gat, gesneden tot één lichaam. Met Meerkleurig aan blijft de pen blauw, het blok oranje, en de wanden van het gat krijgen de kleur van het blok.](shot:group-multicolor)
+
+Taps maken en tordieren werken op bijna elke vorm. Alleen het tandwiel, de schroefdraad, de veer, de kartel, het scharnier, de piramide, de gebogen buis, het druppelgat, de schroefkopfrezen en de liniaal doen niet mee: die hebben eigen vaste maten of, zoals de piramide, al een eigen top.
+
+![Een kegel waarvan de bovenstraal en de hoogte zijn veranderd: een klein pijltje naast elk zet de waarde terug, en de twee knoppen onderaan bewaren of herstellen de standaardwaarden van de vorm.](shot:property-reset)
+
+Een taps toelopend of schuin blok, cilinder, ellips, veelhoek, buis of ring houdt zijn exacte vorm, en dat geldt ook voor de capsule, ster, hart, maansikkel, zwaluwstaart en een afgerond blok zonder afgeronde boven- en onderranden: afschuiningen en afrondingen werken erop zoals op de gewone vorm, en de STEP-export schrijft hem weg. Hetzelfde geldt voor een getordeerde vorm: zijn doorsnede draait precies mee terwijl hij stijgt, en de zijden winden gelijkmatig van onder naar boven.
+
+Typen is nauwkeuriger dan slepen. Alle getalvelden nemen millimeters, maar ook percentages: typ "50 %" in een breedte van 40 mm en je krijgt 20 mm. Ze rekenen ook: "15*3", "120-2*4" of "(40+2)/2" geven 45, 112 en 21; x werkt in plaats van *. Het veld onthoudt de berekening, zowel in het eigenschappenpaneel als in de maatvakjes rond het geselecteerde lichaam: klik je er later weer in, dan staat de formule er in plaats van het getal, zolang de waarde er nog bij past, en je past hem ter plekke aan, waarbij "(140+2)/2" bijvoorbeeld "(40+6)/2" wordt. Sleep je het lichaam aan een greep of schaal je het, dan past de formule niet meer en toont het veld weer alleen het getal.
+
+## Hoe rond is rond? Het aantal zijden
+
+Ronde vormen zoals cilinder, kegel, buis, ellips of de boringen hebben in hun eigenschappen de schakelaar {{ui:prop.sidesFollowSize}} en de schuifregelaar {{ui:prop.sides}}. De {{ui:shape.torus}} heeft er twee: {{ui:prop.torusSides}} rond de ring en {{ui:prop.torusSteps}} rond de buis. Ook daar volgen ze de grootte tot je ze vastzet, zodat een grote torus geen facetten toont. De reden: voor de weergave en voor STL, 3MF en OBJ tekent layerling een cirkel als een veelhoek met veel kleine zijden. Hoe meer zijden, hoe gladder, en hoe meer driehoeken het kost.
+
+**Waar het aantal zijden uitmaakt**
+
+- **In de export voor de slicer** (STL, 3MF, OBJ). Een cilinder met weinig zijden komt daar aan als veelhoek.
+- **Bij het combineren van lichamen en gaten.** Een boring die door een gat met weinig zijden is gesneden, is hoekig in het eindproduct. Dat geldt ook voor schroefgaten.
+- **In de weergave.** Veel heel fijne vormen maken de editor trager.
+
+**Waar het niet uitmaakt**
+
+- **Voor de STEP-export.** Die schrijft de ronde vorm weg, niet de veelhoek.
+- **Voor afschuiningen en afrondingen** ({{ui:editor.tool.chamfer}}, {{ui:editor.tool.fillet}}) zolang de vorm rond blijft. Dat is zo als je geen aantal zijden hebt ingesteld, als het aantal minstens de standaard van de vorm is, of als de veelhoek hooguit {{value:EXACT_ROUND_TOLERANCE}} mm van de cirkel afwijkt. De standaard is {{value:ROUND_FROM_SIDES}} zijden voor cilinder, ellips, buis en kegel, {{value:ROUND_FROM_ROOF_SIDES}} voor het {{ui:shape.roundRoof}}, {{value:ROUND_FROM_SPHERE_STEPS}} stappen voor de {{ui:shape.sphere}}, {{value:ROUND_FROM_HALF_SPHERE_STEPS}} voor de {{ui:shape.halfSphere}}, {{value:ROUND_FROM_TORUS_SIDES}} zijden en {{value:ROUND_FROM_TORUS_STEPS}} stappen voor de {{ui:shape.torus}}, en een {{ui:prop.quality}} van {{value:ROUND_FROM_BENT_TUBE_QUALITY}} voor een ronde {{ui:shape.bentTube}}.
+- **Voor schroefdraad, een veer of een schuin vertand tandwiel.** Het randgereedschap en de STEP-export nemen het exacte lichaam; de {{ui:prop.quality}} bepaalt alleen hoe fijn het getekend wordt.
+
+**Waar het toch weer uitmaakt**
+
+- **Voor afschuiningen en afrondingen op een vorm met weinig zijden.** Zet je het aantal zijden onder de standaard, dan neemt het randgereedschap de vorm zoals hij getekend is: een cilinder met 6 zijden blijft een zeskantige staaf, en de afronding loopt langs zijn zes randen. Zo kun je bijvoorbeeld een moeruitsparing met afgeronde hoeken bouwen. Voor een ronde vorm laat je {{ui:prop.sidesFollowSize}} aan.
+
+**Zo gebruik je het**
+
+- **Laat {{ui:prop.sidesFollowSize}} aan.** Dan kiest layerling het aantal zijden op basis van de diameter, zodat de veelhoek hooguit {{value:ROUND_DEVIATION_TOLERANCE}} mm van de echte cirkel afwijkt, ver onder wat een printer kan weergeven. Kleine vormen krijgen minstens {{value:MIN_AUTOMATIC_SIDES}} zijden, grote meer.
+- **Minder zijden** neem je als je bewust een veelhoek wilt (al is daar de {{ui:shape.polygon}} voor) of als de editor traag wordt van heel veel ronde vormen.
+- **Meer zijden** heb je bijna nooit nodig. Alleen bij heel grote ronde onderdelen, als je randen ziet in de STL.
+- **Voor onderdelen die je alleen met randgereedschap bewerkt of als STEP doorgeeft,** maakt het aantal zijden niet uit.
+
+## Werken met de grepen
+
+Naast de instellingen zitten er grepen op de vorm zelf:
+
+- De **hoeken en randen** maken de vorm groter of kleiner. Houd [[Shift]] ingedrukt terwijl je een hoek sleept om breedte, diepte en hoogte samen te schalen en de verhoudingen te behouden; houd [[Alt]] ingedrukt om vanuit het midden te schalen in plaats van vanuit de tegenoverliggende hoek. Zonder toetsenbord, of als je geen toets wilt vasthouden, zet je {{ui:inspector.keepProportions}} bovenaan de eigenschappen aan: dan houden de hoeken altijd de verhoudingen, en als je breedte, diepte of hoogte typt, schalen de andere twee met dezelfde factor mee. De instelling wordt onthouden.
+- De **pijl bovenop** verandert de hoogte, de greep **in het midden** tilt de vorm op of laat hem zakken.
+- De **gebogen pijlen** draaien hem.
+- De **getallen** naast de vorm tonen de maten. Een klik op een ervan opent een veld waarin je het gewenste getal typt. Met [[Enter]] groeit de vorm vanaf de rand tegenover het getal, zoals bij slepen; met [[Alt]]+[[Enter]] groeit hij rond zijn midden, zodat een vorm die met een andere was uitgelijnd uitgelijnd blijft. Dat geldt voor breedte en lengte; de hoogte groeit altijd omhoog vanaf de onderkant. De velden in de eigenschappen rechts houden het midden zonder toets.
+- Een **klik op een hoek** (zonder te slepen) opent breedte en diepte samen. Typ de eerste, druk op [[Tab]] voor de tweede en op [[Enter]] om beide toe te passen. [[Esc]] breekt af.
+
+Is een vorm over rechte hoeken gedraaid, bijvoorbeeld op zijn kant gelegd met {{ui:editor.tool.layFlat}}, dan zijn de velden in de eigenschappen genoemd naar de richting waarin elke maat nu loopt: {{ui:prop.height}} is wat omhoog gaat, {{ui:prop.width}} loopt langs X en {{ui:prop.length}} langs Y. Typ je de hoogte van een liggende vorm, dan verander je dus de verticale maat, en zijn onderkant blijft op de plaat. Een vorm die onder een andere hoek gekanteld is, toont zijn eigen maten in de velden, en een opmerking eronder zegt dat.
+
+Zonder muis gebruik je het toetsenbord: de pijltjestoetsen verplaatsen de selectie met één snapstap (0,1 mm als het raster uit staat), met [[Shift]] met vijf, of met tien als je in de instellingen onder {{ui:workspace.appearance}} {{ui:workspace.gridMajorEvery}} op 10 {{ui:workspace.gridMajorSteps}} zet: tot aan de volgende donkerdere lijn, zoals in Tinkercad. Ze volgen de weergave: [[→]] verplaatst naar waar rechts op het scherm is, [[↑]] van je af, ook nadat je de plaat hebt gedraaid. Duw je een vorm uit beeld, dan schuift de weergave mee. [[Ctrl]]+[[↑]] en [[Ctrl]]+[[↓]] tillen hem op en laten hem zakken. [[R]] draait 45°, [[Shift]]+[[R]] 22,5°. [[D]] laat de selectie op het werkvlak vallen.
+
+De grepen trekken een vorm zo groot als je plaat, minstens 220 mm breed en diep. Een getal typen in de eigenschappen gaat daar voorbij, en een vorm die zo groot is gemaakt, krimpt niet terug als je hem opnieuw vastpakt. Een eigen bovengrens per vorm stel je in de instellingen in onder {{ui:workspace.shapeDefaults}} met {{ui:workspace.customLimit}}.
+
+De snapstap staat rechtsonder in de editor en kun je op elk moment veranderen.
+
+## Kopiëren en dupliceren
+
+{{ui:editor.tool.copy}}, {{ui:editor.tool.paste}} en {{ui:editor.tool.duplicate}} staan in het lint ({{ui:editor.group.clipboard}}). [[Ctrl]]+[[D]] dupliceert een selectie. layerling onthoudt hoe je de kopie het laatst hebt verplaatst of gedraaid en past bij het volgende dupliceren hetzelfde opnieuw toe. Zo maak je met een paar toetsaanslagen een rij gaten of treden. Voor regelmatige opstellingen is er ook het patroon, beschreven in [Selecteren en schikken](chapter:selecteren-en-schikken).
+
+> **Tip:** Wil een vorm de gewenste maat niet aannemen, dan ligt het vaak aan de grenzen voor nieuwe vormen. Onder {{ui:workspace.shapeDefaults}} in de instellingen bepaal je hoe elke vorm begint en hoe groot hij mag worden.
+
+## Eigen vormen
+
+Een houder, een handgreep of een grondplaat die je steeds opnieuw nodig hebt, gaat in de {{ui:myShapes.title}}. Die staan bovenaan de vormenbibliotheek, boven de {{ui:myShapes.basicShapes}}, en klappen in met hun pijltje.
+
+1. Selecteer een of meer lichamen, gaten, groepen, een geïmporteerd model inbegrepen.
+2. Open de vormenbibliotheek en klik op {{ui:myShapes.saveSelection}}. Voer een naam in en bevestig met {{ui:common.save}}.
+3. In elk ontwerp voegt een klik op de tegel de vorm in, net als elke andere vorm. Je kunt de tegel ook naar het werkvlak slepen; hij landt dan waar je loslaat.
+
+Meerdere lichamen komen samen terug, geplaatst zoals ze ten opzichte van elkaar stonden, en blijven elk afzonderlijk te selecteren. Het potlood op een tegel geeft hem een andere naam, de prullenbak verwijdert hem na een vraag. Vormen die al in ontwerpen zijn ingevoegd, blijven zoals ze zijn.
+
+De {{ui:myShapes.title}} staan in deze browser, los van de ontwerpen, en zijn er bij de volgende start weer. {{ui:dashboard.backupAll}} op de startpagina maakt er samen met de ontwerpen een back-up van, en het openen van de back-up brengt beide terug. Om alleen de vormen naar een andere browser mee te nemen, bewaart {{ui:myShapes.backup}} (het pijltje naar beneden) ze als ZIP-bestand en brengt {{ui:myShapes.load}} (het pijltje naar boven) ze daar terug. {{ui:myShapes.load}} neemt ook losse `.lyl`-ontwerpen aan; elk ervan wordt een vorm. Vormen die er al zijn, worden niet dubbel toegevoegd.
+
+### Eigen vormen op de server
+
+Met de [gedeelde opslag op de server](chapter:bestanden-en-opslaan) aan toont het onderdeel twee groepen: {{ui:myShapes.onServer}} en {{ui:myShapes.inBrowser}}. Bij het bewaren kies je waar de vorm heen gaat; de server is vooraf gekozen. Daar staat hij in de map `Custom shapes`, als een eigen `.lyl`-bestand met een afbeelding, klaar op elk apparaat dat de server bereikt. De wolk op een browsertegel zet die vorm op de server; hij wordt dan niet meer dubbel bewaard.
+
+De map `Custom shapes` staat ook op de startpagina. Open daar een vorm zoals een ontwerp, verander hem, en hij wordt automatisch opgeslagen zoals elk ontwerp op de server; de volgende keer invoegen neemt de nieuwe versie. Omdat de opslag op de server geen inlog heeft, ziet iedereen die de server bereikt dezelfde vormen.
+
+## Om een cilinder wikkelen
+
+Moet een patroon, een logo of belettering op een beker, een blik of een buis? Leg het eerst plat op de plaat, bijvoorbeeld als geïmporteerde SVG of als tekst, zoals het er van bovenaf uit moet zien. Wikkel het daarna om een cilinder in de instellingen van de vorm onder {{ui:inspector.wrapCylinder}}:
+
+1. Open {{ui:inspector.wrapCylinder}} en voer de {{ui:inspector.wrapDiameter}} van de cilinderwand in, zoals de buitendiameter van je beker. Tienden van een millimeter werken ook, zoals 63,5.
+2. Klik op {{ui:inspector.wrapApply}}. Wat van links naar rechts liep, loopt nu rond de cilinder, de achterrand wordt de bovenkant, en de dikte steekt uit de wand.
+3. Selecteer de gewikkelde vorm en de cilinder en centreer beide, van links naar rechts en van voor naar achter. Het midden van de gewikkelde vorm is de as van de cilinder, dus dan zit hij precies op de wand.
+
+Voor een gravure zet je {{ui:inspector.wrapInward}} aan: de dikte gaat dan de wand in. Maak de vorm een gat, centreer hem en groepeer hem met de cilinder.
+
+Een vorm die al gewikkeld is, is een net van het gewikkelde en laat zich niet nog eens wikkelen: maak het wikkelen ongedaan of wikkel het platte origineel nog eens met een andere diameter.
+
+Het resultaat is een mesh, net als een geïmporteerd model. Ongedaan maken legt de vorm weer plat; voor een andere diameter maak je eerst ongedaan en wikkel je opnieuw. Verder dan één keer rond de cilinder gaat het niet; dan noemt layerling de kleinste diameter die past.

@@ -1,0 +1,146 @@
+---
+title: Gewinde, Zahnräder und andere Bauteile
+summary: Schrauben, Muttern und Gewindelöcher, die zusammenpassen, dazu Zahnrad, Feder, gebogenes Rohr, Schwalbenschwanz, Tropfenbohrung sowie Stufen- und Senkbohrung.
+---
+
+Die Formenbibliothek enthält neben den Grundformen einige Bauteile, die man sonst mühsam zusammensetzen müsste. Alle lassen sich nachträglich in ihren Einstellungen ändern.
+
+## Gewinde
+
+Wähle {{ui:shape.thread}} in der Formenbibliothek. Unter {{ui:inspector.threadRole}} entscheidest du, was es sein soll:
+
+- **{{ui:thread.rod}}:** ein Zylinder mit Gewinde, zum Beispiel eine Schraube ohne Kopf.
+- **{{ui:thread.screw}}:** mit Kopf. Die {{ui:inspector.threadHead}} wählst du aus: {{ui:thread.headCylinder}}, {{ui:thread.headCountersunk}} oder {{ui:thread.headHex}}.
+- **{{ui:thread.nut}}:** die passende Mutter.
+- **{{ui:thread.bore}}:** ein Gewindeloch. Es ist eine Aussparung. Ziehe es in ein Teil, gruppiere beides, und das Teil hat ein Innengewinde.
+
+![Eine Schraube mit Zylinderkopf. Rechts stehen Art und Kopfform, weiter unten Größe, Steigung und Profil.](shot:thread-screw)
+
+Die Größe suchst du bei {{ui:prop.threadSize}} aus einer Liste: metrisch von M2 bis M12, die Zollgrößen UNC und UNF von Nr. 4 bis 1 Zoll und die Rohrgewinde G1/16 bis G4. Wählst du {{ui:thread.customSize}}, bestimmst du {{ui:prop.diameter}} und {{ui:prop.pitch}} selbst. Bei einer Zoll- oder G-Größe fragt das Feld nach {{ui:prop.threadsPerInch}} statt nach der Steigung in Millimetern.
+
+Die Liste ordnet die Größen nach Reihen, und eine Zeile unter dem Feld nennt die Reihe der gewählten Größe, mit Beispielen aus dem Alltag:
+
+- **M, Regelgewinde:** das metrische ISO-Regelgewinde nach ISO 261, wie bei Normschrauben und -muttern.
+- **UNC, US-Zoll grob:** Die Kamera- und Stativschraube ist 1/4"-20 UNC (ISO 1222), größere Stativköpfe nehmen 3/8"-16 UNC.
+- **UNF, US-Zoll fein:** dieselben Durchmesser wie UNC mit feinerer Steigung (ASME B1.1).
+- **G, Rohrgewinde:** Ein Duschschlauch wird mit G1/2 angeschlossen, ein Waschmaschinen-Zulaufschlauch mit G3/4. Ein Gartenwasserhahn endet in G3/4, kleinere Hähne in G1/2; dort wird der Hahnverbinder eines Schlauch-Stecksystems aufgeschraubt.
+
+Die G-Größen sind die zylindrischen Whitworth-Rohrgewinde nach ISO 228-1, wie sie an Fittings für Wasser, Gas, Hydraulik und Pneumatik sitzen. Die Größe nennt das Rohr, nicht das Gewinde: Ein G1 misst über das Gewinde 33,249 mm. Wählst du eine G-Größe, wechselt das Profil auf {{ui:thread.profileWhitworth}}, eine metrische oder Zollgröße stellt es wieder auf {{ui:thread.profileV}}. Ein {{ui:thread.profileTrapezoidal}} oder {{ui:thread.profileRound}}, das du selbst gewählt hast, bleibt. Die Norm legt nur das Gewinde fest; Schraubenkopf und Mutter bekommen bei einer G-Größe dieselben Verhältnisse wie bei einem selbst gewählten Durchmesser. Die kegeligen Rohrgewinde R, Rc und Rp sind nicht dabei.
+
+Weitere Einstellungen:
+
+- **{{ui:prop.threadHand}}:** {{ui:thread.right}} oder {{ui:thread.left}}.
+- **{{ui:prop.threadProfile}}:** {{ui:thread.profileV}} ist das genormte Profil der metrischen und Zollgewinde, {{ui:thread.profileWhitworth}} das der G-Rohrgewinde: 55° mit gerundeten Spitzen und Tälern. {{ui:thread.profileTrapezoidal}} und {{ui:thread.profileRound}} haben flache Spitzen und Täler. Das druckt sich meist zuverlässiger, weil keine dünnen Spitzen entstehen.
+- **{{ui:thread.profileCustom}}:** Ein Trapez, das du selbst formst, mit ebener Spitze und ebenem Tal gleicher Breite. {{ui:prop.threadFlankAngle}} ist der Winkel zwischen den beiden Flanken eines Zahns: 60° ist das spitze Gewinde, 30° das Trapezgewinde, und bei 90° oder weniger ist keine Flanke flacher als 45°, das Gewinde druckt also ohne Stützen. {{ui:prop.threadDepth}} und {{ui:prop.threadCoreDiameter}} sind ein Maß auf zwei Arten: Der Kerndurchmesser ist der Durchmesser minus zweimal die Tiefe, und was du an einem änderst, ändert das andere. Ein neues eigenes Profil beginnt mit der Tiefe des spitzen Gewindes bei 60°. Die Tiefe hat Grenzen, die vom Winkel und von der Steigung abhängen: nicht flacher als ein Zehntel der Steigung, nicht tiefer als 40 % des Durchmessers, und nicht so tief, dass die beiden Flanken mehr als neun Zehntel der Steigung brauchen. Änderst du die Steigung, geht die Tiefe im gleichen Verhältnis mit, ziehst du das Gewinde größer, ebenso. Spiel und Fasen wirken wie bei den anderen Profilen. Über die MCP-Brücke heißt das Profil `custom`, dazu `threadFlankAngle` und `threadDepth`.
+- **{{ui:prop.clearance}}:** Bei Mutter und Gewindeloch der Spielraum, der dafür sorgt, dass ein gedrucktes Paar sich wirklich dreht. Je gröber dein Drucker arbeitet, desto mehr Spiel braucht das Paar. Es ist der zusätzliche Platz über den ganzen Durchmesser, und der Spalt zwischen den Flanken eines Spitzgewindes ist nur etwa halb so groß, ein gedrucktes Paar braucht also mehr, als man vermutet: Neue Muttern beginnen bei 0,4 mm, 0,3 ist eng und 0,5 locker. Drucke zuerst ein Testpaar. Bei Gewindestange und Schraube steht hier ein eigenes Spiel, das den Bolzen im Durchmesser um diesen Wert dünner macht. Es ist auf 0 gestellt. Welche Seite das Spiel bekommt, hängt davon ab, was du paarst:
+  - **Gedruckte Schraube und gedruckte Mutter:** Die Schraube bleibt bei 0, die Mutter bekommt das Spiel (die 0,4 mm, mit denen sie beginnt).
+  - **Echte Schraube in gedruckter Mutter oder gedrucktem Gewindeloch:** Die gedruckte Seite nimmt alles, die Mutter behält also ihre 0,4 mm. Wackelt die Schraube, ist ein engeres 0,3 mm einen Versuch wert.
+  - **Gedruckte Schraube in echter Mutter:** Die echte Mutter hat kein Spiel, also muss die Schraube dünner werden: hier 0,3 bis 0,4 mm, so viel wie eine gedruckte Mutter hätte.
+- **{{ui:prop.axialClearance}}:** Bei Mutter und Gewindeloch das Spiel entlang der Achse, zusätzlich zum {{ui:prop.clearance}}. Jeder Zahn der Mutter wird um diesen Wert dünner, der Durchmesser bleibt, wie er ist. Der Grund: Das {{ui:prop.clearance}} wirkt nur auf den Durchmesser und öffnet die Flanken eines Spitzgewindes zu etwa 0,58 seines Betrags. Wer Luft zwischen den Flanken will, muss den Durchmesser weit aufmachen und bekommt dafür seitliches Schlackern. Mit dem Spiel in Achsrichtung stellst du beides getrennt ein. Es ist auf 0 gestellt, ein gespeichertes Gewinde ändert sich also nicht, und es reicht höchstens bis ein Fünftel der Steigung, denn darüber bliebe von den Zähnen der Mutter nichts mehr. Das Feld gibt es nur bei Mutter und Gewindeloch, Stange und Schraube behalten ihr eigenes Spiel. Mehr dazu unten bei „Gewinde für den 3D-Druck“.
+- **{{ui:prop.threadChamferTop}}, {{ui:prop.threadChamferBottom}}, {{ui:prop.headChamfer}} und {{ui:prop.rimChamfer}}:** Fasen an den Enden, damit das Gewinde sauber anläuft und der Kopf keine scharfe Kante hat. Jedes Ende von Stange, Mutter und Gewindeloch hat seine eigene Fase, oben kann sie also lang und unten kurz sein oder fehlen. Eine Schraube hat nur eine an der Spitze, sie heißt {{ui:prop.chamfer}}. Bei Mutter und Gewindeloch ist die Fase der Platz, um den sich die Mündung über den Außendurchmesser hinaus öffnet; der Kegel läuft unter 45 Grad weiter bis auf den Gewindekern, sodass am Außendurchmesser kein Absatz stehen bleibt.
+
+Beim Umschalten zwischen {{ui:thread.rod}} und {{ui:thread.bore}} bleibt die Länge erhalten. Mutter und Schraube beginnen mit ihren Normmaßen.
+- **{{ui:prop.quality}}:** Wie fein das Gewinde berechnet wird. Höher ist genauer, aber langsamer.
+
+Gedruckte Gewinde sind eine Sache für sich. Stelle die Pärchen aus Schraube und Mutter zuerst als Test her, bevor du ein großes Teil druckst, und passe das Spiel an deinen Drucker an.
+
+## Gewinde für den 3D-Druck
+
+Ein gedrucktes Gewinde braucht Luft an zwei Stellen, und beide wirken verschieden:
+
+- **Spiel im Durchmesser ({{ui:prop.clearance}}):** macht die Mutter weiter. Die Schraube sitzt dann zu jeder Seite mit der Hälfte des Werts Luft, bei 0,4 mm also 0,2 mm. Das Gewinde läuft leicht, die Schraube kann aber seitlich wackeln.
+- **Spiel in Achsrichtung ({{ui:prop.axialClearance}}):** macht die Zähne der Mutter dünner. Die Schraube kann dann entlang der Achse um diesen Wert hin und her, wenn man sie nicht anzieht. Seitlich gibt es dafür keine Luft.
+
+Beides zusammen ergibt den Spalt zwischen den Flanken: etwa 0,58 mal das Spiel im Durchmesser plus das Spiel in Achsrichtung. Ein Beispiel für 0,3 mm Spalt: Früher brauchte es dafür 0,5 mm im Durchmesser, also 0,25 mm Luft zu jeder Seite. Jetzt reichen 0,2 mm im Durchmesser (0,1 mm Luft zu jeder Seite) und 0,2 mm in Achsrichtung, und der Spalt ist 0,32 mm.
+
+**Folgen, die du kennen solltest**
+
+- **Die Schraube hat Spiel in Achsrichtung.** Ohne Last kann sie sich um diesen Wert hin und her bewegen. Für Verschraubungen, Deckel und Gehäuse ist das unerheblich, bei einer Spindel, die genau positionieren soll, nicht: Dort bleibt es klein oder bei 0.
+- **Die Zähne der Mutter werden dünner.** Mit 0,3 mm bei 1,75 mm Steigung ist jeder Zahn in seiner Mitte knapp ein Drittel dünner und damit deutlich weniger belastbar. Für Teile, die stark belastet werden, nimmst du lieber ein gröberes Gewinde.
+- **Mehr Rechenarbeit.** Die Zahnform bekommt zusätzliche Punkte, das Gewinde hat mehr Dreiecke und braucht beim Berechnen etwas länger.
+- **Kein Bogen im STEP-Export beim Whitworth-Profil.** Ein {{ui:thread.profileWhitworth}}-Gewinde mit Spiel in Achsrichtung gibt das Kantenwerkzeug und der STEP-Export als Zahnform aus Strecken weiter, nicht mit den echten Kreisbögen. Bei 0 bleibt alles wie bisher.
+
+**Tipps**
+
+1. **Zuerst ein Testpaar.** Schraube und Mutter, jeweils nur 4 bis 6 mm hoch, dauern wenige Minuten. Drucke drei Paare mit unterschiedlichem Spiel nebeneinander und nimm das, das sich leicht dreht und nicht wackelt.
+2. **Mit Werten anfangen, die oft passen.** Spiel im Durchmesser 0,2 bis 0,3 mm und Spiel in Achsrichtung 0,2 mm. Wackelt die Schraube seitlich, verringere das Spiel im Durchmesser, klemmt sie, erhöhe das Spiel in Achsrichtung. Wer ohne das Spiel in Achsrichtung auskommen will, nimmt wie bisher 0,4 mm im Durchmesser.
+3. **Das Spiel in Achsrichtung sollte mindestens eine Schichthöhe betragen.** Was unter einer Schicht liegt, löst der Drucker nicht auf. Bei 0,2 mm Schichthöhe sind 0,2 mm ein guter Anfang, bei 0,1 mm Schichthöhe reicht weniger.
+4. **Drucke Schraube und Mutter stehend.** Die Achse zeigt nach oben, dann liegt jeder Gang in ganzen Schichten und die Flanken kommen sauber heraus. Liegend hängen die Flanken durch.
+5. **Feine Steigungen sind schwierig.** Unter etwa 1 mm Steigung verschmelzen die Gänge oft. Ein gröberes Gewinde oder ein {{ui:thread.profileTrapezoidal}}-Profil mit flachen Spitzen druckt zuverlässiger als ein feines Spitzgewinde.
+6. **Dünne Spitzen vermeiden.** Das Spitzgewinde hat eine schmale Spitze, die der Drucker mit seiner Düsenbreite kaum trifft. Das {{ui:thread.profileTrapezoidal}}- und das {{ui:thread.profileRound}}-Profil haben flachere Zähne.
+7. **Entgraten und einlaufen lassen.** Die erste Umdrehung geht oft schwer, weil an den Flanken kleine Reste vom Druck stehen. Ein paar Mal hin und her drehen, dann läuft es leichter. Die Fase am Anfang hilft dem Einfädeln.
+8. **Wechselnde Drucker und Filamente.** Das Spiel hängt vom Drucker, vom Material und von der Düse ab. Wer den Drucker oder das Material wechselt, druckt das Testpaar neu.
+
+Das Kantenwerkzeug nimmt ein Gewinde als exakten Körper. Du kannst das Teil, in dem es sitzt, mit dem Gewinde darin fasen oder verrunden, ebenso die Kanten eines Schraubenkopfs, siehe [Kanten brechen und Körper aushöhlen](chapter:kanten-und-aushoehlen). Die Kanten eines Gewindes zu ermitteln dauert etwas: ein paar Sekunden bei M6, etwa eine halbe Minute bei einem G1/2-Rohrgewinde. Am schnellsten brichst du die Kante eines Schraubenkopfs aber weiterhin mit der Kopffase in den Eigenschaften.
+
+## Zahnräder
+
+{{ui:shape.gear}} gibt es als {{ui:gear.spur}}, {{ui:gear.helical}}, {{ui:gear.herringbone}} und {{ui:gear.bevel}}, dazu als {{ui:gear.internal}} und {{ui:gear.rack}} (weiter unten). Neue Zahnräder haben unter {{ui:prop.gearProfile}} die {{ui:gear.profileInvolute}}: Zähne mit Evolventenflanken, wie sie Zahnradgeneratoren und der Maschinenbau verwenden. Solche Zähne rollen sauber aufeinander ab. Du stellst die Zahl der {{ui:prop.teeth}} und den {{ui:prop.gearModule}} ein, daraus folgt die Größe: Der Außendurchmesser ist Modul × (Zähne + 2), der Teilkreis Modul × Zähne. Neue Räder starten mit Modul 2. Zwei Räder greifen ineinander, wenn sie denselben Modul und denselben {{ui:prop.gearPressureAngle}} haben (meist 20°) und ihre Mitten (Zähne + Zähne) × Modul / 2 auseinanderstehen. Wählst du beide Räder aus, nennt das Eigenschaftenfeld diesen Achsabstand und wie weit die Mitten gerade auseinanderstehen. Steht dabei Zahn auf Zahn statt Zahn in Lücke, drehst du eines der Räder um einen halben Zahn, also um 180° geteilt durch seine Zähnezahl. {{ui:prop.gearBacklash}} nimmt den Zähnen etwas Dicke, damit ein gedrucktes Paar nicht klemmt. Der Wert gilt für das Paar, jedes Rad nimmt die Hälfte davon; 0,2 mm ist ein guter Anfang, 0 ergibt das genaue Rad. Unter dem Grundkreis läuft die Flanke gerade zum Fuß hinunter und wird nicht hinterschnitten wie beim Fräsen. Zum Drucken passt das, ein sehr kleines Ritzel unter etwa 17 Zähnen kann am Fuß aber leicht streifen.
+
+Beim Schrägrad kommt der {{ui:prop.helixAngle}} dazu. Bei Evolventenzähnen ist das der echte Schrägungswinkel am Teilkreis: Zwei Schrägräder greifen ineinander, wenn sie denselben Modul und denselben Winkel haben, das eine positiv und das andere negativ. Das {{ui:gear.herringbone}} besteht aus zwei Schrägrad-Hälften, die gegenläufig drehen: Die Zähne laufen bis zur halben Höhe in die eine Richtung und danach zurück, wie ein Pfeil. Das hat für den 3D-Druck zwei Vorteile: Das Rad zentriert sich von selbst auf seiner Welle, und es entsteht kein Axialschub, weil sich die Kräfte der beiden Hälften aufheben. Beim Schrägrad schiebt das Rad dagegen seitlich auf der Achse. Du stellst den {{ui:prop.helixAngle}} und die {{ui:prop.helixQuality}} wie beim Schrägrad ein; der Winkel gilt für jede Hälfte. Zwei Pfeilräder greifen ineinander, wenn sie denselben Modul und denselben Winkel haben, das eine positiv und das andere negativ, wie beim Schrägrad. Eine Rille in der Mitte, wie bei gefrästen Pfeilrädern, gibt es nicht: Beide Hälften gehen ohne Absatz ineinander über. Das Kantenwerkzeug und der STEP-Export nehmen das Pfeilrad als Dreiecksnetz, nicht als exakten Körper.
+
+Das Kegelrad nimmt die Evolventenzähne und lässt sie zur Oberseite hin kleiner werden. Das ist eine Näherung, kein genau berechnetes Kegelradpaar.
+
+{{ui:gear.profileRound}} sind runde Zähne aus Kreisbögen, wie beim „Useful gear“ in Tinkercad: Zahnkopf und Zahnlücke gehen ohne Ecke ineinander über. Kleine Zahnräder lassen sich so gutmütiger drucken und laufen leichter, und an einem Drehknopf ergibt die Zahnform einen angenehmen Griff. Auch runde Zähne stellst du über {{ui:prop.teeth}}, {{ui:prop.gearModule}} und {{ui:prop.gearBacklash}} ein; einen Eingriffswinkel haben sie nicht. Sie stehen niedriger als Evolventenzähne, darum ist der Außendurchmesser Modul × (Zähne + 1,2). Runde Räder mit demselben Modul greifen ineinander, beim selben Achsabstand wie Evolventenräder; mit einem Evolventenrad passen sie nicht zusammen.
+
+{{ui:gear.profileSimple}} sind die geraden Zähne, die alle Zahnräder bisher hatten. Dort stellst du {{ui:prop.toothSize}} und {{ui:prop.toothWidth}} von Hand ein. Ältere Entwürfe behalten sie, bis du die Zahnform umstellst. Die {{ui:prop.centerHole}} gibt es bei allen drei Zahnformen.
+
+Das {{ui:gear.internal}} hat seine Zähne innen: ein Ring, in dem ein kleineres Rad läuft, wie der äußere Kranz eines Planetengetriebes. Du stellst es wie ein Evolventen- oder Rundzahnrad über {{ui:prop.teeth}}, {{ui:prop.gearModule}} und {{ui:prop.gearBacklash}} ein; dazu kommt der {{ui:prop.gearRim}}, der Ring außen um die Zähne. Der Außendurchmesser ist Modul × (Zähne + 2,5) plus zweimal der Kranz, bei runden Zähnen Modul × (Zähne + 1,7). Ein Rad mit demselben Modul läuft darin, wenn seine Mitte (Zähne des Hohlrads − seine Zähne) × Modul / 2 neben der Mitte des Hohlrads steht; wählst du beide aus, nennt das Eigenschaftenfeld diesen Abstand. Für einen Planetensatz gilt: Zähne des Hohlrads = Zähne des Sonnenrads + 2 × Zähne eines Planeten, zum Beispiel 30 = 12 + 2 × 9. Eine Mittelbohrung hat das Hohlrad nicht, es ist selbst der Ring. Zwischen 26 und 33 Zähnen sind seine Zahnspitzen bis zu einem Viertel Modul kürzer, weil sonst eine winzige Kante am Grundkreis entstünde; den Eingriff stört das nicht.
+
+Die {{ui:gear.rack}} ist das Zahnrad mit unendlichem Radius: eine Leiste mit Zähnen an einer Seite, deren Flanken bei Evolventenzähnen gerade Linien im Eingriffswinkel sind. Ihre Breite (entlang X) ist Zähne × Teilung, die Teilung ist π × Modul; darum lassen sich mehrere Zahnstangen mit demselben Modul nahtlos aneinanderlegen, die Enden liegen jeweils in einer Zahnlücke. Die Länge (entlang Y) ist die Dicke der Leiste und frei, solange Zähne und ein halber Millimeter Leiste hineinpassen. Die Zähne zeigen nach vorn, zum Betrachter der Startansicht; drehe die Zahnstange, wie du sie brauchst. Ein Rad mit demselben Modul rollt darauf ab, wenn seine Mitte seine Zähne × Modul / 2 vor der Teillinie steht; die Teillinie liegt einen Modul hinter den Zahnspitzen, bei runden Zähnen 0,6 Modul. Hohlrad und Zahnstange gibt es mit Evolventen- und mit runden Zähnen, nicht mit einfachen; beim Wechsel der Zahnradart bleibt der Modul erhalten.
+
+Das Kantenwerkzeug und der STEP-Export nehmen jedes Zahnrad als exakten Körper, die Evolventenflanken als glatte Kurven. Ein Schrägrad auf ovaler Grundfläche bleibt ein Dreiecksnetz, ebenso ein Schrägrad mit Evolventenzähnen ab etwa 31 Zähnen. Kleine Zähne begrenzen, wie stark sich Kanten verrunden lassen: Bei einem Rad mit einfachen Zähnen, 30 mm Durchmesser und 12 Zähnen ist die Fläche zwischen zwei Zähnen am Fuß nur etwa 0,65 mm breit, alle Kanten zu verrunden geht deshalb bis etwa 0,5 mm, beim Kegelrad mit seiner kleineren Oberseite bis etwa 0,4 mm. Die Zähne eines Schrägrads stehen schräg, das macht diese Fläche quer zu ihren schrägen Kanten noch schmaler: Je größer der Schrägungswinkel im Verhältnis zur Höhe des Rads, desto kleiner die Rundung, die passt. Beim Schrägrad lassen sich die Kanten der beiden flachen Enden verrunden, nur diese Kanten zu fasen scheitert aber im CAD-Kern; verrunde sie oder fase alle Kanten zusammen mit kleinerem Maß, etwa 0,2 mm.
+
+## Federn
+
+Die {{ui:shape.spring}} hat {{ui:prop.turns}} und eine {{ui:prop.wire}}. Zusammen mit der Höhe bestimmen sie, wie weich die Feder wird. Unter {{ui:prop.springHand}} wählst du, wie herum der Draht läuft: {{ui:spring.right}} wie bei einer üblichen Druckfeder, oder {{ui:spring.left}}.
+
+Das Kantenwerkzeug und der STEP-Export nehmen eine Feder als exakten Körper: ein runder Draht entlang einer Schraubenlinie, an beiden Enden gerade abgeschnitten. Diese beiden Drahtenden kannst du zum Beispiel verrunden oder fasen.
+
+## Gebogene Rohre
+
+Ein {{ui:shape.bentTube}} besteht aus bis zu zwölf Abschnitten: ein gerades Stück, gefolgt von einer Biegung. Für jedes stellst du die {{ui:prop.bentTubeSegmentLength}}, den {{ui:prop.bentTubeBendAngle}}, den {{ui:prop.bentTubeBendRadius}} und den {{ui:prop.bentTubeRoll}} ein. Der Abschnitt, den du gerade bearbeitest, leuchtet auf dem Rohr orange auf, so behältst du die Reihenfolge im Blick. Ein Rollwinkel von 0° biegt in der Ebene der Arbeitsfläche, bei 90° biegt das Rohr nach oben. Das Profil kann rund, quadratisch, sechs- oder achteckig sein, innen ebenso, oder ganz massiv. Läuft das Rohr in sich selbst, warnt dich layerling.
+
+## Übergang
+
+Der {{ui:shape.loft}} verbindet einen Umriss unten mit einem anderen oben, wie ein Loft in Fusion: ein Schlauchadapter von einem Durchmesser auf einen anderen, ein eckiger Lüfter auf ein rundes Rohr, ein Sockel, der nach oben rund wird. Für beide Enden wählst du {{ui:prop.loftBottomOutline}} und {{ui:prop.loftTopOutline}}: {{ui:loft.round}}, {{ui:loft.rectangle}} mit {{ui:prop.loftBottomCorner}} oder {{ui:loft.polygon}} mit seiner Eckenzahl, dazu Breite und Länge jedes Endes und die Höhe. Mit {{ui:prop.loftOffsetX}} und {{ui:prop.loftOffsetZ}} sitzt das obere Ende seitlich versetzt, für einen schrägen Übergang; das untere Ende bleibt dabei stehen.
+
+{{ui:prop.loftWall}} macht aus dem vollen Körper ein Rohr, das oben und unten offen ist. Die Öffnung ist an beiden Enden um die Wandstärke kleiner, waagerecht gemessen; wo die Wand schräg steht, ist sie also etwas dünner. Ziehst du den Rahmen größer, wachsen beide Enden mit, Eckenradius und Wand bleiben gleich.
+
+{{ui:prop.loftSmooth}} macht den Übergang weich. Bei 0 laufen die Seiten gerade von unten nach oben, wie bei einem Kegel. Bei 100 laufen sie an beiden Enden gerade nach oben und ändern dazwischen ihre Größe in einer S-Kurve: Das ist ein Schlauchadapter, der sich weich von einem schmalen zu einem weiten Rohr aufweitet, statt wie ein Trichter zu verlaufen. Dazwischen mischt der Regler beides. Der weiche Übergang geht mit {{ui:prop.loftWall}}, mit Verdrehung, Kippung und seitlichem Versatz zusammen; ein Rohr mit Wand bleibt an beiden Enden offen. Er ist ein exakter Körper wie die gerade Form, die Kanten lassen sich also fasen und verrunden, aber er wird durch mehrere Schnitte gebaut und rechnet dadurch etwas länger.
+
+{{ui:prop.loftTwist}} dreht den Querschnitt auf dem Weg nach oben gleichmäßig um die Hochachse, bis zu 360° in beide Richtungen; die Seiten winden sich dann. {{ui:prop.loftTiltX}} und {{ui:prop.loftTiltZ}} kippen das obere Ende, bis zu 45°: Ein positiver Wert hebt seine Vorderkante beziehungsweise seine rechte Seite. Die Schnitte dazwischen kippen anteilig mit, so dass die Wand weich in die Schräge läuft. Der höchste Punkt bleibt auf der eingestellten Höhe. Wird die Höhe später so klein, dass das schräge Ende unter die Platte reichen würde, gibt die Neigung so weit nach, dass es passt. Einen Bogen entlang eines Pfads, etwa einen Rohrkrümmer, macht der Übergang nicht.
+
+Der Übergang ist ein exakter Körper, auch verdreht und gekippt: Seine Kanten lassen sich fasen und verrunden, und der STEP-Export behält ihn. Einen Flansch mit Schraubenlöchern setzt du wie gewohnt dazu und gruppierst.
+
+## Scharnier
+
+Das {{ui:shape.hinge}} wird in einem Stück gedruckt und bewegt sich danach (print-in-place): zwei Blätter, die aufgeklappt flach auf der Platte liegen, dazwischen abwechselnde Knöchel auf einer Achse. Der Stift gehört zum hinteren Blatt und läuft mit Spiel durch die Knöchel des vorderen. Du stellst die {{ui:prop.hingeLength}}, die {{ui:prop.hingeOpenWidth}} und den {{ui:prop.hingeKnuckleDiameter}} ein, dazu die Zahl der {{ui:prop.hingeKnuckles}} (ungerade, damit der Stift an beiden Enden hält), den {{ui:prop.hingePinDiameter}} und die {{ui:prop.hingeLeafThickness}}.
+
+{{ui:prop.hingeClearance}} ist der Abstand zwischen den beweglichen Teilen: um den Stift, zwischen den Knöcheln und vor den Blättern. Mit 0,4 mm löst sich ein gut eingestellter Drucker meist mit einer kleinen Drehung; verwachsen die Teile, nimm mehr, wackelt es zu sehr, weniger. Drucke das Scharnier liegend, so wie es auf der Platte erscheint, ohne Stützen. Die Blätter kannst du mit Bohrungen versehen oder in ein größeres Teil gruppieren, etwa einen Deckel.
+
+## Rändelung
+
+Die {{ui:shape.knurl}} ist ein runder Griff mit Rillen ringsum, für Drehknöpfe, Stellräder und Werkzeuggriffe. Unter {{ui:prop.knurlPattern}} wählst du {{ui:knurl.straight}}, also Rillen längs der Achse wie an einem Drehknopf, {{ui:knurl.diamond}}: Zwei schräge Rillenreihen kreuzen sich zu kleinen Rauten, oder {{ui:knurl.round}}: Rillen und Rippen längs der Achse als weiche Wellenkante aus Kreisbögen, ein angenehmer Griff ohne scharfe Grate. Die runden Rillen bleiben flacher als eine halbe Teilung, sonst würden die Rippen am Fuß bauchig; eine zu große Tiefe gibt darum nach. Du stellst {{ui:prop.diameter}} und {{ui:prop.height}} ein, die Zahl der {{ui:prop.knurlCount}} und die {{ui:prop.knurlDepth}}; bei der gekreuzten Rändelung dazu den {{ui:prop.knurlAngle}} zur Achse. Die {{ui:prop.knurlChamfer}} bricht beide Enden unter 45°, wie bei einem gedrehten Knopf; 0 lässt sie scharf.
+
+Die gerade und die runde Rändelung sind exakte Körper, ihre Kanten lassen sich brechen und runden. Die gekreuzte bleibt ein Netz, denn als exakter Körper bräuchte sie bei 30 Rillen schon fast eine Minute zum Rechnen. Für einen Knopf auf einer Achse gruppierst du die Rändelung mit einer Bohrung, etwa einem {{ui:shape.thread}} als Gewindeloch. Rillen unter 0,4 mm Tiefe druckt kaum ein Drucker sauber, und enger als 0,8 mm am Umfang lässt layerling die Rillen gar nicht erst stehen: Ein dünner Griff bekommt entsprechend weniger.
+
+## Schwalbenschwanz
+
+Der {{ui:shape.dovetail}} ist die Verbindung, bei der zwei Teile ineinander einrasten und sich nur seitlich zusammenschieben lassen. Du stellst die Breite am breiten Ende, die {{ui:prop.dovetailNeckWidth}} und die Länge des Zapfens ein. Kopiere den Zapfen für die Gegenseite und mache die Kopie zur Aussparung: {{ui:prop.dovetailClearance}} sorgt dann für ein wenig Spiel, damit die Verbindung nach dem Druck nicht klemmt.
+
+> **Tipp:** Ein Gewindeloch schneidet sich beim Gruppieren in das Teil, mit dem es sich überlappt. Setze es also ein Stück in das Material hinein und lasse es nicht nur an der Fläche anliegen.
+
+## Tropfenbohrung
+
+Ein Loch, das waagerecht im Teil liegt, bekommt beim Drucken oben eine Brücke, und die hängt durch. Die {{ui:shape.teardrop}} hat deshalb oben eine Spitze: Jede Schicht liegt auf der darunter, und das Loch wird ohne Stützen rund genug. Stelle den {{ui:prop.teardropDiameter}} auf das Maß des Lochs, etwa 3,4 mm für eine M3-Schraube, und die {{ui:prop.teardropLength}} so lang, dass sie durch das Teil reicht. Der {{ui:prop.teardropTipAngle}} steht auf 90°, die Flanken laufen also unter 45° zusammen. Das druckt bei den meisten Druckern sauber; flachere Spitzen brauchen mehr Höhe, steilere sparen sie.
+
+Mache die Tropfenbohrung zur Aussparung und gruppiere sie mit dem Teil. Sie liegt mit der Länge in Richtung der Tiefe, die Spitze zeigt nach oben. Für ein Loch in der anderen Richtung drehst du sie um 90° um die senkrechte Achse.
+
+Ein **Gewindeloch** auf der Seite hängt oben genauso durch. Gib ihm eine eigene Tropfenbohrung: Füge eine {{ui:shape.teardrop}} als Aussparung hinzu, deren {{ui:prop.teardropDiameter}} der Kern des Gewindes ist, der Durchmesser, den seine Zähne freilassen (bei M10 etwa 8,4 mm), so lang wie das Gewindeloch, und wähle beide aus. Klicke {{ui:editor.tool.align}} und richte sie in der Mitte aus - die Mitte der Tropfenbohrung ist die Mitte ihres runden Teils, nicht die ihres Kastens mit der Spitze, die beiden Kreise liegen also genau aufeinander - und gruppiere beide mit dem Teil. Das Gewinde wird wie sonst geschnitten, und die Spitze öffnet die Oberseite des Lochs, so dass es ohne Stützen druckt.
+
+## Stufen- und Senkbohrung
+
+Ein Schraubenkopf soll oft nicht überstehen. Die {{ui:shape.counterbore}} schneidet dafür eine runde Tasche für einen Zylinderkopf (DIN 912), die {{ui:shape.countersink}} einen Kegel für eine Senkkopfschraube (DIN 7991). Beide stehen mit dem Kopf nach oben: Der {{ui:prop.screwHoleHead}} ist der Durchmesser der Tasche oder des Kegels, der {{ui:prop.screwHoleShaft}} die Bohrung darunter, die {{ui:prop.screwHoleLength}} die ganze Länge. Bei der Stufenbohrung stellst du die {{ui:prop.screwHoleHeadDepth}} ein, bei der Senkbohrung den {{ui:prop.screwHoleAngle}} (90° passt zu Senkschrauben). Die Vorgaben passen zu einer M3-Schraube.
+
+Mache die Form zur Aussparung und gruppiere sie mit dem Teil. Lass ihre Oberseite ein Stück über der Fläche enden, auf der der Kopf sitzen soll, damit die Tasche sauber offen ist. Für die Tasche einer Sechskantmutter nimmst du einen {{ui:shape.polygon}} mit sechs Seiten als Aussparung.

@@ -1,0 +1,118 @@
+import { beforeAll, describe, expect, it } from "vitest";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { OcctKernel } from "occt-wasm";
+import { buildRevolvedSketchSolid } from "@/lib/cadSketchRevolve";
+import { shellSolid } from "@/lib/cadShell";
+import { revolveAxisOffset } from "@/lib/revolveAxis";
+import type { SketchPoint, SketchProfile } from "@/types/layerling";
+
+function polygon(coordinates: Array<[number, number]>): SketchProfile {
+  const points: SketchPoint[] = coordinates.map(([x, z], index) => ({ id: `p${index}`, x, z }));
+  return {
+    points,
+    segments: points.map((point, index) => ({ id: `s${index}`, kind: "line" as const, startId: point.id, endId: points[(index + 1) % points.length].id })),
+  };
+}
+
+describe("a revolved sketch as an exact solid, with the real OCCT kernel", () => {
+  let kernel: OcctKernel;
+
+  beforeAll(async () => {
+    const wasm = join(dirname(fileURLToPath(import.meta.resolve("occt-wasm"))), "occt-wasm.wasm");
+    kernel = await OcctKernel.init({ wasm });
+  });
+
+  // The profile stands left of the axis (x <= 0); sketch z runs downwards, so the top is the smallest z.
+  const cup = () => polygon([[-20, 0], [0, 0], [0, 30], [-20, 30]]);
+
+  it("turns a rectangle into a cylinder of the right size, standing up", () => {
+    const solid = buildRevolvedSketchSolid(kernel, cup(), 0, 360);
+    expect(kernel.isValid(solid)).toBe(true);
+    expect(kernel.getVolume(solid)).toBeCloseTo(Math.PI * 20 * 20 * 30, 1);
+    const bounds = kernel.getBoundingBox(solid, false);
+    expect(bounds.xmax - bounds.xmin).toBeCloseTo(40, 3);
+    expect(bounds.zmax - bounds.zmin).toBeCloseTo(40, 3);
+    expect(bounds.ymax - bounds.ymin).toBeCloseTo(30, 3);
+    expect(bounds.ymin).toBeCloseTo(0, 3);
+  });
+
+  it("takes a part of the turn, from a start angle, either way round", () => {
+    const quarter = buildRevolvedSketchSolid(kernel, cup(), 0, 90);
+    expect(kernel.getVolume(quarter)).toBeCloseTo((Math.PI * 20 * 20 * 30) / 4, 1);
+    const bounds = kernel.getBoundingBox(quarter, false);
+    // From +x towards -z: x and -z are positive.
+    expect(bounds.xmin).toBeGreaterThan(-1e-6);
+    expect(bounds.zmax).toBeLessThan(1e-6);
+    const turned = buildRevolvedSketchSolid(kernel, cup(), 90, 90);
+    expect(kernel.getVolume(turned)).toBeCloseTo((Math.PI * 20 * 20 * 30) / 4, 1);
+    expect(kernel.getBoundingBox(turned, false).zmax).toBeLessThan(1e-6);
+    expect(kernel.getBoundingBox(turned, false).xmax).toBeLessThan(1e-6);
+    const back = buildRevolvedSketchSolid(kernel, cup(), 90, -90);
+    const backBounds = kernel.getBoundingBox(back, false);
+    expect(backBounds.xmin).toBeGreaterThan(-1e-6);
+    expect(backBounds.zmax).toBeLessThan(1e-6);
+  });
+
+  it.each([[0, 90], [0, 180], [30, 200], [0, -120], [300, 150]])("lies about its axis the way revolveAxisOffset says (start %d, sweep %d)", (startAngle, sweepAngle) => {
+    const ring = polygon([[-20, 0], [-8, 0], [-8, 30], [-20, 30]]);
+    const bounds = kernel.getBoundingBox(buildRevolvedSketchSolid(kernel, ring, startAngle, sweepAngle), false);
+    const offset = revolveAxisOffset(ring, { startAngle, sweepAngle });
+    // The axis is at the origin of the solid, so the middle of its box is minus the offset.
+    expect((bounds.xmin + bounds.xmax) / 2).toBeCloseTo(-offset.x, 2);
+    expect((bounds.zmin + bounds.zmax) / 2).toBeCloseTo(-offset.z, 2);
+  });
+
+  it("keeps a curve exact: a quarter circle profile makes a dome with the volume of a half sphere", () => {
+    // From the axis at the top, out to the rim at the base, bulging outwards.
+    const k = 0.5522847498;
+    const profile: SketchProfile = {
+      points: [
+        { id: "a", x: 0, z: 0, handleOut: { x: -20 * k, z: 0 } },
+        { id: "b", x: -20, z: 20, handleIn: { x: -20, z: 20 - 20 * k } },
+        { id: "c", x: 0, z: 20 },
+      ],
+      segments: [
+        { id: "ab", kind: "bezier", startId: "a", endId: "b" },
+        { id: "bc", kind: "line", startId: "b", endId: "c" },
+        { id: "ca", kind: "line", startId: "c", endId: "a" },
+      ],
+    };
+    const dome = buildRevolvedSketchSolid(kernel, profile, 0, 360);
+    expect(kernel.isValid(dome)).toBe(true);
+    // A Bezier quarter circle is within a few hundredths of a percent of the true arc.
+    expect(Math.abs(kernel.getVolume(dome) / ((2 / 3) * Math.PI * 20 ** 3) - 1)).toBeLessThan(0.002);
+    // The quarter circle is built as an arc, so the dome is a true sphere surface (type 4 in the BREP text), not a free-form revolution.
+    const brep = kernel.toBREP(dome);
+    const surfaces = brep.slice(brep.indexOf("Surfaces"), brep.indexOf("TShapes")).split(String.fromCharCode(10)).map((row) => row.split(" ")[0]);
+    expect(surfaces).toContain("4");
+  });
+
+  it("leaves a ring as a ring when the profile has a hole in it", () => {
+    const outer = [[-20, 0], [-5, 0], [-5, 30], [-20, 30]] as Array<[number, number]>;
+    const inner = [[-15, 5], [-10, 5], [-10, 25], [-15, 25]] as Array<[number, number]>;
+    const outerProfile = polygon(outer);
+    const innerProfile = polygon(inner);
+    const profile: SketchProfile = {
+      points: [...outerProfile.points, ...innerProfile.points.map((point) => ({ ...point, id: `i-${point.id}` }))],
+      segments: [...outerProfile.segments, ...innerProfile.segments.map((segment) => ({ ...segment, id: `i-${segment.id}`, startId: `i-${segment.startId}`, endId: `i-${segment.endId}` }))],
+    };
+    const ring = buildRevolvedSketchSolid(kernel, profile, 0, 360);
+    const expected = Math.PI * (20 ** 2 - 5 ** 2) * 30 - Math.PI * (15 ** 2 - 10 ** 2) * 20;
+    expect(kernel.getVolume(ring)).toBeCloseTo(expected, 0);
+  });
+
+  it("refuses a profile that crosses the axis, so the caller can fall back to the mesh", () => {
+    expect(() => buildRevolvedSketchSolid(kernel, polygon([[-10, 0], [10, 0], [10, 20], [-10, 20]]), 0, 360)).toThrow(/axis/);
+  });
+
+  // The reason for all this (#167): a revolved cup could not be hollowed.
+  it("can be hollowed: a cup with the top open", () => {
+    const solid = buildRevolvedSketchSolid(kernel, cup(), 0, 360);
+    const hollow = shellSolid(kernel, solid, 2, "top");
+    expect(kernel.isValid(hollow)).toBe(true);
+    const outerVolume = Math.PI * 20 * 20 * 30;
+    const cavity = Math.PI * 18 * 18 * 28;
+    expect(kernel.getVolume(hollow)).toBeCloseTo(outerVolume - cavity, 0);
+  });
+});

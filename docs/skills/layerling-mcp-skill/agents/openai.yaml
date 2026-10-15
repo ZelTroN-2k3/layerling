@@ -1,0 +1,4 @@
+interface:
+  display_name: "Layerling MCP Skill"
+  short_description: "Control live Layerling editor tabs"
+  default_prompt: "Use $layerling-mcp-skill to inspect the live Layerling scene and modify selected objects."

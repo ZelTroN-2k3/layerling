@@ -1,0 +1,10 @@
+# Copy this server block into your Codex config.toml and replace the script
+# path with the absolute path to your Layerling checkout.
+#
+# Windows paths can use forward slashes:
+# C:/Users/you/Desktop/layerling/scripts/layerling-mcp-server.mjs
+
+[mcp_servers.layerling]
+command = "node"
+args = ["/absolute/path/to/layerling/scripts/layerling-mcp-server.mjs"]
+startup_timeout_sec = 20

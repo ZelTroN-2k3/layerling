@@ -1,0 +1,30 @@
+services:
+  layerling:
+    # The ready-made image from every release. "up -d --build" builds it from
+    # this folder instead, under the same name.
+    image: ghcr.io/henmedia/layerling:latest
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      NEXT_TELEMETRY_DISABLED: "1"
+      # LAYERLING_SHARED_PROJECTS_DIR: "/shared-projects"
+      # The colour theme people get on their first visit: system (the default), light, dark or graphite.
+      # LAYERLING_DEFAULT_THEME: "graphite"
+      # With the shared folder on: new designs start on the server. "true" is the start for people who have not
+      # chosen (they can untick it on the start page), "always" holds for everyone.
+      # LAYERLING_NEW_DESIGNS_ON_SERVER: "always"
+      # Let an AI client (MCP) drive the open editors over the network. Off by default; whoever has the
+      # token can read and change the open designs, so use a long random one on a trusted network. See the README.
+      # LAYERLING_MCP_REMOTE: "true"
+      # LAYERLING_MCP_TOKEN: "a-long-random-secret-of-at-least-16-characters"
+      # LAYERLING_MCP_ALLOWED_HOSTS: "layerling.example.com"   # only for a real domain, e.g. behind a reverse proxy
+    # With the shared folder: the container runs as the user with the number 999, which must be allowed to write
+    # to the mounted folder ("sudo chown 999:999 ./shared-projects"), or run it as yourself with:
+    # user: "1000:1000"   # your own numbers: id -u and id -g
+    # volumes:
+    #   - ./shared-projects:/shared-projects:z

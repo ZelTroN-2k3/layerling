@@ -1,0 +1,77 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+
+# Next.js
+.next/
+.next-dev/
+.next-export/
+out/
+build/
+dist/
+
+# Operator pages: the legal notice and privacy policy belong to whoever runs an
+# installation, not to the project. Dropped into public/ they are picked up by
+# the build and survive an upload sync.
+apps/web/public/impressum.html
+apps/web/public/datenschutz.html
+apps/web/public/kontakt.php
+
+# The user guide is built from docs/guide by scripts/build-guide.mjs.
+apps/web/public/anleitung/
+apps/web/public/guide/
+apps/web/public/handleiding/
+apps/web/public/guide-fr/
+apps/web/public/instrukcja/
+
+# Environment files
+.env
+.env*.local
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+# Next rewrites this to point at whichever build ran last.
+apps/web/next-env.d.ts
+
+# Test and automation output
+coverage/
+test-results/
+playwright-report/
+.playwright-cli/
+
+# Local workspace state
+.codex/
+.codex-run/
+.codex-remote-attachments/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Claude Code local settings (machine-specific)
+.claude/settings.local.json
+
+# Staged occt-wasm runtime (copied from node_modules by scripts/copy-occt-wasm.mjs)
+apps/web/public/occt/
+
+# Archives and local unpacked version folders
+*.zip
+/layerling-*/
+
+# Local web server cache / environment notes
+.laragon_cache.json
+*.url
+démarrage serveur.txt

@@ -1,0 +1,139 @@
+import { strToU8, zipSync } from "fflate";
+import { layerlingToZUp, type MeshPoint } from "@/lib/meshCoordinates";
+import { weldMeshVertices } from "@/lib/objExport";
+
+// ---------------------------------------------------------------------------
+// 3MF export - the counterpart of threemfImport.ts.
+//
+// Spec: https://github.com/3MFConsortium/spec_core/blob/master/3MF%20Core%20Specification.md
+//
+// The package holds the three parts a 3MF consumer requires: the content
+// types, the root relationship and 3D/3dmodel.model. Every body becomes an
+// object of its own with its name and colour, and a build item that places it
+// where it stands in the scene. Coordinates are millimetres, Z-up, exactly as
+// the STL export writes them.
+// ---------------------------------------------------------------------------
+
+export type ThreeMfExportMesh = {
+  name: string;
+  /** "#rrggbb"; anything else falls back to the default body colour. */
+  color?: string;
+  /** A colour per face, for a body whose parts keep their own colours (#153); wins over `color`. */
+  faceColors?: readonly string[];
+  vertices: readonly MeshPoint[];
+  faces: readonly (readonly [number, number, number])[];
+};
+
+export const THREE_MF_MEDIA_TYPE = "model/3mf";
+const MODEL_PATH = "3D/3dmodel.model";
+const CORE_NAMESPACE = "http://schemas.microsoft.com/3dmanufacturing/core/2015/02";
+const MATERIAL_NAMESPACE = "http://schemas.microsoft.com/3dmanufacturing/material/2015/02";
+const MODEL_RELATIONSHIP = "http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel";
+const DEFAULT_COLOR = "#D97813";
+
+const CONTENT_TYPES = `<?xml version="1.0" encoding="UTF-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/>
+</Types>
+`;
+
+const ROOT_RELATIONSHIPS = `<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Target="/${MODEL_PATH}" Id="rel0" Type="${MODEL_RELATIONSHIP}"/>
+</Relationships>
+`;
+
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    // Control characters are not allowed in XML 1.0 at all.
+    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, "");
+}
+
+function displayColor(color: string | undefined) {
+  return color && /^#[0-9a-f]{6}$/i.test(color) ? color.toUpperCase() : DEFAULT_COLOR;
+}
+
+/** Micrometre precision keeps the file small without moving anything a printer could see. */
+function coordinate(value: number) {
+  const rounded = Math.round(value * 1e6) / 1e6;
+  return Object.is(rounded, -0) ? "0" : String(rounded);
+}
+
+/**
+ * The colours are written twice, on purpose. The core `basematerials` group,
+ * which each object points at, is what most programs read. Bambu Studio and
+ * OrcaSlicer do not read it from files they did not write themselves; they
+ * read the Materials extension's `m:colorgroup`, but only when the triangles
+ * point at it, and then offer to map the colours onto filaments. So every
+ * triangle names the colour group too. A program that knows neither simply
+ * sees the geometry.
+ */
+export function exportMeshesTo3mf(meshes: readonly ThreeMfExportMesh[], metadata: { title?: string } = {}): Uint8Array {
+  const colors = [...new Set(meshes.flatMap((mesh) => [displayColor(mesh.color), ...(mesh.faceColors ?? []).map(displayColor)]))];
+  const objects: string[] = [];
+  const items: string[] = [];
+  const colorGroupId = meshes.length + 2; // after the material group (1) and the objects (2...)
+
+  meshes.forEach((mesh, index) => {
+    const welded = weldMeshVertices(mesh);
+    if (welded.faces.length === 0) return;
+    const id = index + 2; // 1 is the material group
+    const vertices = welded.vertices
+      .map((vertex) => {
+        const [x, y, z] = layerlingToZUp(vertex);
+        return `<vertex x="${coordinate(x)}" y="${coordinate(y)}" z="${coordinate(z)}"/>`;
+      })
+      .join("");
+    const colorIndex = colors.indexOf(displayColor(mesh.color));
+    const triangles = welded.faces
+      .map(([a, b, c], index) => {
+        const faceColor = mesh.faceColors?.[welded.kept[index]];
+        const triangleColor = faceColor ? colors.indexOf(displayColor(faceColor)) : colorIndex;
+        return `<triangle v1="${a}" v2="${b}" v3="${c}" pid="${colorGroupId}" p1="${triangleColor}"/>`;
+      })
+      .join("");
+    const name = escapeXml(mesh.name || `Body ${index + 1}`);
+    objects.push(
+      `  <object id="${id}" type="model" name="${name}" pid="1" pindex="${colorIndex}">` +
+        `<mesh><vertices>${vertices}</vertices><triangles>${triangles}</triangles></mesh></object>`,
+    );
+    items.push(`  <item objectid="${id}"/>`);
+  });
+
+  if (objects.length === 0) {
+    throw new Error("3MF export needs at least one body with triangles");
+  }
+
+  const materials = colors
+    .map((color, index) => `<base name="${escapeXml(`Color ${index + 1}`)}" displaycolor="${color}"/>`)
+    .join("");
+  const colorGroup = colors.map((color) => `<m:color color="${color}FF"/>`).join("");
+  const title = metadata.title?.trim() ? `  <metadata name="Title">${escapeXml(metadata.title.trim())}</metadata>\n` : "";
+  const model = `<?xml version="1.0" encoding="UTF-8"?>
+<model unit="millimeter" xml:lang="en-US" xmlns="${CORE_NAMESPACE}" xmlns:m="${MATERIAL_NAMESPACE}">
+${title}  <metadata name="Application">layerling</metadata>
+ <resources>
+  <basematerials id="1">${materials}</basematerials>
+  <m:colorgroup id="${colorGroupId}">${colorGroup}</m:colorgroup>
+${objects.join("\n")}
+ </resources>
+ <build>
+${items.join("\n")}
+ </build>
+</model>
+`;
+
+  return zipSync(
+    {
+      "[Content_Types].xml": strToU8(CONTENT_TYPES),
+      "_rels/.rels": strToU8(ROOT_RELATIONSHIPS),
+      [MODEL_PATH]: strToU8(model),
+    },
+    { level: 6 },
+  );
+}

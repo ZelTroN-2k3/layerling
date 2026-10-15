@@ -1,0 +1,69 @@
+{
+  "name": "layerling",
+  "version": "1.72.3",
+  "private": true,
+  "description": "Easy 3D CAD for 3D printing. A local-first 3D editor that runs in your browser.",
+  "author": {
+    "name": "Layerling contributors"
+  },
+  "homepage": "https://github.com/henmedia/layerling",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "copy:occt": "node scripts/copy-occt-wasm.mjs",
+    "clean:cache": "node scripts/clean-next-cache.mjs",
+    "predev": "npm run copy:occt && npm run guide",
+    "dev": "next dev apps/web",
+    "prebuild": "npm run copy:occt && npm run guide",
+    "build": "next build apps/web",
+    "export": "node scripts/build-static-export.mjs",
+    "verify:static-worker-assets": "node scripts/verify-static-worker-assets.mjs",
+    "start": "next start apps/web",
+    "typecheck": "tsc -p apps/web/tsconfig.json --noEmit",
+    "test": "vitest run --config tests/vitest.config.ts",
+    "test:watch": "vitest --config tests/vitest.config.ts",
+    "test:e2e": "vitest run --config tests/vitest.e2e.config.ts",
+    "perf": "vitest run --config tests/vitest.perf.config.ts --reporter verbose",
+    "icons:shapes": "vitest run --config tests/vitest.tools.config.ts tests/tools/renderShapeIcons.tool.ts",
+    "icons:brand": "vitest run --config tests/vitest.tools.config.ts tests/tools/renderBrandIcons.tool.ts",
+    "icons:social": "node scripts/render-social-card.mjs",
+    "guide": "node scripts/build-guide.mjs",
+    "i18n:status": "node scripts/i18n-status.mjs",
+    "guide:images": "node scripts/guide-screenshots.mjs",
+    "theme:graphite": "node scripts/generate-graphite-theme.mjs",
+    "printers:update": "node scripts/generate-printer-presets.mjs",
+    "printers:check": "node scripts/check-printer-updates.mjs",
+    "ci": "npm run typecheck && npm run test",
+    "mcp:layerling": "node scripts/layerling-mcp-server.mjs"
+  },
+  "dependencies": {
+    "@types/three": "^0.184.1",
+    "brepjs": "^18.118.0",
+    "fflate": "^0.8.3",
+    "lucide-react": "^0.511.0",
+    "manifold-3d": "^3.5.0",
+    "meshoptimizer": "^1.3.0",
+    "next": "^15.5.26",
+    "occt-wasm": "^5.7.1",
+    "opentype.js": "^1.3.4",
+    "react": "^19.1.0",
+    "react-colorful": "^5.8.0",
+    "react-dom": "^19.1.0",
+    "three": "^0.184.0",
+    "three-bvh-csg": "^0.0.18",
+    "three-mesh-bvh": "^0.9.13"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.18",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "jsdom": "^30.1.2",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "brepjs": {
+      "occt-wasm": "$occt-wasm"
+    },
+    "postcss": "8.5.28"
+  }
+}

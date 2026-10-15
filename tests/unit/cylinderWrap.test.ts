@@ -1,0 +1,100 @@
+import { describe, expect, it } from "vitest";
+import { wrapMeshAroundCylinder, type CylinderWrapInput } from "@/lib/cylinderWrap";
+import { validateClosedSolidTriangleSoup } from "@/lib/svgImport";
+
+/** A closed box lying on the plate, faces wound outward. */
+function plateBox(width: number, thickness: number, depth: number, at = { x: 0, y: 0, z: 0 }): CylinderWrapInput {
+  const [x0, x1] = [at.x - width / 2, at.x + width / 2];
+  const [y0, y1] = [at.y, at.y + thickness];
+  const [z0, z1] = [at.z - depth / 2, at.z + depth / 2];
+  const vertices: CylinderWrapInput["vertices"] = [
+    [x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1],
+    [x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1],
+  ];
+  const faces: CylinderWrapInput["faces"] = [
+    [0, 1, 2], [0, 2, 3], // bottom (-y)
+    [4, 6, 5], [4, 7, 6], // top (+y)
+    [0, 4, 5], [0, 5, 1], // back (-z)
+    [3, 2, 6], [3, 6, 7], // front (+z)
+    [0, 3, 7], [0, 7, 4], // left (-x)
+    [1, 5, 6], [1, 6, 2], // right (+x)
+  ];
+  return { vertices, faces };
+}
+
+function signedVolume(positions: number[]) {
+  let volume = 0;
+  for (let i = 0; i < positions.length; i += 9) {
+    const [ax, ay, az, bx, by, bz, cx, cy, cz] = positions.slice(i, i + 9);
+    volume += (ax * (by * cz - bz * cy) - ay * (bx * cz - bz * cx) + az * (bx * cy - by * cx)) / 6;
+  }
+  return volume;
+}
+
+function soup(mesh: CylinderWrapInput) {
+  return mesh.faces.flatMap((face) => face.flatMap((index) => mesh.vertices[index]));
+}
+
+describe("wrapping a flat body around a cylinder (#106)", () => {
+  it("stays closed and keeps its faces wound outward", () => {
+    const box = plateBox(60, 2, 20, { x: 15, y: 3, z: -7 });
+    expect(signedVolume(soup(box))).toBeGreaterThan(0);
+    const result = wrapMeshAroundCylinder(box, { diameter: 40 });
+    if ("error" in result) throw new Error(result.error);
+    expect(() => validateClosedSolidTriangleSoup(result.positions, "wrapped")).not.toThrow();
+    expect(signedVolume(result.positions)).toBeGreaterThan(0);
+    // Bending keeps the volume of a thin shell: arc length times depth times thickness, measured at the middle radius.
+    expect(Math.abs(signedVolume(result.positions) - 60 * 20 * 2 * (21 / 20))).toBeLessThan(2);
+  });
+
+  it("lays the body on the wall: radius from the wall outward, depth as height, front at angle 0", () => {
+    const result = wrapMeshAroundCylinder(plateBox(30, 3, 12), { diameter: 50 });
+    if ("error" in result) throw new Error(result.error);
+    let minR = Infinity, maxR = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (let i = 0; i < result.positions.length; i += 3) {
+      const r = Math.hypot(result.positions[i], result.positions[i + 2]);
+      minR = Math.min(minR, r); maxR = Math.max(maxR, r);
+      minY = Math.min(minY, result.positions[i + 1]); maxY = Math.max(maxY, result.positions[i + 1]);
+    }
+    expect(minR).toBeCloseTo(25, 6);
+    expect(maxR).toBeCloseTo(28, 6);
+    expect(minY).toBeCloseTo(0, 6);
+    expect(maxY).toBeCloseTo(12, 6);
+    expect(result.outerRadius).toBeCloseTo(28, 6);
+    expect(result.height).toBeCloseTo(12, 6);
+    expect(result.arcDegrees).toBeCloseTo((30 / 25) * 180 / Math.PI, 6);
+  });
+
+  it("goes into the wall for an engraving, keeping the outside on the given diameter", () => {
+    const result = wrapMeshAroundCylinder(plateBox(30, 3, 12), { diameter: 50, inward: true });
+    if ("error" in result) throw new Error(result.error);
+    const radii: number[] = [];
+    for (let i = 0; i < result.positions.length; i += 3) radii.push(Math.hypot(result.positions[i], result.positions[i + 2]));
+    expect(Math.min(...radii)).toBeCloseTo(22, 6);
+    expect(Math.max(...radii)).toBeCloseTo(25, 6);
+    expect(result.outerRadius).toBeCloseTo(25, 6);
+  });
+
+  it("keeps the back edge of the plate at the top of the wall", () => {
+    // A thin strip only at the back of a deeper body: after wrapping it must sit high up.
+    const mesh = plateBox(10, 1, 4, { x: 0, y: 0, z: -8 });
+    const extra = plateBox(10, 1, 4, { x: 0, y: 0, z: 8 });
+    const offset = mesh.vertices.length;
+    const both: CylinderWrapInput = {
+      vertices: [...mesh.vertices, ...extra.vertices],
+      faces: [...mesh.faces, ...extra.faces.map((face) => face.map((index) => index + offset) as [number, number, number])],
+    };
+    const result = wrapMeshAroundCylinder(both, { diameter: 30 });
+    if ("error" in result) throw new Error(result.error);
+    // The first box's vertices come first in the output order of its faces.
+    const firstBoxHeights = result.positions.filter((_, index) => index % 3 === 1).slice(0, 36);
+    expect(Math.min(...firstBoxHeights)).toBeGreaterThan(10);
+  });
+
+  it("refuses a body longer than the circumference, a missing diameter and too deep an engraving", () => {
+    expect(wrapMeshAroundCylinder(plateBox(100, 2, 10), { diameter: 30 })).toEqual({ error: "tooWide" });
+    expect(wrapMeshAroundCylinder(plateBox(10, 2, 10), { diameter: 0 })).toEqual({ error: "invalidDiameter" });
+    expect(wrapMeshAroundCylinder(plateBox(10, 20, 10), { diameter: 30, inward: true })).toEqual({ error: "tooThick" });
+    expect(wrapMeshAroundCylinder({ vertices: [], faces: [] }, { diameter: 30 })).toEqual({ error: "empty" });
+  });
+});

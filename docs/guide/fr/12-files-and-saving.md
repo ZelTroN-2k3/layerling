@@ -1,0 +1,95 @@
+---
+title: Fichiers, sauvegarde et partage
+summary: Où se trouvent vos conceptions, comment les sauvegarder, quels formats d'importation et d'exportation en couches et ce qui est possible sur un serveur partagé.
+---
+
+## Où vivent vos créations
+
+layerling enregistre tout dans le navigateur de votre ordinateur. Il n'y a pas de compte et rien n'est téléchargé. Chaque changement se sauve. L'image d'aperçu sur la page de démarrage montre la dernière vue que vous aviez devant vous lorsque vous êtes revenu avec {{ui:editor.homeDashboard}}. Si vous ouvrez layerling dans le même navigateur quelques jours plus tard, tout est là.
+
+Si vous revenez à la page de démarrage à partir d'un dessin ne contenant rien, le layerling vous demande s'il faut le conserver. {{ui:confirm.yes}} ou [[Enter]] le conserve, {{ui:confirm.no}} le supprime, afin que les designs vides ne s'empilent pas. Les conceptions dans un dossier partagé sur un serveur ne sont pas interrogées.
+
+Cela a un inconvénient : quiconque efface l'espace de stockage du navigateur ou passe à un autre ordinateur perd les dessins. **Alors sauvegardez le travail important dans un fichier.**
+
+## Sauvegarde et transmission
+
+Sur la page de démarrage, chaque design dispose d'un menu avec les options pour renommer, dupliquer et supprimer. Avec {{ui:dashboard.backupAll}}, vous regroupez toutes les conceptions dans un seul fichier. Grâce à {{ui:dashboard.importGeometry}}, ils reviennent, également dans un autre navigateur ou sur un autre ordinateur. Les {{ui:myShapes.title}} de ce navigateur voyagent dans le même fichier, dans le dossier `Custom shapes`, voir [Formes](chapter:shapes).
+
+Vous sauvegardez un seul dessin dans l'éditeur : {{ui:editor.export}}, choisissez le format **LYL** et cliquez sur {{ui:export.saveProject}}. Le fichier LYL est le format de conception propre à Layerling et contient tout : les formes, les groupes, les esquisses, les données CAO, les sources importées et l'historique, c'est-à-dire les étapes d'annulation. Sous {{ui:export.historyTitle}}, vous choisissez le nombre de dernières étapes à parcourir ; cela commence à ce que les paramètres (la roue dentée dans le ruban) conservent sous {{ui:workspace.history}}. Le dernier arrêt, {{ui:export.historyNone}}, enregistre le dessin avec son état actuel uniquement - la manière de partager un fichier sans ses étapes d'annulation. L'export est une copie sous le {{ui:export.fileName}} que vous lui donnez ; le design dans votre navigateur conserve son historique. Les anciens fichiers `.skf` des versions antérieures peuvent toujours être ouverts ; ils sont ensuite enregistrés sous `.lyl`.
+
+**Enregistrement dans votre propre dossier (Chrome et Edge).** Là, le bouton ouvre la boîte de dialogue d'enregistrement de votre système, vous choisissez donc vous-même le dossier et le nom, et un fichier existant peut être remplacé. Ensuite, [[Ctrl]]+[[S]] enregistre à nouveau la conception dans ce même fichier, sans boîte de dialogue. Un dessin ouvert à partir d'un fichier `.lyl` avec {{ui:dashboard.importGeometry}} ou le bouton Ouvrir de la fenêtre d'exportation est également enregistré dans ce fichier. Le navigateur peut demander une fois l'autorisation de modifier le fichier. Une fois la page rechargée, le design oublie son fichier et le prochain [[Ctrl]]+[[S]] le demande à nouveau ; la boîte de dialogue démarre dans le dossier que vous avez utilisé en dernier. Firefox et Safari n'autorisent pas une page à écrire dans des fichiers comme celui-ci. Là, le fichier est téléchargé dans le dossier Téléchargements comme auparavant, et [[Ctrl]]+[[S]] le télécharge à nouveau ; Firefox peut être configuré pour demander le dossier à chaque fois sous Paramètres, Général, Téléchargements.
+
+## Exportation
+
+Cliquez sur {{ui:editor.export}} ou appuyez sur [[Ctrl]]+[[E]].
+
+![La fenêtre d'export avec les formats STL, 3MF, OBJ, STEP, SVG, PNG, LYL et 2D.](shot:export-panel)
+
+En haut se trouve le nom du fichier, en dessous vous choisissez le format. Avec quelque chose de sélectionné, seule la sélection est exportée, sinon la conception entière. Si la sélection laisse de côté les parties visibles, une note dans la fenêtre l'indique clairement et {{ui:export.selectAll}} sélectionne tout ce qui est visible en un seul clic. Une fois le fichier écrit, la fenêtre se ferme d'elle-même ; si l'exportation échoue, elle reste ouverte avec le message.
+
+| Formater | Pour | Que savoir |
+| --- | --- | --- |
+| **STL** | trancheuse et impression 3D | Un maillage triangulaire. Le format le plus simple et le plus répandu. |
+| **3MF** | trancheuse avec des couleurs | Chaque corps reste une partie à part entière avec son nom et sa couleur. Les corps qui se chevauchent ne sont joints que lorsqu'ils partagent une couleur ; lorsqu'une forme se trouve à l'intérieur d'une autre couleur, par exemple un logo dans une assiette, celle construite en premier laisse la place à la suivante. Adapté à PrusaSlicer, Bambu Studio, OrcaSlicer et Cura. Bambu Studio et OrcaSlicer demandent à l'ouverture comment mapper les couleurs sur vos filaments et appellent le fichier "pas de Bambu" - le message est inoffensif. |
+| **OBJ** | modélisation et échange | Un format de maillage largement pris en charge. Les couleurs sont stockées sous forme de couleurs de sommet dans le même fichier, sans `.mtl` supplémentaire. Bambu Studio et OrcaSlicer les lisent et demandent, comme avec 3MF, comment les mapper sur vos filaments ; d'autres programmes ne voient que la forme. Comme avec 3MF, les corps qui se chevauchent ne sont joints que lorsqu'ils partagent une couleur. |
+| **ÉTAPE** | un programme CAO complet | Conserve les boîtes, les cylindres, les sphères et les cônes selon une géométrie exacte, ainsi que les formes constituées d'un contour (étoile, cœur, ellipse, tube, demi-sphère, toit rond, boîte arrondie, queue d'aronde, les alésages et plus), le tube plié, les filetages, les ressorts et les engrenages, ainsi que les congés et chanfreins. La première exportation STEP d'une session charge une fois le noyau CAO (environ 22 Mo). |
+| **SVG** | découpeur laser et traceur | Une vue de dessus nette en millimètres, y compris les trous et les contours incurvés. |
+| **PNG** | messages du forum, sites d'impression, questions | Une image de la vue telle qu'elle est, avec une résolution deux fois supérieure et sans poignées, cadres de sélection ni dimensions. {{ui:export.png.plate}} et {{ui:export.png.transparent}} sont choisis dans la fenêtre. Tournez et zoomez d'abord jusqu'à ce que l'image soit correcte ; la sélection n'a pas d'importance ici. |
+| **LYL** | se superposer lui-même | Le design modifiable avec tout ce qui lui appartient. |
+| **2D** | atelier, tour et fraiseuse, documentation | Un dessin au format 1:1 au format PDF ou SVG : vues de face, de dessus et de droite sur une feuille ISO. Voir ci-dessous. |
+
+**STL dans votre propre dossier (Chrome et Edge).** Là, la première exportation STL d'un design ouvre la boîte de dialogue d'enregistrement de votre système, vous choisissez donc vous-même le dossier et le nom et pouvez remplacer un fichier existant. Après cela, chaque exportation STL de la conception est écrite dans ce même fichier sans boîte de dialogue ; la fenêtre d'exportation indique quel fichier et **Enregistrer sous…** à côté du bouton d'exportation en choisit un autre. La boîte de dialogue mémorise son propre dossier, à l'exception de celui des conceptions, afin que les fichiers du slicer puissent rester avec le slicer. Une fois la page rechargée, le design oublie son fichier STL et la prochaine exportation demande à nouveau. Firefox et Safari téléchargent le fichier comme auparavant.
+
+Un trou que vous n'avez pas regroupé est retiré de chaque corps qu'il atteint lors de l'exportation, comme le montre la vue. Il n’est donc pas nécessaire de regrouper avant chaque export. Avec une sélection, seuls les trous sélectionnés comptent. Un trou ne peut pas être exporté seul ; la superposition le souligne.
+
+STEP ne propose que des corps CAO exacts. Ce qui ne peut pas être écrit exactement, comme un maillage importé en STL, est laissé de côté. Le message après l'exportation nomme ces corps et explique pourquoi. Pour l'imprimante, utilisez STL ou 3MF, qui transportent tout.
+
+### Un dessin pour l'atelier
+
+Choisissez le format **2D** (survolez-le et il est écrit Dessin) et, sous le nom du fichier, PDF ou SVG. Avec quelque chose de sélectionné, seule la sélection est dessinée, sinon tout le dessin est visible ; les trous que vous n'avez pas regroupés coupent quand même les pièces qu'ils atteignent.
+
+La superposition dessine les vues de face, de dessus et de droite selon une disposition au premier angle (le côté droit à gauche de la vue de face, la vue de dessus en dessous) sur la plus petite feuille ISO adaptée, du A4 au A0, ou une plus grande si la pièce en a besoin. C'est toujours à 1:1. Chaque vue a sa largeur et sa hauteur globales, et les bords que vous ne pouvez pas voir sont en pointillés. Les alésages ronds parallèles à une direction de vue reçoivent une croix centrale et une étiquette (F1, T1, R1), et un tableau en bas répertorie leur diamètre et leur position, mesurés à partir du coin inférieur gauche de la vue. Le cartouche dans le coin inférieur droit contient le nom, l'échelle, les unités, la date et le numéro de feuille. Les mots sur la feuille suivent la langue de l'interface.
+
+Imprimez à 100 % ou « taille réelle », sinon les longueurs ne correspondront pas. Ce que le dessin ne fait pas : les filetages, profondeurs, tolérances et alésages en angle ne sont pas cotés, et les dimensions proviennent du modèle sous forme de maillage, elles sont donc nominales. Une pièce très détaillée (plus de 100 000 triangles) ou plus de 200 alésages est refusée avec message ; choisissez alors moins d’objets.
+
+La projection est basée sur le travail de dessin de Cadverix-3D de WC3D.
+
+### Combien de filament faut-il ?
+
+Pour STL, 3MF, OBJ et STEP, la case {{ui:export.estimateTitle}} indique le volume, le poids et la longueur du filament de 1,75 mm de ce qui est exporté. Il compte comme le dossier : corps visibles uniquement, trous enlevés, chevauchements une seule fois. A droite vous choisissez le filament - PLA, PETG, ABS, ASA, TPU ou PA (nylon) - et le poids suit sa densité. Il est élaboré de manière solide, comme s'il était imprimé avec un remplissage à 100 %. Avec les murs et le remplissage, la trancheuse apparaît moins ; le nombre est la limite supérieure, bon pour comparer et pour savoir si la bobine durera.
+
+## Importation
+
+Avec {{ui:editor.import}} ou [[Ctrl]]+[[I]], vous intégrez des fichiers étrangers dans la conception.
+
+![La fenêtre d'importation : ouvrez ou insérez des conceptions et déposez la géométrie.](shot:import-panel)
+
+- **{{ui:import.openProject}} :** Un design superposé (`.lyl` ou un ancien `.skf`) revient sous la forme d'un nouveau design.
+- **{{ui:import.insertProject}} :** Les corps d'un motif superposé sont ajoutés à celui ouvert. Pratique pour les formes de base dont vous avez besoin encore et encore : construisez-les une fois, enregistrez-les et récupérez-les à chaque fois.
+- **Ajouter une géométrie :** Déposez les fichiers STL, OBJ, 3MF, STEP ou SVG dans la fenêtre ou cliquez pour choisir un fichier. Les maillages importés peuvent être tournés, déplacés, découpés avec des trous et construits. Un SVG se présente sous la forme d'un corps d'esquisse, provenant également d'un traceur tel que picsvg.com ou du "Trace Bitmap" d'Inkscape : ses contours deviennent les lignes et les courbes d'une esquisse, de 4 mm de haut et se lisant par le haut comme dans le dessin. Dans les propriétés, vous définissez son {{ui:prop.sketchFill}}, une zone ou un trait à l'extérieur, à l'intérieur ou centré, et {{ui:prop.sketchSilhouette}} laisse les trous dehors, voir [Croquis](chapter:sketches), "Remplissage et silhouette". Vous modifiez les points eux-mêmes en mode esquisse. Seul un SVG très complexe avec plus de 2 500 lignes et courbes est présenté sous forme de maillage fixe. Une forme qui ne peut pas être intégrée dans un solide, comme un contour qui se croise ou se touche en un point, est laissée de côté et, après l'importation, la couche indique combien il y en avait. Ensuite, il est utile de joindre les pièces qui se chevauchent dans le programme de dessin, de fermer les contours et de sauvegarder à nouveau le fichier. Les dessins réalisés sur une page, comme les calques d'un document exportés sous forme de fichiers séparés, s'alignent à nouveau lorsque vous activez {{ui:import.keepSvgPage}} dans la fenêtre d'importation avant de les importer : chacun garde sa place sur la page, où sinon chacun est centré sur lui-même. Un OBJ ou 3MF coloré se présente sous la forme d'un corps par couleur, chacun à sa place. Dans un OBJ, les couleurs se trouvent soit dans le fichier lui-même, comme dans un OBJ de superposition, soit dans un `.mtl` à côté. Sélectionnez-le également ou importez l'intégralité du ZIP de la même manière que Tinkercad distribue son OBJ. Un 3MF porte lui-même ses couleurs, et dans un projet de Bambu Studio, OrcaSlicer ou PrusaSlicer chaque pièce prend la couleur de son filament. Un 3MF avec plusieurs objets, comme un projet avec un objet par plaque, se présente sous la forme d'un corps par objet ; les modificateurs, les volumes négatifs et les bloqueurs de support du slicer sont laissés de côté. La couleur peinte sur les faces dans le slicer n'est pas lue.
+
+Un design enregistré avec une **couche plus récente** peut contenir des éléments que votre version ne connaît pas encore, comme une nouvelle forme, un nouveau paramètre ou des polices qui vous sont propres. Si layerling ne peut pas l'ouvrir pour cette raison, le message nomme les deux versions. S'il s'ouvre, l'avis indique que les éléments plus récents peuvent être différents ici. Quoi qu’il en soit, recharger la page est utile : layerling.com propose toujours la version la plus récente. L'application installée la récupère au prochain démarrage ; sur votre propre serveur, vous installez la mise à jour.
+
+Les images modèles sont ajoutées en mode esquisse, voir [Esquisses](chapter:sketches).
+
+## Simplifier un maillage importé
+
+Un maillage numérisé ou sculpté comporte souvent beaucoup plus de triangles que sa forme n'en a besoin, et chacun d'entre eux est emporté pendant que vous le déplacez, le coupez et l'enregistrez. {{ui:simplify.title}} dans le groupe Modifier (ou dans le menu contextuel du corps) montre le maillage tel qu'il se trouve à côté de ce qu'en laisserait une part choisie de ses triangles ; les deux vues tournent et zooment ensemble avec les boutons de la souris sur le plan de travail. Définissez la quantité à conserver en pourcentage ou en nombre de triangles, et {{ui:simplify.apply}} prend le maillage le plus clair. Le résultat est un maillage simple : pour le résultat d'une coupe ou d'une fusion, {{ui:group.edit}} et ses parties d'origine sont abandonnées.
+
+La coupe, la fusion et l'intersection d'un maillage importé sont calculées dans votre navigateur, de sorte que les paramètres de l'espace de travail limitent le nombre de triangles qu'un tel maillage peut avoir ({{ui:workspace.booleanTriangleLimit}}). Un maillage au-dessus de la limite n'est pas traité et le message nomme son nombre de triangles ; simplifiez d'abord le maillage ou augmentez la limite si votre ordinateur peut le supporter.
+
+## Signaler un bug
+
+Si layerling fait quelque chose d'inattendu, enregistrez un {{ui:editor.bugReport}} : le lien se trouve dans le pied de page en bas, à côté du forum. Il s'agit d'un fichier ZIP, car GitHub et de nombreux forums refusent un simple .lyl : à l'intérieur se trouvent votre design au format .lyl et un court fichier texte avec la version, le navigateur, la taille de l'écran, les derniers messages et les éventuelles erreurs. La page de démarrage ouvre le ZIP comme une sauvegarde, ou vous le décompressez et ouvrez le .lyl. Il n'y a rien de personnel dedans. Joignez le fichier à votre message sur le forum ou sur GitHub, afin que le problème puisse être suivi exactement avec votre conception.
+
+Si la superposition s'arrête avec une erreur, une fenêtre avec le message d'erreur s'affiche à la place d'une page vierge. À partir de là, vous pouvez enregistrer l'état du dernier design stocké dans le navigateur sous forme de fichier .lyl, revenir à l'aperçu ou démarrer un nouveau design. Le message d'erreur de la fenêtre et le fichier enregistré vous aident lorsque vous le signalez.
+
+## Designs partagés sur un serveur
+
+Lorsque le layerling s'exécute sur votre propre ordinateur ou serveur Web, il peut offrir un dossier partagé dans lequel tous les utilisateurs conservent leurs conceptions. Sur la page de démarrage, il apparaît alors sous la forme {{ui:dashboard.sharedProjects}}. Vous y créez des dossiers, déplacez des conceptions en les faisant glisser et effectuez une recherche dans tout le dossier. Un design qui y vit s'y récupère. Un design de ce navigateur va sur le serveur en faisant glisser sa carte sur la vignette du serveur, ou avec {{ui:dashboard.sendToServer}} dans le menu de la carte. Une sauvegarde que vous ouvrez arrive d'abord dans ce navigateur, comme n'importe quelle conception que vous ouvrez ; mettez les designs sur le serveur à partir de là. La page d'accueil affiche un dessin par son nom de fichier, donc renommer un dessin, sur sa fiche ou en haut de l'éditeur, renomme également le fichier sur le serveur. La suppression d'un dessin ou d'un dossier le supprime définitivement, ainsi que sa copie de travail dans ce navigateur. Les formes personnalisées conservées sur le serveur se trouvent dans son dossier `Formes personnalisées`, voir [Formes](chapter:shapes).
+
+Deux nouveautés rendent cela plus rapide : {{ui:dashboard.sendAllToServer}} sur la page de démarrage place toutes les conceptions de ce navigateur sur le serveur en une seule fois, et cocher {{ui:dashboard.newOnServer}} fait démarrer chaque nouvelle conception dans le dossier du serveur, de sorte qu'elle y est enregistrée dès la première modification. La coche est conservée dans ce navigateur. Une conception qui ne peut pas y aller — par exemple si son nom est déjà pris sur le serveur — reste dans le navigateur, et le message indique combien.
+
+Il ne s'agit pas d'une édition simultanée : celui qui ouvre un fichier travaille sur sa propre copie. Si quelqu'un d'autre a modifié le fichier entre-temps, layerling refuse de l'écraser.
+
+Sur layerling.com, cette fonction n'est pas activée. Comment le configurer sur votre propre serveur est décrit dans le [README sur GitHub](https://github.com/henmedia/layerling/blob/main/README.md).

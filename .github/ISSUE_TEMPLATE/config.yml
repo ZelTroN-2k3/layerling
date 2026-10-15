@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Suggest a feature or an idea
+    url: https://github.com/henmedia/layerling/discussions/new?category=ideas
+    about: Wishes and ideas are talked over in Discussions, where others can add their view. Issues are for bugs.
+  - name: Ask a question
+    url: https://github.com/henmedia/layerling/discussions/new?category=q-a
+    about: How do I do this in layerling? Ask in Discussions.
