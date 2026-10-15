@@ -156,9 +156,11 @@ describe("language detection", () => {
     expect(withBrowser(["en-US"], "de")).toBe("de");
   });
 
-  it("switches and reports the new language", () => {
+  it("switches and reports the new language", async () => {
     setLanguage("de", false);
     expect(getLanguage()).toBe("de");
+    await setLanguage("fr", false);
+    expect(getLanguage()).toBe("fr");
     setLanguage("en", false);
     expect(getLanguage()).toBe("en");
   });
